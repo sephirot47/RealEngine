@@ -1,5 +1,9 @@
 # C++ objects and libs
 
+*~
+*.user
+*.o
+*.pro
 *.slo
 *.lo
 *.o
