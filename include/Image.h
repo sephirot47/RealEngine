@@ -23,6 +23,7 @@ public:
     int GetComponents() const;
     int GetWidth() const;
     int GetHeight() const;
+    GLenum GetFormat() const;
     const void* GetData() const;
 };
 

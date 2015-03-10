@@ -20,7 +20,6 @@ public:
     void SetWrapMode(GLenum mode) const;
     void SetScaleMode(GLenum mode) const;
     void SetData(const void *data, int width, int height, GLenum format) const;
-    void LoadFromImage(const Image &img) const;
 
     void Bind() const;
     void UnBind() const;

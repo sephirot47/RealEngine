@@ -32,7 +32,7 @@ void Init()
 
     ReadOBJ("luigi.obj", pos, uv, normals, tris);
 
-    vbo = new VBO(GL_ARRAY_BUFFER);
+    vbo = new VBO();
     int size = pos.size() * sizeof(vec3) + uv.size() * sizeof(vec2);
     char *data = new char [size];
     memcpy(data, &pos[0], pos.size() * sizeof(vec3));
@@ -43,9 +43,10 @@ void Init()
     vao = new VAO();
     vao->AddAttribute(*vbo, 0, 3, GL_FLOAT, GL_FALSE, 0, 0);
     vao->AddAttribute(*vbo, 1, 2, GL_FLOAT, GL_FALSE, 0, pos.size() * sizeof(vec3));
+
     img = new Image(); img->LoadFromFile("luigiD.jpg");
     texture = new Texture();
-    texture->LoadFromImage(*img);
+    texture->SetData(img->GetData(), img->GetWidth(), img->GetHeight(), img->GetFormat());
 
     fshader = new Shader(); fshader->Create("fshader", GL_FRAGMENT_SHADER);
     vshader = new Shader(); vshader->Create("vshader", GL_VERTEX_SHADER);

@@ -1,9 +1,8 @@
 #include "../include/VBO.h"
 
-VBO::VBO(GLenum target)
+VBO::VBO()
 {
     glGenBuffers(1, &object);
-    this->target = target;
 }
 
 VBO::~VBO()
@@ -13,17 +12,17 @@ VBO::~VBO()
 
 void VBO::SetData(const void *data, int size) const
 {
-    glBindBuffer(target, object);
-    glBufferData(target, size, data, GL_STATIC_DRAW);
-    glBindBuffer(target, 0);
+    glBindBuffer(GL_ARRAY_BUFFER, object);
+    glBufferData(GL_ARRAY_BUFFER, size, data, GL_STATIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
 void VBO::Bind() const
 {
-    glBindBuffer(target, object);
+    glBindBuffer(GL_ARRAY_BUFFER, object);
 }
 
 void VBO::UnBind() const
 {
-    glBindBuffer(target, 0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
 }

@@ -35,11 +35,6 @@ void Texture::SetData(const void *data, int width, int height, GLenum format) co
     UnBind();
 }
 
-void Texture::LoadFromImage(const Image &img) const
-{
-    SetData(img.GetData(), img.GetWidth(), img.GetHeight(), img.GetComponents());
-}
-
 void Texture::Bind() const
 {
     glBindTexture(GL_TEXTURE_2D, object);

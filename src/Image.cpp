@@ -37,6 +37,11 @@ int Image::GetHeight() const
     return height;
 }
 
+GLenum Image::GetFormat() const
+{
+    return components == 3 ? GL_RGB : GL_RGBA;
+}
+
 const void* Image::GetData() const
 {
     return data;
