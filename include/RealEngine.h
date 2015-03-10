@@ -23,6 +23,7 @@
 #include "VBO.h"
 #include "Texture.h"
 #include "Image.h"
+#include "FrameBuffer.h"
 #include "VAO.h"
 
 #endif // REALENGINE_H

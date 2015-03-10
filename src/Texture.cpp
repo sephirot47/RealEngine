@@ -28,10 +28,10 @@ void Texture::SetScaleMode(GLenum mode) const
     UnBind();
 }
 
-void Texture::SetData(const void *data, int width, int height, GLenum format) const
+void Texture::SetData(const void *data, int width, int height, GLenum format, GLenum internalFormat, GLenum type) const
 {
     Bind();
-    glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+    glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, internalFormat, type, data);
     UnBind();
 }
 

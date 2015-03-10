@@ -8,10 +8,6 @@
 
 using namespace std;
 
-const float triMesh[9] = {-1.0f, -1.0f, 0.0f,
-                           0.0f,  1.0f, 0.0f,
-                           1.0f, -1.0f, 0.0f};
-
 const int width = 800, height = 800;
 
 VAO *vao;
@@ -19,7 +15,12 @@ VBO *vbo;
 Shader *fshader, *vshader;
 ShaderProgram *program;
 Texture *texture;
-Image *img;
+
+FrameBuffer* frameBuffer;
+VAO *fbvao;
+VBO *fbvbo;
+Shader *fbfshader, *fbvshader;
+ShaderProgram *fbProgram;
 
 vector<vec3> pos, normals;
 vector<vec2> uv;
@@ -44,9 +45,9 @@ void Init()
     vao->AddAttribute(*vbo, 0, 3, GL_FLOAT, GL_FALSE, 0, 0);
     vao->AddAttribute(*vbo, 1, 2, GL_FLOAT, GL_FALSE, 0, pos.size() * sizeof(vec3));
 
-    img = new Image(); img->LoadFromFile("luigiD.jpg");
+    Image *img = new Image(); img->LoadFromFile("luigiD.jpg");
     texture = new Texture();
-    texture->SetData(img->GetData(), img->GetWidth(), img->GetHeight(), img->GetFormat());
+    texture->SetData(img->GetData(), img->GetWidth(), img->GetHeight(), img->GetFormat(), img->GetFormat(), GL_UNSIGNED_BYTE);
 
     fshader = new Shader(); fshader->Create("fshader", GL_FRAGMENT_SHADER);
     vshader = new Shader(); vshader->Create("vshader", GL_VERTEX_SHADER);
@@ -54,12 +55,29 @@ void Init()
     program->AttachShader(*fshader);
     program->AttachShader(*vshader);
     program->Link();
+
+    ///FRAME BUFFER STUFF////
+    frameBuffer = new FrameBuffer(width, height);
+
+    fbvbo = new VBO();
+    fbvbo->SetData(FrameBuffer::screenMesh, sizeof(FrameBuffer::screenMesh));
+
+    fbvao = new VAO();
+    fbvao->AddAttribute(*fbvbo, 0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+    fbfshader = new Shader(); fbfshader->Create("fbfshader", GL_FRAGMENT_SHADER);
+    fbvshader = new Shader(); fbvshader->Create("fbvshader", GL_VERTEX_SHADER);
+    fbProgram = new ShaderProgram();
+    fbProgram->AttachShader(*fbfshader);
+    fbProgram->AttachShader(*fbvshader);
+    fbProgram->Link();
+    ///////////////////////////
 }
 
 void RenderScene()
 {
+    frameBuffer->Bind();
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
     vao->Bind();
     program->Use();
     texture->Bind(0);
@@ -86,6 +104,21 @@ void RenderScene()
     texture->UnBind(0);
     program->UnUse();
     vao->UnBind();
+    frameBuffer->UnBind();
+
+    //Render to screen
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    fbvao->Bind();
+    fbProgram->Use();
+    frameBuffer->GetColorTexture()->Bind(0);
+
+    fbProgram->SetUniform("scene", 0);
+    glDrawArrays(GL_QUADS, 0, 4);
+
+    frameBuffer->GetColorTexture()->UnBind(0);
+    fbProgram->UnUse();
+    fbvao->UnBind();
+    //
 }
 
 int main()
