@@ -5,6 +5,7 @@
 
 #include <iostream>
 #include <vector>
+#include <map>
 #include <stdio.h>
 #include <stdlib.h>
 #include <GL/gl.h>
@@ -19,7 +20,11 @@
 class ShaderProgram
 {
 private:
-    int textureCount;
+
+    typedef std::pair<std::string, Texture*> TextureMapPair;
+    typedef  std::map<std::string, Texture*> TextureMap;
+
+    TextureMap textureMap;
     GLuint object;
 
 public:
@@ -32,8 +37,8 @@ public:
     void Use() const;
     void UnUse() const;
 
-    void AttachTexture(const Texture &texture, const std::string& name) const;
-    void DetachTexture(const Texture &texture, const std::string& name) const;
+    void AttachTexture(const std::string& name, Texture &texture);
+    void DetachTexture(const std::string& name);
 
     GLint GetUniformLocation(const std::string& name) const;
     void SetUniform(const std::string& name, float value) const;

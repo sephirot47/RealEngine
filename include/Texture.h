@@ -23,7 +23,7 @@ public:
     void UnBind() const;
 
     void Bind(GLuint slot) const;
-    void UnBind(GLuint slot) const;
+    static void UnBind(GLuint slot);
 
     GLuint GetObject() const { return object; }
 };

@@ -51,7 +51,7 @@ void Texture::Bind(GLuint slot) const
     glBindTexture(GL_TEXTURE_2D, object);
 }
 
-void Texture::UnBind(GLuint slot) const
+void Texture::UnBind(GLuint slot)
 {
     glActiveTexture(GL_TEXTURE0 + slot);
     glBindTexture(GL_TEXTURE_2D, 0);

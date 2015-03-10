@@ -53,6 +53,8 @@ void Init()
     program->AttachShader(*vshader);
     program->Link();
 
+    program->AttachTexture("tex", *texture);
+
     ///FRAME BUFFER STUFF////
     frameBuffer = new FrameBuffer(width, height);
     frameDrawer = new FrameDrawer(*frameBuffer);
@@ -65,7 +67,7 @@ void RenderScene()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     vao->Bind();
     program->Use();
-    texture->Bind(0);
+    //texture->Bind(0);
 
     mat4 model(1.0f);
     static float rot, time;
@@ -79,14 +81,12 @@ void RenderScene()
 
     mat4 projection = perspective(45.0f * 3.1415f/180.0f, 1.0f, 0.1f, 100.0f);
 
-    program->SetUniform("tex", 0);
     program->SetUniform("time", time);
     program->SetUniform("model", model);
     program->SetUniform("projection", projection);
 
     glDrawArrays(tris ? GL_TRIANGLES : GL_QUADS, 0, pos.size());
 
-    texture->UnBind(0);
     program->UnUse();
     vao->UnBind();
     frameBuffer->UnBind();

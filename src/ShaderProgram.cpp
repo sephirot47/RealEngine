@@ -37,11 +37,44 @@ void ShaderProgram::Link() const
 void ShaderProgram::Use() const
 {
     glUseProgram(object);
+
+    int slot = 0;
+    for(auto it : textureMap)
+    {
+        it.second->Bind(slot);
+        glUniform1i(GetUniformLocation(it.first), slot);
+        ++slot;
+    }
 }
 
 void ShaderProgram::UnUse() const
 {
     glUseProgram(0);
+
+    int slot = 0;
+    for(auto it : textureMap)
+    {
+        Texture::UnBind(slot);
+        ++slot;
+    }
+}
+
+void ShaderProgram::AttachTexture(const std::string &name, Texture &texture)
+{
+    auto it = textureMap.find(name);
+    if(it == textureMap.end())
+    {
+        textureMap.insert( textureMap.end(), TextureMapPair(name, &texture) );
+    }
+}
+
+void ShaderProgram::DetachTexture(const std::string &name)
+{
+    auto it = textureMap.find(name);
+    if(it != textureMap.end())
+    {
+        textureMap.erase(it);
+    }
 }
 
 
