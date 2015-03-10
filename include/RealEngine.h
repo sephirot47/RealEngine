@@ -24,6 +24,7 @@
 #include "Texture.h"
 #include "Image.h"
 #include "FrameBuffer.h"
+#include "FrameDrawer.h"
 #include "VAO.h"
 
 #endif // REALENGINE_H

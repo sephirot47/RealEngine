@@ -1,13 +1,11 @@
 #include "../include/FrameBuffer.h"
 
-const float FrameBuffer::screenMesh[12] = {1.0f, -1.0f, 0.0f,
-                                           1.0f,  1.0f, 0.0f,
-                                          -1.0f,  1.0f, 0.0f,
-                                          -1.0f, -1.0f, 0.0f};
-
 FrameBuffer::FrameBuffer(int width, int height)
 {
     glGenFramebuffers(1, &object);
+
+    this->width = width;
+    this->height = height;
 
     colorTexture = new Texture();
     colorTexture->SetData(0, width, height, GL_RGB, GL_RGB, GL_FLOAT);

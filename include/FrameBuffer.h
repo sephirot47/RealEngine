@@ -13,13 +13,12 @@ class FrameBuffer
 {
 private:
     Texture *colorTexture, *depthTexture;
+    int width, height;
     GLuint object;
 
     FrameBuffer(const FrameBuffer&) {}
 
 public:
-
-    static const float screenMesh[12];
 
     FrameBuffer(int width, int height);
     ~FrameBuffer();

@@ -17,10 +17,7 @@ ShaderProgram *program;
 Texture *texture;
 
 FrameBuffer* frameBuffer;
-VAO *fbvao;
-VBO *fbvbo;
-Shader *fbfshader, *fbvshader;
-ShaderProgram *fbProgram;
+FrameDrawer* frameDrawer;
 
 vector<vec3> pos, normals;
 vector<vec2> uv;
@@ -58,20 +55,8 @@ void Init()
 
     ///FRAME BUFFER STUFF////
     frameBuffer = new FrameBuffer(width, height);
-
-    fbvbo = new VBO();
-    fbvbo->SetData(FrameBuffer::screenMesh, sizeof(FrameBuffer::screenMesh));
-
-    fbvao = new VAO();
-    fbvao->AddAttribute(*fbvbo, 0, 3, GL_FLOAT, GL_FALSE, 0, 0);
-
-    fbfshader = new Shader(); fbfshader->Create("fbfshader", GL_FRAGMENT_SHADER);
-    fbvshader = new Shader(); fbvshader->Create("fbvshader", GL_VERTEX_SHADER);
-    fbProgram = new ShaderProgram();
-    fbProgram->AttachShader(*fbfshader);
-    fbProgram->AttachShader(*fbvshader);
-    fbProgram->Link();
-    ///////////////////////////
+    frameDrawer = new FrameDrawer(*frameBuffer);
+    /////////////////////////
 }
 
 void RenderScene()
@@ -106,19 +91,7 @@ void RenderScene()
     vao->UnBind();
     frameBuffer->UnBind();
 
-    //Render to screen
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    fbvao->Bind();
-    fbProgram->Use();
-    frameBuffer->GetColorTexture()->Bind(0);
-
-    fbProgram->SetUniform("scene", 0);
-    glDrawArrays(GL_QUADS, 0, 4);
-
-    frameBuffer->GetColorTexture()->UnBind(0);
-    fbProgram->UnUse();
-    fbvao->UnBind();
-    //
+    frameDrawer->Draw();
 }
 
 int main()

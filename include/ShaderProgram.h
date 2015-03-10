@@ -11,14 +11,15 @@
 #include <GL/glu.h>
 #include <GL/glext.h>
 
-#include "../include/glm/glm.hpp"
-#include "../include/Shader.h"
-#include "../include/Debug.h"
+#include "glm/glm.hpp"
+#include "Texture.h"
+#include "Shader.h"
+#include "Debug.h"
 
 class ShaderProgram
 {
 private:
-
+    int textureCount;
     GLuint object;
 
 public:
@@ -30,6 +31,9 @@ public:
     void Link() const;
     void Use() const;
     void UnUse() const;
+
+    void AttachTexture(const Texture &texture, const std::string& name) const;
+    void DetachTexture(const Texture &texture, const std::string& name) const;
 
     GLint GetUniformLocation(const std::string& name) const;
     void SetUniform(const std::string& name, float value) const;
