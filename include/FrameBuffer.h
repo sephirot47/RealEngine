@@ -26,6 +26,8 @@ public:
     void Bind() const;
     void UnBind() const;
 
+    int GetWidth() const { return width; }
+    int GetHeight() const { return height; }
     Texture* GetDepthTexture() const { return depthTexture; }
     Texture* GetColorTexture() const { return colorTexture; }
     GLuint GetObject() const { return object; }

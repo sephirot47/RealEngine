@@ -33,6 +33,9 @@ FrameDrawer::FrameDrawer(FrameBuffer &fb)
     program->AttachShader(*fshader);
     program->AttachShader(*vshader);
     program->Link();
+
+    program->AttachTexture("scene", *frameBuffer->GetColorTexture());
+    program->AttachTexture("depth", *frameBuffer->GetDepthTexture());
 }
 
 FrameDrawer::~FrameDrawer()
@@ -46,16 +49,12 @@ void FrameDrawer::Draw() const
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     vao->Bind();
     program->Use();
-    frameBuffer->GetColorTexture()->Bind(0);
-    frameBuffer->GetDepthTexture()->Bind(1);
 
-    program->SetUniform("scene", 0);
-    program->SetUniform("depth", 1);
+    program->SetUniform("width",  float(frameBuffer->GetWidth()));
+    program->SetUniform("height", float(frameBuffer->GetHeight()));
 
     glDrawArrays(GL_QUADS, 0, 4);
 
-    frameBuffer->GetColorTexture()->UnBind(0);
-    frameBuffer->GetDepthTexture()->UnBind(1);
     program->UnUse();
     vao->UnBind();
 }

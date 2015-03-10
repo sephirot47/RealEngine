@@ -1,26 +1,23 @@
 #include "../include/FileLoader.h"
 
-using namespace std;
-using namespace glm;
-
-unsigned char* ReadImage(const char *filepath, int &components, int &width, int &height)
+unsigned char* FileLoader::ReadImage(const char *filepath, int &components, int &width, int &height)
 {
     unsigned char* data = stbi_load(filepath, &width, &height, &components, 0);
     if(data == 0)
     {
-        std::cout << "Error loading the texture '" << filepath << "', couldn't open/read the file." << std::endl;
+        DbgError("Error loading the texture '" << filepath << "', couldn't open/read the file.");
         return data;
     }
     return data;
 }
 
-void GetOBJFormat(const char *filepath, bool &uvs, bool &normals, bool &triangles)
+void FileLoader::GetOBJFormat(const char *filepath, bool &uvs, bool &normals, bool &triangles)
 {
-    FILE *f;
+    std::FILE *f;
     f = fopen(filepath, "r");
     if(!f)
     {
-        cout << "Error trying to open '" << filepath << "'";
+        DbgError("Error trying to open '" << filepath << "'");
         return;
     }
 
@@ -72,28 +69,28 @@ void GetOBJFormat(const char *filepath, bool &uvs, bool &normals, bool &triangle
     fclose(f);
 }
 
-bool ReadOBJ(const char *filepath, vector<vec3> &vertexPos, vector<vec2> &vertexUvs, vector<vec3> &vertexNormals,
+bool FileLoader::ReadOBJ(const char *filepath, vector<vec3> &vertexPos, vector<vec2> &vertexUvs, vector<vec3> &vertexNormals,
              bool &triangles)
 {
-    vector<vec3> disorderedVertexPos, disorderedVertexNormals;
-    vector<vec2> disorderedVertexUvs;
-    vector<unsigned int> vertexPosIndexes, vertexUvsIndexes, vertexNormIndexes;
+    std::vector<glm::vec3> disorderedVertexPos, disorderedVertexNormals;
+    std::vector<glm::vec2> disorderedVertexUvs;
+    std::vector<unsigned int> vertexPosIndexes, vertexUvsIndexes, vertexNormIndexes;
     bool hasUvs, hasNormals;
 
     GetOBJFormat(filepath, hasUvs, hasNormals, triangles);
 
-    ifstream f(filepath, ios::in);
+    std::ifstream f(filepath, std::ios::in);
     if(!f.is_open()) cout << "Error opening the mesh file" << endl;
-    string line;
-    string errormsg = "Error reading the mesh file";
+    std::string line;
+    std::string errormsg = "Error reading the mesh file";
     while(getline(f, line))
     {
-        stringstream ss(line);
-        string lineHeader;
+        std::stringstream ss(line);
+        std::string lineHeader;
         if(!(ss >> lineHeader)) continue;
         if(lineHeader == "v")
         {
-            vec3 pos;
+            glm::vec3 pos;
             ss >> pos.x, errormsg;
             ss >> pos.y, errormsg;
             ss >> pos.z, errormsg;
@@ -101,14 +98,14 @@ bool ReadOBJ(const char *filepath, vector<vec3> &vertexPos, vector<vec2> &vertex
         }
         else if(hasUvs && lineHeader == "vt") //Cargamos uvs
         {
-            vec2 uv;
+            glm::vec2 uv;
             ss >> uv.x, errormsg;
             ss >> uv.y, errormsg;
             disorderedVertexUvs.push_back(uv);
         }
         else if(hasNormals && lineHeader == "vn") //Cargamos normals
         {
-            vec3 normal;
+            glm::vec3 normal;
             ss >> normal.x, errormsg;
             ss >> normal.y, errormsg;
             ss >> normal.z, errormsg;
@@ -156,14 +153,14 @@ bool ReadOBJ(const char *filepath, vector<vec3> &vertexPos, vector<vec2> &vertex
         vertexPos.push_back(disorderedVertexPos[vertexPosIndexes[i]-1]);
     }
 
-    vec2 defaultUvs(0.5f, 0.5f);
+    glm::vec2 defaultUvs(0.5f, 0.5f);
     for(int i = 0; i < vertexUvsIndexes.size(); ++i)
     {
         if(hasUvs) vertexUvs.push_back(disorderedVertexUvs[vertexUvsIndexes[i]-1]);
         else vertexUvs.push_back(defaultUvs);
     }
 
-    vec3 defaultNormals(0.0f, 0.0f, 1.0f);
+    glm::vec3 defaultNormals(0.0f, 0.0f, 1.0f);
     for(int i = 0; i < vertexNormIndexes.size(); ++i)
     {
         if(hasNormals) vertexNormals.push_back(disorderedVertexNormals[vertexNormIndexes[i]-1]);

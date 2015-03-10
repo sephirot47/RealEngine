@@ -14,7 +14,7 @@ Image::~Image()
 
 void Image::LoadFromFile(const std::string& filepath)
 {
-    data = ReadImage(filepath.c_str(), components, width, height);
+    data = FileLoader::ReadImage(filepath.c_str(), components, width, height);
 }
 
 int Image::GetSize() const

@@ -28,19 +28,24 @@ void Init()
     glClearColor(0.0, 0.0, 0.3, 1.0);
     glEnable(GL_DEPTH_TEST);
 
-    ReadOBJ("luigi.obj", pos, uv, normals, tris);
+    FileLoader::ReadOBJ("luigi.obj", pos, uv, normals, tris);
 
     vbo = new VBO();
-    int size = pos.size() * sizeof(vec3) + uv.size() * sizeof(vec2);
+    int size = pos.size() * sizeof(vec3) + uv.size() * sizeof(vec2) + normals.size() * sizeof(vec3);
     char *data = new char [size];
     memcpy(data, &pos[0], pos.size() * sizeof(vec3));
-    memcpy(data + pos.size() * sizeof(vec3), &uv[0], uv.size() * sizeof(vec2));
+    memcpy(data + pos.size() * sizeof(vec3),
+           &uv[0], uv.size() * sizeof(vec2));
+    memcpy(data + pos.size() * sizeof(vec3) + uv.size() * sizeof(vec2),
+           &normals[0], normals.size() * sizeof(vec3));
+
     vbo->SetData(&data[0], size);
     delete [] data;
 
     vao = new VAO();
     vao->AddAttribute(*vbo, 0, 3, GL_FLOAT, GL_FALSE, 0, 0);
     vao->AddAttribute(*vbo, 1, 2, GL_FLOAT, GL_FALSE, 0, pos.size() * sizeof(vec3));
+    vao->AddAttribute(*vbo, 2, 3, GL_FLOAT,  GL_TRUE, 0, pos.size() * sizeof(vec3) + uv.size() * sizeof(vec2));
 
     Image *img = new Image(); img->LoadFromFile("luigiD.jpg");
     texture = new Texture();
@@ -61,29 +66,28 @@ void Init()
     /////////////////////////
 }
 
+float rot = 0.0f, appTime = 0.0f;
+
 void RenderScene()
 {
     frameBuffer->Bind();
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     vao->Bind();
     program->Use();
-    //texture->Bind(0);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     mat4 model(1.0f);
-    static float rot, time;
-    time += 0.1f;
-    rot += (float)(rand()%1000)/2000.0f;
-    vec3 axis(sin(time), 1.0, cos(time)), translate(sin(time) * 0.1f, -0.2, cos(time) * 0.1f - 1.0f), scale(0.004);
+    appTime += 0.1f;
+   // rot += 0.03f;
+    vec3 axis(.0, 1.0, 0.0), translate(0.0f, -0.3f, -1.5f), scale(0.006);
     mat4 T = glm::translate(model, translate);
     mat4 R = glm::rotate_slow(model, rot, axis);
     mat4 S = glm::scale(model, scale);
     model = T * R * S;
 
     mat4 projection = perspective(45.0f * 3.1415f/180.0f, 1.0f, 0.1f, 100.0f);
-
-    program->SetUniform("time", time);
-    program->SetUniform("model", model);
     program->SetUniform("projection", projection);
+    program->SetUniform("time", appTime);
+    program->SetUniform("model", model);
 
     glDrawArrays(tris ? GL_TRIANGLES : GL_QUADS, 0, pos.size());
 
@@ -91,7 +95,18 @@ void RenderScene()
     vao->UnBind();
     frameBuffer->UnBind();
 
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    frameDrawer->GetProgram()->SetUniform("time", appTime);
     frameDrawer->Draw();
+}
+
+bool IsPressed(int keyCode)
+{
+    int n;
+    const Uint8 *state = SDL_GetKeyboardState(&n);
+    int i = SDL_GetScancodeFromKey(keyCode);
+    if(i < n && n >= 1) return state[i] == 1;
+    return false;
 }
 
 int main()
@@ -114,6 +129,8 @@ int main()
         while(SDL_PollEvent(&event))
         {
             if(event.type == SDL_QUIT) running = false;
+            if (event.type == SDL_KEYDOWN && IsPressed(SDLK_RIGHT)) rot += 0.03;
+            if (event.type == SDL_KEYDOWN && IsPressed(SDLK_LEFT)) rot -= 0.03;
         }
 
         RenderScene();

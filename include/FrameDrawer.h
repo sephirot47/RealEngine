@@ -35,6 +35,7 @@ public:
     ~FrameDrawer();
 
     void Draw() const;
+    ShaderProgram* GetProgram() const { return program; }
 };
 
 #endif // FRAMEDRAWER_H
