@@ -7,7 +7,7 @@ in vec3 pos;
 in vec2 uv;
 in vec3 normal;
 
-vec3 lightPos = vec3(100, 100, -20), lightDir = (0.0, -0.3, -1.5) - lightPos;
+vec3 lightPos = vec3(100*sin(time*0.2), 100, -20*cos(time*0.2)), lightDir = (0.0, -0.3, -1.5) - lightPos;
 
 float discretisa(float light)
 {
@@ -21,7 +21,7 @@ void main()
     gl_FragColor = texture(tex, vec2(uv.x, 1.0 - uv.y)); //vec4(uv.x, uv.y, 0.0, 1.0);  
 
     vec3 vertexToLight = normalize(lightPos - pos); 
-    float lightIntensity = discretisa( clamp(dot(vertexToLight, normalize(normal)), 0.0, 1.0)) * 3.0;
-    gl_FragColor = vec4(gl_FragColor.xyz * lightIntensity, 1.0) + vec4(0.5, 0.5, 0.5, 1.0);
+    float lightIntensity = discretisa( clamp(dot(vertexToLight, normalize(normal)), 0.0, 1.0));// * 3.0;
+    gl_FragColor = vec4(gl_FragColor.xyz * lightIntensity, 1.0);
 }
 

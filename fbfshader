@@ -4,7 +4,7 @@ uniform float time;
 uniform float width, height;
 uniform sampler2D scene, depth;
 
-float threshold = 0.005;
+float threshold = 0.01;
 
 vec4 edgeColor = vec4(0.0, 0.0, 0.0, 1.0);
 
@@ -40,6 +40,6 @@ void main()
     }
     else gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
 
-    gl_FragColor = texture(scene, uv);
+    //gl_FragColor = texture(scene, uv);
 }
 

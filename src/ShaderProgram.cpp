@@ -59,7 +59,7 @@ void ShaderProgram::UnUse() const
     }
 }
 
-void ShaderProgram::AttachTexture(const std::string &name, Texture &texture)
+void ShaderProgram::AttachTexture(const std::string name, Texture &texture)
 {
     auto it = textureMap.find(name);
     if(it == textureMap.end())
@@ -68,7 +68,7 @@ void ShaderProgram::AttachTexture(const std::string &name, Texture &texture)
     }
 }
 
-void ShaderProgram::DetachTexture(const std::string &name)
+void ShaderProgram::DetachTexture(const std::string name)
 {
     auto it = textureMap.find(name);
     if(it != textureMap.end())
@@ -78,42 +78,42 @@ void ShaderProgram::DetachTexture(const std::string &name)
 }
 
 
-GLint ShaderProgram::GetUniformLocation(const string& name) const
+GLint ShaderProgram::GetUniformLocation(const string name) const
 {
     return glGetUniformLocation(object, name.c_str());
 }
 
-void ShaderProgram::SetUniform(const std::string& name, float value) const
+void ShaderProgram::SetUniform(const std::string name, float value) const
 {
     Use();
     glUniform1f(GetUniformLocation(name), value);
 }
 
-void ShaderProgram::SetUniform(const string &name, int value) const
+void ShaderProgram::SetUniform(const string name, int value) const
 {
     Use();
     glUniform1i(GetUniformLocation(name), value);
 }
 
-void ShaderProgram::SetUniform(const std::string&  name, const glm::vec2 &value) const
+void ShaderProgram::SetUniform(const std::string  name, const glm::vec2 &value) const
 {
     Use();
     glUniform2f(GetUniformLocation(name), value.x, value.y);
 }
 
-void ShaderProgram::SetUniform(const std::string&  name, const glm::vec3 &value) const
+void ShaderProgram::SetUniform(const std::string  name, const glm::vec3 &value) const
 {
     Use();
     glUniform3f(GetUniformLocation(name), value.x, value.y, value.z);
 }
 
-void ShaderProgram::SetUniform(const std::string&  name, const glm::vec4 &value) const
+void ShaderProgram::SetUniform(const std::string  name, const glm::vec4 &value) const
 {
     Use();
     glUniform4f(GetUniformLocation(name), value.x, value.y, value.z, value.w);
 }
 
-void ShaderProgram::SetUniform(const std::string&  name, const glm::mat4 &value, GLboolean normalized) const
+void ShaderProgram::SetUniform(const std::string  name, const glm::mat4 &value, GLboolean normalized) const
 {
     Use();
     glUniformMatrix4fv(GetUniformLocation(name), 1, normalized, glm::value_ptr(value));

@@ -12,7 +12,7 @@ const int width = 800, height = 800;
 
 VAO *vao;
 VBO *vbo;
-Shader *fshader, *vshader;
+Shader *fshader, *vshader, *fbfshader;
 ShaderProgram *program;
 Texture *texture;
 
@@ -28,7 +28,7 @@ void Init()
     glClearColor(0.0, 0.0, 0.3, 1.0);
     glEnable(GL_DEPTH_TEST);
 
-    FileLoader::ReadOBJ("luigi.obj", pos, uv, normals, tris);
+    FileLoader::ReadOBJ("gordaco.obj", pos, uv, normals, tris);
 
     vbo = new VBO();
     int size = pos.size() * sizeof(vec3) + uv.size() * sizeof(vec2) + normals.size() * sizeof(vec3);
@@ -47,7 +47,7 @@ void Init()
     vao->AddAttribute(*vbo, 1, 2, GL_FLOAT, GL_FALSE, 0, pos.size() * sizeof(vec3));
     vao->AddAttribute(*vbo, 2, 3, GL_FLOAT,  GL_TRUE, 0, pos.size() * sizeof(vec3) + uv.size() * sizeof(vec2));
 
-    Image *img = new Image(); img->LoadFromFile("luigiD.jpg");
+    Image *img = new Image(); img->LoadFromFile("gordaco.bmp");
     texture = new Texture();
     texture->SetData(img->GetData(), img->GetWidth(), img->GetHeight(), img->GetFormat(), img->GetFormat(), GL_UNSIGNED_BYTE);
 
@@ -60,9 +60,12 @@ void Init()
 
     program->AttachTexture("tex", *texture);
 
+    fbfshader = new Shader(); fbfshader->Create("fbfshader", GL_FRAGMENT_SHADER);
+
     ///FRAME BUFFER STUFF////
     frameBuffer = new FrameBuffer(width, height);
     frameDrawer = new FrameDrawer(*frameBuffer);
+    frameDrawer->AttachFragmentShader(*fbfshader, "scene", "depth");
     /////////////////////////
 }
 
@@ -78,7 +81,7 @@ void RenderScene()
     mat4 model(1.0f);
     appTime += 0.1f;
    // rot += 0.03f;
-    vec3 axis(.0, 1.0, 0.0), translate(0.0f, -0.3f, -1.5f), scale(0.006);
+    vec3 axis(.0, 1.0, 0.0), translate(0.0f, -0.3f, -1.5f), scale(0.004);
     mat4 T = glm::translate(model, translate);
     mat4 R = glm::rotate_slow(model, rot, axis);
     mat4 S = glm::scale(model, scale);
