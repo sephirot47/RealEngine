@@ -82,7 +82,7 @@ bool FileLoader::ReadOBJ(const char *filepath, vector<vec3> &vertexPos, vector<v
     std::ifstream f(filepath, std::ios::in);
     if(!f.is_open()) cout << "Error opening the mesh file" << endl;
     std::string line;
-    std::string errormsg = "Error reading the mesh file";
+
     while(getline(f, line))
     {
         std::stringstream ss(line);
@@ -91,24 +91,24 @@ bool FileLoader::ReadOBJ(const char *filepath, vector<vec3> &vertexPos, vector<v
         if(lineHeader == "v")
         {
             glm::vec3 pos;
-            ss >> pos.x, errormsg;
-            ss >> pos.y, errormsg;
-            ss >> pos.z, errormsg;
+            ss >> pos.x;
+            ss >> pos.y;
+            ss >> pos.z;
             disorderedVertexPos.push_back(pos);
         }
         else if(hasUvs && lineHeader == "vt") //Cargamos uvs
         {
             glm::vec2 uv;
-            ss >> uv.x, errormsg;
-            ss >> uv.y, errormsg;
+            ss >> uv.x;
+            ss >> uv.y;
             disorderedVertexUvs.push_back(uv);
         }
         else if(hasNormals && lineHeader == "vn") //Cargamos normals
         {
             glm::vec3 normal;
-            ss >> normal.x, errormsg;
-            ss >> normal.y, errormsg;
-            ss >> normal.z, errormsg;
+            ss >> normal.x;
+            ss >> normal.y;
+            ss >> normal.z;
             disorderedVertexNormals.push_back(normal);
         }
         else if(lineHeader == "f")
@@ -119,19 +119,19 @@ bool FileLoader::ReadOBJ(const char *filepath, vector<vec3> &vertexPos, vector<v
 
             for (int i = 0; i < n; ++i)
             {
-                ss >> index, errormsg;
+                ss >> index;
                 vertexPosIndexes.push_back(index);
 
                 if(hasUvs)
                 {
-                    ss >> c, errormsg;  //Read the '/'
-                    ss >> index, errormsg;
+                    ss >> c;  //Read the '/'
+                    ss >> index;
                     vertexUvsIndexes.push_back(index);
 
                     if (hasNormals)
                     {
-                        ss >> c, errormsg;
-                        ss >> index, errormsg;
+                        ss >> c;
+                        ss >> index;
                         vertexNormIndexes.push_back(index);
                     }
                 }
@@ -139,8 +139,8 @@ bool FileLoader::ReadOBJ(const char *filepath, vector<vec3> &vertexPos, vector<v
                 {
                     if (hasNormals)
                     {
-                        ss >> c, errormsg;
-                        ss >> index, errormsg;
+                        ss >> c;
+                        ss >> index;
                         vertexNormIndexes.push_back(index);
                     }
                 }
@@ -153,18 +153,20 @@ bool FileLoader::ReadOBJ(const char *filepath, vector<vec3> &vertexPos, vector<v
         vertexPos.push_back(disorderedVertexPos[vertexPosIndexes[i]-1]);
     }
 
-    glm::vec2 defaultUvs(0.5f, 0.5f);
-    for(int i = 0; i < vertexUvsIndexes.size(); ++i)
+    if(hasUvs)
     {
-        if(hasUvs) vertexUvs.push_back(disorderedVertexUvs[vertexUvsIndexes[i]-1]);
-        else vertexUvs.push_back(defaultUvs);
+        for(int i = 0; i < vertexUvsIndexes.size(); ++i)
+        {
+            vertexUvs.push_back(disorderedVertexUvs[vertexUvsIndexes[i]-1]);
+        }
     }
 
-    glm::vec3 defaultNormals(0.0f, 0.0f, 1.0f);
-    for(int i = 0; i < vertexNormIndexes.size(); ++i)
+    if(hasNormals)
     {
-        if(hasNormals) vertexNormals.push_back(disorderedVertexNormals[vertexNormIndexes[i]-1]);
-        else vertexNormals.push_back(defaultNormals);
+        for(int i = 0; i < vertexNormIndexes.size(); ++i)
+        {
+            vertexNormals.push_back(disorderedVertexNormals[vertexNormIndexes[i]-1]);
+        }
     }
 
     return true;

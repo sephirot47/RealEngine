@@ -7,7 +7,7 @@ in vec3 pos;
 in vec2 uv;
 in vec3 normal;
 
-vec3 lightPos = vec3(100*sin(time*0.2), 100, -20*cos(time*0.2)), lightDir = (0.0, -0.3, -1.5) - lightPos;
+vec3 lightPos = vec3(100*sin(time*3.0), -50, 100*cos(time*3.0)), lightDir = (0.0, -0.3, -1.5) - lightPos;
 
 float discretisa(float light)
 {

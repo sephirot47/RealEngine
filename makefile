@@ -1,7 +1,7 @@
 all: main.exe
 
-main.exe: main.o Shader.o ShaderProgram.o stb_image.o Debug.o Time.o VBO.o VAO.o Image.o Texture.o FileLoader.o FrameBuffer.o FrameDrawer.o
-	g++ -std=c++11 main.o Shader.o ShaderProgram.o stb_image.o FrameBuffer.o VBO.o VAO.o Debug.o Time.o Image.o FileLoader.o Texture.o FrameDrawer.o -o main.exe -Iinclude -lGL -lGLU -lSDL2
+main.exe: main.o Shader.o ShaderProgram.o stb_image.o Debug.o Time.o VBO.o VAO.o Image.o Texture.o FileLoader.o FrameBuffer.o FrameDrawer.o Mesh.o
+	g++ -std=c++11 main.o Shader.o ShaderProgram.o stb_image.o FrameBuffer.o VBO.o VAO.o Debug.o Time.o Image.o FileLoader.o Texture.o FrameDrawer.o Mesh.o -o main.exe -Iinclude -lGL -lGLU -lSDL2
 
 main.o: src/main.cpp
 	g++ -std=c++11 -c src/main.cpp -Iinclude -lGL -lGLU -lSDL2
@@ -41,6 +41,9 @@ FrameDrawer.o: src/FrameDrawer.cpp
 
 stb_image.o: src/stb_image.cpp
 	g++ -std=c++11 -c src/stb_image.cpp -Iinclude -lGL -lGLU -lSDL2
+
+Mesh.o: src/Mesh.cpp
+	g++ -std=c++11 -c src/Mesh.cpp -Iinclude -lGL -lGLU -lSDL2
 
 clean:
 	rm -rf *.exe *.o *~

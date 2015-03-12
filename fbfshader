@@ -6,7 +6,7 @@ uniform sampler2D scene, depth;
 
 float threshold = 0.01;
 
-vec4 edgeColor = vec4(0.0, 0.0, 0.0, 1.0);
+vec4 edgeColor = vec4(1.0, 1.0, 1.0, 1.0);
 
 in vec2 uv;
 
@@ -19,7 +19,7 @@ int IsEdge(float depthStep, float radius)
 			float stepx = i/width, stepy = j/height;
 			float dist = max(abs(stepx), abs(stepy));	
 			float neighbourDepth = texture(depth, vec2(uv.x + stepx, uv.y + stepy)).x;
-			if(abs(neighbourDepth - depthStep) > threshold*dist*40)
+			if(neighbourDepth - depthStep > threshold*dist*40)
 			{ 		
 				return 1;
 			}
@@ -31,15 +31,16 @@ int IsEdge(float depthStep, float radius)
 void main()  
 {  
     float depthStep = texture(depth, uv).x;
-    float radius = clamp(1.0, 1.0, 5.0);
+    float radius = clamp(1.0, 0.05, 5.0);
 
     if(IsEdge(depthStep, radius) == 1) gl_FragColor = edgeColor;
     else if(depthStep < 1.0)
     {
 	gl_FragColor = texture(scene, uv);
     }
-    else gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
-
-    //gl_FragColor = texture(scene, uv);
+    else
+    {
+ 	gl_FragColor = vec4(1.0, 0.2, 0.2, 1.0) * (1.0 - uv.y);
+    }
 }
 

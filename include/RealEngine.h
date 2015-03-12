@@ -26,5 +26,6 @@
 #include "FrameBuffer.h"
 #include "FrameDrawer.h"
 #include "VAO.h"
+#include "Mesh.h"
 
 #endif // REALENGINE_H

@@ -10,74 +10,44 @@ using namespace std;
 
 const int width = 800, height = 800;
 
-VAO *vao;
-VBO *vbo;
-Shader *fshader, *vshader, *fbfshader;
-ShaderProgram *program;
 Texture *texture;
-
-FrameBuffer* frameBuffer;
-FrameDrawer* frameDrawer;
-
-vector<vec3> pos, normals;
-vector<vec2> uv;
-bool tris;
+FrameBuffer *framebuffer;
+FrameDrawer *framedrawer;
+Mesh *mesh;
 
 void Init()
 {
     glClearColor(0.0, 0.0, 0.3, 1.0);
     glEnable(GL_DEPTH_TEST);
 
-    FileLoader::ReadOBJ("gordaco.obj", pos, uv, normals, tris);
-
-    vbo = new VBO();
-    int size = pos.size() * sizeof(vec3) + uv.size() * sizeof(vec2) + normals.size() * sizeof(vec3);
-    char *data = new char [size];
-    memcpy(data, &pos[0], pos.size() * sizeof(vec3));
-    memcpy(data + pos.size() * sizeof(vec3),
-           &uv[0], uv.size() * sizeof(vec2));
-    memcpy(data + pos.size() * sizeof(vec3) + uv.size() * sizeof(vec2),
-           &normals[0], normals.size() * sizeof(vec3));
-
-    vbo->SetData(&data[0], size);
-    delete [] data;
-
-    vao = new VAO();
-    vao->AddAttribute(*vbo, 0, 3, GL_FLOAT, GL_FALSE, 0, 0);
-    vao->AddAttribute(*vbo, 1, 2, GL_FLOAT, GL_FALSE, 0, pos.size() * sizeof(vec3));
-    vao->AddAttribute(*vbo, 2, 3, GL_FLOAT,  GL_TRUE, 0, pos.size() * sizeof(vec3) + uv.size() * sizeof(vec2));
-
-    Image *img = new Image(); img->LoadFromFile("gordaco.bmp");
+    Image *img = new Image(); img->LoadFromFile("luigiD.jpg");
     texture = new Texture();
     texture->SetData(img->GetData(), img->GetWidth(), img->GetHeight(), img->GetFormat(), img->GetFormat(), GL_UNSIGNED_BYTE);
 
-    fshader = new Shader(); fshader->Create("fshader", GL_FRAGMENT_SHADER);
-    vshader = new Shader(); vshader->Create("vshader", GL_VERTEX_SHADER);
-    program = new ShaderProgram();
+    Shader *fshader = new Shader(); fshader->Create("fshader", GL_FRAGMENT_SHADER);
+    Shader *vshader = new Shader(); vshader->Create("vshader", GL_VERTEX_SHADER);
+    Shader *finalshader = new Shader(); finalshader->Create("fbfshader", GL_FRAGMENT_SHADER);
+    ShaderProgram *program = new ShaderProgram();
     program->AttachShader(*fshader);
     program->AttachShader(*vshader);
     program->Link();
 
+    framebuffer = new FrameBuffer(width, height);
+    framedrawer = new FrameDrawer(*framebuffer);
+
+    framedrawer->AttachFragmentShader(*finalshader, "scene", "depth");
+
     program->AttachTexture("tex", *texture);
 
-    fbfshader = new Shader(); fbfshader->Create("fbfshader", GL_FRAGMENT_SHADER);
-
-    ///FRAME BUFFER STUFF////
-    frameBuffer = new FrameBuffer(width, height);
-    frameDrawer = new FrameDrawer(*frameBuffer);
-    frameDrawer->AttachFragmentShader(*fbfshader, "scene", "depth");
-    /////////////////////////
+    mesh = new Mesh();
+    mesh->LoadFromFile("luigi.obj");
+    mesh->SetShaderProgram(*program);
 }
 
 float rot = 0.0f, appTime = 0.0f;
 
 void RenderScene()
 {
-    frameBuffer->Bind();
-    vao->Bind();
-    program->Use();
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
     mat4 model(1.0f);
     appTime += 0.1f;
    // rot += 0.03f;
@@ -88,19 +58,25 @@ void RenderScene()
     model = T * R * S;
 
     mat4 projection = perspective(45.0f * 3.1415f/180.0f, 1.0f, 0.1f, 100.0f);
-    program->SetUniform("projection", projection);
-    program->SetUniform("time", appTime);
-    program->SetUniform("model", model);
+    mesh->GetShaderProgram()->SetUniform("projection", projection);
+    mesh->GetShaderProgram()->SetUniform("time", appTime);
+    mesh->GetShaderProgram()->SetUniform("model", model);
 
-    glDrawArrays(tris ? GL_TRIANGLES : GL_QUADS, 0, pos.size());
-
-    program->UnUse();
-    vao->UnBind();
-    frameBuffer->UnBind();
+    framebuffer->Bind();
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    mesh->Draw();
+    translate = vec3(-0.13f, -0.3f, -1.45f);
+    model = mat4(1.0f);
+    T = glm::translate(model, translate);
+    R = glm::rotate_slow(model, sin(appTime * 10.0f)*0.1f - 0.1f, axis);
+    model = T * R * S;
+    mesh->GetShaderProgram()->SetUniform("model", model);
+    mesh->Draw();
+    framebuffer->UnBind();
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    frameDrawer->GetProgram()->SetUniform("time", appTime);
-    frameDrawer->Draw();
+    framedrawer->Draw();
+
 }
 
 bool IsPressed(int keyCode)

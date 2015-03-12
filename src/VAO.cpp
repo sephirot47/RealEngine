@@ -18,12 +18,12 @@ void VAO::AddAttribute(const VBO &vbo, GLuint index, GLint size, GLenum type, GL
 {
     glEnableClientState(GL_VERTEX_ARRAY);
     glBindVertexArray(object);
-    vbo.Bind();
 
-    glVertexAttribPointer(index, size, type, normalized, stride, (void*) offset);
     glEnableVertexAttribArray(index);
+    vbo.Bind();
+    glVertexAttribPointer(index, size, type, normalized, stride, (void*) offset);
+    vbo.UnBind();
 
-    vbo.Bind();UnBind();
     glBindVertexArray(0);
     glDisableClientState(GL_VERTEX_ARRAY);
 }
