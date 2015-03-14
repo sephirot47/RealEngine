@@ -42,11 +42,11 @@ void Texture::BindFrameBuffer(GLenum target)
 {
     //Solo creamos framebuffer si se va a renderizar algo en la textura
     if(!framebuffer) framebuffer = new FrameBuffer();
-    framebuffer->Bind();
 
     GLenum drawBuffers = GL_COLOR_ATTACHMENT0;
     framebuffer->SetDrawingBuffers(1, &drawBuffers);
 
+    framebuffer->Bind();
     glFramebufferTexture2D(GL_FRAMEBUFFER, target, GL_TEXTURE_2D, GetObject(), 0);
 }
 

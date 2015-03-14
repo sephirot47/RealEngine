@@ -64,17 +64,17 @@ void Init()
     //
 }
 
-float rot = 0.0f, appTime = 0.0f;
+float rot = 0.0f, luigiRot = 0.0f, appTime = 0.0f;
 
 void RenderScene()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     mat4 model(1.0f);
     appTime += 0.1f;
-   // rot += 0.03f;
+    luigiRot += 0.03f;
     vec3 axis(.0, 1.0, 0.0), translate(-0.3f, -0.3f, -1.5f), scale(0.004);
     mat4 T = glm::translate(model, translate);
-    mat4 R = glm::rotate_slow(model, rot, axis);
+    mat4 R = glm::rotate_slow(model, luigiRot, axis);
     mat4 S = glm::scale(model, scale);
     model = T * R * S;
 
