@@ -62,10 +62,8 @@ void ShaderProgram::UnUse() const
 void ShaderProgram::AttachTexture(const std::string name, Texture &texture)
 {
     auto it = textureMap.find(name);
-    if(it == textureMap.end())
-    {
-        textureMap.insert( textureMap.end(), TextureMapPair(name, &texture) );
-    }
+    if(it != textureMap.end()) textureMap.erase(it);
+    textureMap.insert( textureMap.end(), TextureMapPair(name, &texture) );
 }
 
 void ShaderProgram::DetachTexture(const std::string name)

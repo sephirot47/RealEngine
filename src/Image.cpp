@@ -14,6 +14,7 @@ Image::~Image()
 
 void Image::LoadFromFile(const std::string& filepath)
 {
+    if(data) delete [] data;
     data = FileLoader::ReadImage(filepath.c_str(), components, width, height);
 }
 

@@ -34,14 +34,14 @@ public:
     void SetDrawingMode(GLenum drawingMode);
     void SetShaderProgram(ShaderProgram &shaderProgram);
 
-    const VAO* GetVAO() const;
-    const VBO* GetVBOPos() const;
-    const VBO* GetVBOUv() const;
-    const VBO* GetVBONormals() const;
-    const Shader* GetVertexShader() const;
-    const Shader* GetFragmentShader() const;
-    const ShaderProgram* GetShaderProgram() const;
-    const GLenum* GetDrawingMode() const;
+    VAO* GetVAO() const;
+    VBO* GetVBOPos() const;
+    VBO* GetVBOUv() const;
+    VBO* GetVBONormals() const;
+    Shader* GetVertexShader() const;
+    Shader* GetFragmentShader() const;
+    ShaderProgram* GetShaderProgram() const;
+    GLenum* GetDrawingMode() const;
 };
 
 #endif // MESH_H

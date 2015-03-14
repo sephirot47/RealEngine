@@ -17,7 +17,7 @@ private:
 
 protected:
 
-    RenderTarget() { framebuffer = new FrameBuffer(); }
+    RenderTarget() { framebuffer = 0; }
     virtual ~RenderTarget() { if(framebuffer) { delete framebuffer; framebuffer = 0; } }
 
 public:

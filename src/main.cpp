@@ -10,31 +10,57 @@ using namespace std;
 
 const int width = 800, height = 800;
 
-Texture *texture;
-Mesh *mesh;
+Texture *luigiTexture, *gordacoTexture, *sceneTexture;
+Mesh *luigiMesh, *gordacoMesh;
 
 void Init()
 {
     glClearColor(0.0, 0.0, 0.3, 1.0);
     glEnable(GL_DEPTH_TEST);
 
+    //LUIGI THINGS
+    Shader *luigifshader = new Shader(); luigifshader->Create("luigifshader", GL_FRAGMENT_SHADER);
+    Shader *luigivshader = new Shader(); luigivshader->Create("luigivshader", GL_VERTEX_SHADER);
+    ShaderProgram *luigiProgram = new ShaderProgram();
+    luigiProgram->AttachShader(*luigifshader);
+    luigiProgram->AttachShader(*luigivshader);
+    luigiProgram->Link();
+
     Image *img = new Image(); img->LoadFromFile("luigiD.jpg");
-    texture = new Texture();
-    texture->SetData(img->GetData(), img->GetWidth(), img->GetHeight(), img->GetFormat(), img->GetFormat(), GL_UNSIGNED_BYTE);
+    luigiTexture = new Texture();
+    luigiTexture->SetData(img->GetData(), img->GetWidth(), img->GetHeight(), img->GetFormat(), img->GetFormat(), GL_UNSIGNED_BYTE);
 
-    Shader *fshader = new Shader(); fshader->Create("fshader", GL_FRAGMENT_SHADER);
-    Shader *vshader = new Shader(); vshader->Create("vshader", GL_VERTEX_SHADER);
-    Shader *finalshader = new Shader(); finalshader->Create("fbfshader", GL_FRAGMENT_SHADER);
-    ShaderProgram *program = new ShaderProgram();
-    program->AttachShader(*fshader);
-    program->AttachShader(*vshader);
-    program->Link();
+    luigiProgram->AttachTexture("tex", *luigiTexture);
 
-    program->AttachTexture("tex", *texture);
+    luigiMesh = new Mesh();
+    luigiMesh->LoadFromFile("luigi.obj");
+    luigiMesh->SetShaderProgram(*luigiProgram);
+    //
 
-    mesh = new Mesh();
-    mesh->LoadFromFile("luigi.obj");
-    mesh->SetShaderProgram(*program);
+    //GORDACO THINGS
+    Shader *gordacofshader = new Shader(); gordacofshader->Create("gordacofshader", GL_FRAGMENT_SHADER);
+    Shader *gordacovshader = new Shader(); gordacovshader->Create("gordacovshader", GL_VERTEX_SHADER);
+    ShaderProgram *gordacoProgram = new ShaderProgram();
+    gordacoProgram->AttachShader(*gordacofshader);
+    gordacoProgram->AttachShader(*gordacovshader);
+    gordacoProgram->Link();
+
+    img->LoadFromFile("gordaco.bmp");
+    gordacoTexture = new Texture();
+    gordacoTexture->SetData(img->GetData(), img->GetWidth(), img->GetHeight(), img->GetFormat(), img->GetFormat(), GL_UNSIGNED_BYTE);
+
+    gordacoProgram->AttachTexture("tex", *gordacoTexture);
+
+    gordacoMesh = new Mesh();
+    gordacoMesh->LoadFromFile("gordaco.obj");
+    gordacoMesh->SetShaderProgram(*gordacoProgram);
+    //
+
+    //SCENE THINGS
+    sceneTexture = new Texture();
+    sceneTexture->SetWrapMode(GL_REPEAT);
+    sceneTexture->SetData(0, width, height, GL_RGB, GL_RGB, GL_FLOAT);
+    //
 }
 
 float rot = 0.0f, appTime = 0.0f;
@@ -45,18 +71,32 @@ void RenderScene()
     mat4 model(1.0f);
     appTime += 0.1f;
    // rot += 0.03f;
-    vec3 axis(.0, 1.0, 0.0), translate(0.0f, -0.3f, -1.5f), scale(0.004);
+    vec3 axis(.0, 1.0, 0.0), translate(-0.3f, -0.3f, -1.5f), scale(0.004);
     mat4 T = glm::translate(model, translate);
     mat4 R = glm::rotate_slow(model, rot, axis);
     mat4 S = glm::scale(model, scale);
     model = T * R * S;
 
     mat4 projection = perspective(45.0f * 3.1415f/180.0f, 1.0f, 0.1f, 100.0f);
-    mesh->GetShaderProgram()->SetUniform("projection", projection);
-    mesh->GetShaderProgram()->SetUniform("time", appTime);
-    mesh->GetShaderProgram()->SetUniform("model", model);
+    luigiMesh->GetShaderProgram()->SetUniform("projection", projection);
+    luigiMesh->GetShaderProgram()->SetUniform("time", appTime);
+    luigiMesh->GetShaderProgram()->SetUniform("model", model);
 
-    mesh->Draw();
+    luigiMesh->Draw(*sceneTexture); //Render a sceneTexture
+    luigiMesh->Draw(); //Render a pantalla
+
+    gordacoMesh->GetShaderProgram()->SetUniform("projection", projection);
+    gordacoMesh->GetShaderProgram()->SetUniform("time", appTime);
+    model = mat4(1.0f);
+    translate = vec3(0.25f, -0.3f, -1.5f);
+    T = glm::translate(model, translate);
+    R = glm::rotate_slow(model, rot, axis);
+    scale = vec3(0.005);
+    S = glm::scale(model, scale);
+    model = T * R * S;
+    gordacoMesh->GetShaderProgram()->SetUniform("model", model);
+    gordacoMesh->GetShaderProgram()->AttachTexture("tex", *gordacoTexture); //Seteamos textura
+    gordacoMesh->Draw(); //Dibujamos gordaco
 }
 
 bool IsPressed(int keyCode)

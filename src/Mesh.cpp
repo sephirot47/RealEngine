@@ -60,9 +60,7 @@ void Mesh::Draw()
 void Mesh::Draw(RenderTarget &rt)
 {
     rt.BindFrameBuffer();
-
     Draw();
-
     rt.UnBindFrameBuffer();
 }
 
@@ -76,37 +74,37 @@ void Mesh::SetShaderProgram(ShaderProgram &shaderProgram)
     program = &shaderProgram;
 }
 
-const VAO* Mesh::GetVAO() const
+VAO* Mesh::GetVAO() const
 {
     return vao;
 }
 
-const VBO* Mesh::GetVBOPos() const
+VBO* Mesh::GetVBOPos() const
 {
     return vboPos;
 }
 
-const VBO* Mesh::GetVBOUv() const
+VBO* Mesh::GetVBOUv() const
 {
     return vboUv;
 }
 
-const VBO* Mesh::GetVBONormals() const
+VBO* Mesh::GetVBONormals() const
 {
     return vboNormals;
 }
 
-const Shader* Mesh::GetFragmentShader() const
+Shader* Mesh::GetFragmentShader() const
 {
     return fshader;
 }
 
-const Shader* Mesh::GetVertexShader() const
+Shader* Mesh::GetVertexShader() const
 {
     return vshader;
 }
 
-const ShaderProgram* Mesh::GetShaderProgram() const
+ShaderProgram* Mesh::GetShaderProgram() const
 {
     return program;
 }

@@ -38,7 +38,15 @@ void Texture::SetData(const void *data, int width, int height, GLenum format, GL
 void Texture::BindToFrameBuffer(GLenum target, FrameBuffer *framebuffer) const
 {
     framebuffer->Bind();
+
+    //Solo creamos framebuffer si se va a renderizar algo en la textura
+    if(!framebuffer) framebuffer = new FrameBuffer();
+
+    GLenum drawBuffers = GL_COLOR_ATTACHMENT0;
+    framebuffer->SetDrawingBuffers(1, &drawBuffers);
+
     glFramebufferTexture2D(GL_FRAMEBUFFER, target, GL_TEXTURE_2D, GetObject(), 0);
+
     framebuffer->UnBind();
 }
 
