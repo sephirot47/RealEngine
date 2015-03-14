@@ -2,34 +2,32 @@
 #define FRAMEBUFFER_H
 #define GL_GLEXT_PROTOTYPES
 
+#include <vector>
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include <GL/glext.h>
 
-#include "Texture.h"
 #include "Debug.h"
 
 class FrameBuffer
 {
 private:
-    Texture *colorTexture, *depthTexture;
-    int width, height;
-    GLuint object;
+
+    std::vector<GLenum> drawBuffers;
+    GLuint numBuffers, object;
 
     FrameBuffer(const FrameBuffer&) {}
 
 public:
 
-    FrameBuffer(int width, int height);
+    FrameBuffer();
     ~FrameBuffer();
 
     void Bind() const;
     void UnBind() const;
 
-    int GetWidth() const { return width; }
-    int GetHeight() const { return height; }
-    Texture* GetDepthTexture() const { return depthTexture; }
-    Texture* GetColorTexture() const { return colorTexture; }
+    void SetDrawingBuffers(int size, GLenum *bufs);
+
     GLuint GetObject() const { return object; }
 };
 

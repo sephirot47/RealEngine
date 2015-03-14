@@ -35,6 +35,13 @@ void Texture::SetData(const void *data, int width, int height, GLenum format, GL
     UnBind();
 }
 
+void Texture::BindToFrameBuffer(GLenum target, FrameBuffer *framebuffer) const
+{
+    framebuffer->Bind();
+    glFramebufferTexture2D(GL_FRAMEBUFFER, target, GL_TEXTURE_2D, GetObject(), 0);
+    framebuffer->UnBind();
+}
+
 void Texture::Bind() const
 {
     glBindTexture(GL_TEXTURE_2D, object);

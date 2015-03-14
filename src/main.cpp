@@ -11,8 +11,6 @@ using namespace std;
 const int width = 800, height = 800;
 
 Texture *texture;
-FrameBuffer *framebuffer;
-FrameDrawer *framedrawer;
 Mesh *mesh;
 
 void Init()
@@ -32,11 +30,6 @@ void Init()
     program->AttachShader(*vshader);
     program->Link();
 
-    framebuffer = new FrameBuffer(width, height);
-    framedrawer = new FrameDrawer(*framebuffer);
-
-    framedrawer->AttachFragmentShader(*finalshader, "scene", "depth");
-
     program->AttachTexture("tex", *texture);
 
     mesh = new Mesh();
@@ -48,6 +41,7 @@ float rot = 0.0f, appTime = 0.0f;
 
 void RenderScene()
 {
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     mat4 model(1.0f);
     appTime += 0.1f;
    // rot += 0.03f;
@@ -62,21 +56,7 @@ void RenderScene()
     mesh->GetShaderProgram()->SetUniform("time", appTime);
     mesh->GetShaderProgram()->SetUniform("model", model);
 
-    framebuffer->Bind();
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     mesh->Draw();
-    translate = vec3(-0.13f, -0.3f, -1.45f);
-    model = mat4(1.0f);
-    T = glm::translate(model, translate);
-    R = glm::rotate_slow(model, sin(appTime * 10.0f)*0.1f - 0.1f, axis);
-    model = T * R * S;
-    mesh->GetShaderProgram()->SetUniform("model", model);
-    mesh->Draw();
-    framebuffer->UnBind();
-
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    framedrawer->Draw();
-
 }
 
 bool IsPressed(int keyCode)

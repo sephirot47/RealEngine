@@ -4,6 +4,7 @@
 #include "FileLoader.h"
 #include "Shader.h"
 #include "ShaderProgram.h"
+#include "RenderTarget.h"
 #include "VAO.h"
 #include "VBO.h"
 
@@ -28,8 +29,9 @@ public:
     void LoadFromFile(const char *filepath);
 
     void Draw();
-    void SetDrawingMode(GLenum drawingMode);
+    void Draw(RenderTarget &rt);
 
+    void SetDrawingMode(GLenum drawingMode);
     void SetShaderProgram(ShaderProgram &shaderProgram);
 
     const VAO* GetVAO() const;

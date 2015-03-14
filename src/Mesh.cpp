@@ -57,6 +57,15 @@ void Mesh::Draw()
     vao->UnBind();
 }
 
+void Mesh::Draw(RenderTarget &rt)
+{
+    rt.BindFrameBuffer();
+
+    Draw();
+
+    rt.UnBindFrameBuffer();
+}
+
 void Mesh::SetDrawingMode(GLenum drawingMode)
 {
     this->drawingMode = drawingMode;
