@@ -57,11 +57,14 @@ void Mesh::Draw()
     vao->UnBind();
 }
 
-void Mesh::Draw(RenderTarget &rt)
+void Mesh::Draw(Texture &texture)
 {
-    rt.BindFrameBuffer();
+    texture.BindFrameBuffer(GL_COLOR_ATTACHMENT0);
+
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     Draw();
-    rt.UnBindFrameBuffer();
+
+    texture.UnBindFrameBuffer();
 }
 
 void Mesh::SetDrawingMode(GLenum drawingMode)

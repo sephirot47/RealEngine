@@ -5,11 +5,14 @@ Texture::Texture()
     glGenTextures(1, &object);
     SetWrapMode(GL_REPEAT);
     SetScaleMode(GL_LINEAR);
+
+    framebuffer = 0;
 }
 
 Texture::~Texture()
 {
     glDeleteTextures(1, &object);
+    if(framebuffer) delete framebuffer;
 }
 
 void Texture::SetWrapMode(GLenum mode) const
@@ -35,18 +38,20 @@ void Texture::SetData(const void *data, int width, int height, GLenum format, GL
     UnBind();
 }
 
-void Texture::BindToFrameBuffer(GLenum target, FrameBuffer *framebuffer) const
+void Texture::BindFrameBuffer(GLenum target)
 {
-    framebuffer->Bind();
-
     //Solo creamos framebuffer si se va a renderizar algo en la textura
     if(!framebuffer) framebuffer = new FrameBuffer();
+    framebuffer->Bind();
 
     GLenum drawBuffers = GL_COLOR_ATTACHMENT0;
     framebuffer->SetDrawingBuffers(1, &drawBuffers);
 
     glFramebufferTexture2D(GL_FRAMEBUFFER, target, GL_TEXTURE_2D, GetObject(), 0);
+}
 
+void Texture::UnBindFrameBuffer() const
+{
     framebuffer->UnBind();
 }
 

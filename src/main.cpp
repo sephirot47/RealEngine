@@ -58,8 +58,9 @@ void Init()
 
     //SCENE THINGS
     sceneTexture = new Texture();
-    sceneTexture->SetWrapMode(GL_REPEAT);
     sceneTexture->SetData(0, width, height, GL_RGB, GL_RGB, GL_FLOAT);
+    sceneTexture->SetWrapMode(GL_REPEAT);
+    sceneTexture->SetScaleMode(GL_LINEAR);
     //
 }
 
@@ -95,7 +96,7 @@ void RenderScene()
     S = glm::scale(model, scale);
     model = T * R * S;
     gordacoMesh->GetShaderProgram()->SetUniform("model", model);
-    gordacoMesh->GetShaderProgram()->AttachTexture("tex", *gordacoTexture); //Seteamos textura
+    gordacoMesh->GetShaderProgram()->AttachTexture("tex", *sceneTexture); //Seteamos textura
     gordacoMesh->Draw(); //Dibujamos gordaco
 }
 

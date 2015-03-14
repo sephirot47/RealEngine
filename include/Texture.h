@@ -6,17 +6,18 @@
 #include <GL/glu.h>
 #include <GL/glext.h>
 
-#include "RenderTarget.h"
 #include "FrameBuffer.h"
 #include "Debug.h"
 
-class Texture : public RenderTarget
+class Texture
 {
 private:
+    FrameBuffer *framebuffer;
     GLuint object;
 
     void Bind() const;
     void UnBind() const;
+
 
 public:
     Texture();
@@ -26,7 +27,8 @@ public:
     void SetScaleMode(GLenum mode) const;
     void SetData(const void *data, int width, int height, GLenum format, GLenum internalFormat, GLenum type) const;
 
-    void BindToFrameBuffer(GLenum target, FrameBuffer *framebuffer) const;
+    void BindFrameBuffer(GLenum target);
+    void UnBindFrameBuffer() const;
 
     void Bind(GLuint slot) const;
     static void UnBind(GLuint slot);
