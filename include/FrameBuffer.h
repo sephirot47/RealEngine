@@ -7,6 +7,7 @@
 #include <GL/glu.h>
 #include <GL/glext.h>
 
+#include "Texture.h"
 #include "Debug.h"
 
 class FrameBuffer
@@ -14,19 +15,21 @@ class FrameBuffer
 private:
 
     std::vector<GLenum> drawBuffers;
+    std::vector<Texture*> textures;
     GLuint numBuffers, object;
+    int width, height;
 
     FrameBuffer(const FrameBuffer&) {}
 
 public:
 
-    FrameBuffer();
+    FrameBuffer(int widht, int height);
     ~FrameBuffer();
 
     void Bind() const;
     void UnBind() const;
 
-    void SetDrawingBuffers(int size, GLenum *bufs);
+    void SetDrawingBuffers(int n, GLenum *bufs);
 
     GLuint GetObject() const { return object; }
 };

@@ -59,12 +59,7 @@ void Mesh::Draw()
 
 void Mesh::Draw(Texture &texture)
 {
-    texture.BindFrameBuffer(GL_COLOR_ATTACHMENT0);
-
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     Draw();
-
-    texture.UnBindFrameBuffer();
 }
 
 void Mesh::SetDrawingMode(GLenum drawingMode)
