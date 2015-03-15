@@ -10,6 +10,7 @@ using namespace std;
 
 const int width = 800, height = 800;
 
+FrameBuffer *framebuffer;
 Texture *luigiTexture, *gordacoTexture, *sceneTexture;
 Mesh *luigiMesh, *gordacoMesh;
 
@@ -62,6 +63,12 @@ void Init()
     sceneTexture->SetWrapMode(GL_REPEAT);
     sceneTexture->SetScaleMode(GL_LINEAR);
     //
+
+    //FRAMEBUFFER THINGS
+    framebuffer = new FrameBuffer(width, height);
+    GLenum buffers[] = {GL_COLOR_ATTACHMENT0, GL_DEPTH_ATTACHMENT};
+    framebuffer->SetDrawingBuffers(2, buffers);
+    //
 }
 
 float rot = 0.0f, luigiRot = 0.0f, appTime = 0.0f;
@@ -83,7 +90,11 @@ void RenderScene()
     luigiMesh->GetShaderProgram()->SetUniform("time", appTime);
     luigiMesh->GetShaderProgram()->SetUniform("model", model);
 
-    luigiMesh->Draw(*sceneTexture); //Render a sceneTexture
+    framebuffer->Bind();
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    luigiMesh->Draw(); //Render a sceneTexture
+    framebuffer->UnBind();
+
     luigiMesh->Draw(); //Render a pantalla
 
     gordacoMesh->GetShaderProgram()->SetUniform("projection", projection);
@@ -96,7 +107,7 @@ void RenderScene()
     S = glm::scale(model, scale);
     model = T * R * S;
     gordacoMesh->GetShaderProgram()->SetUniform("model", model);
-    gordacoMesh->GetShaderProgram()->AttachTexture("tex", *sceneTexture); //Seteamos textura
+    gordacoMesh->GetShaderProgram()->AttachTexture("tex", *framebuffer->GetTexture(GL_COLOR_ATTACHMENT0)); //Seteamos textura
     gordacoMesh->Draw(); //Dibujamos gordaco
 }
 

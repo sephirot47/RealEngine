@@ -29,7 +29,8 @@ public:
     void Bind() const;
     void UnBind() const;
 
-    void SetDrawingBuffers(int n, GLenum *bufs);
+    Texture *GetTexture(GLenum target);
+    void SetDrawingBuffers(int n, GLenum* bufs);
 
     GLuint GetObject() const { return object; }
 };
