@@ -14,13 +14,15 @@
 #include "FrameBuffer.h"
 #include "Texture.h"
 #include "Debug.h"
+#include "VAO.h"
+#include "VBO.h"
 #include "glm/glm.hpp"
 
 class GBuffer : public FrameBuffer
 {
 private:
 
-    std::string colorName, posName, uvName, normalsName, depthName;
+    std::string colorsName, posName, uvName, normalsName, depthName;
 
     static const float screenMesh[12];
     static const std::string vshaderSource;
@@ -31,30 +33,40 @@ private:
         PositionAttachment = GL_COLOR_ATTACHMENT1,
         UvAttachment = GL_COLOR_ATTACHMENT2,
         NormalsAttachment = GL_COLOR_ATTACHMENT3,
-        DepthAttachment = GL_COLOR_ATTACHMENT4
+        DepthAttachment = GL_DEPTH_ATTACHMENT
     };
 
+    VAO *vao;
+    VBO *screenMeshVbo;
     ShaderProgram *program;
     Shader *vshader, *fshader;
 
 public:
 
-    GBuffer(int width, int height);
+    GBuffer(int width, int height, Shader &fshader);
     ~GBuffer();
 
-    void SetColorTextureName(std::string name);
-    void SetPositionTextureName(std::string name);
-    void SetNormalsTextureName(std::string name);
-    void SetUvTextureName(std::string name);
-    void SetDepthTextureName(std::string name);
+    void Draw() const;
+
+    void SetVertexColorLocation(int location, VBO &vbo);
+    void SetVertexPositonLocation(int location, VBO &vbo);
+    void SetVertexUvLocation(int location, VBO &vbo);
+    void SetVertexNormalsLocation(int location, VBO &vbo);
+
+    void SetFragmentColorTextureName(std::string name);
+    void SetFragmentPositionTextureName(std::string name);
+    void SetFragmentNormalsTextureName(std::string name);
+    void SetFragmentUvTextureName(std::string name);
+    void SetFragmentDepthTextureName(std::string name);
 
     void SetVertexShader(Shader *vshader);
-    void SetFragmentShader(Shader *fshader);
 
-    Texture *GetColorTexture();
-    Texture *GetPositionTexture();
-    Texture *GetNormalsTexture();
-    Texture *GetUvTexture();
+    VAO *GetVAO() const;
+    Texture *GetColorTexture() const;
+    Texture *GetPositionTexture() const;
+    Texture *GetNormalsTexture() const;
+    Texture *GetUvTexture() const;
+    Texture *GetDepthTexture() const;
 };
 
 #endif // GBUFFER_H

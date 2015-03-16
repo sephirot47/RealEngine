@@ -17,9 +17,11 @@ private:
     std::vector<GLenum> drawBuffers;
     std::vector<Texture*> textures;
     GLuint numBuffers, object;
-    int width, height;
 
     FrameBuffer(const FrameBuffer&) {}
+
+protected:
+    int width, height;
 
 public:
 
@@ -40,7 +42,7 @@ public:
 
     void DeleteDrawingBuffer(GLenum attachment);
 
-    Texture *GetTexture(GLenum target);
+    Texture *GetTexture(GLenum target) const;
     GLuint GetObject() const { return object; }
 };
 

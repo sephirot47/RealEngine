@@ -11,6 +11,8 @@ using namespace std;
 const int width = 800, height = 800;
 
 FrameBuffer *framebuffer;
+GBuffer *gbuffer;
+
 Texture *luigiTexture, *gordacoTexture, *sceneTexture;
 Mesh *luigiMesh, *gordacoMesh;
 
@@ -72,15 +74,15 @@ void Init()
                                   GL_CLAMP_TO_EDGE, GL_NEAREST);
     //
 
-    GBuffer *gbuffer = new GBuffer(width, height);
+    Shader *fshader = new Shader(); fshader->Create("fbfshader", GL_FRAGMENT_SHADER);
+
+    gbuffer = new GBuffer(width, height, *fshader);
 }
 
 float rot = 0.0f, luigiRot = 0.0f, appTime = 0.0f;
 
 void RenderScene()
 {
-    //luigiMesh->SetDrawingMode(GL_LINES);
-
     framebuffer->AddDrawingBuffer(GL_COLOR_ATTACHMENT0, GL_RGB, GL_RGB, GL_FLOAT,
                                   GL_CLAMP_TO_EDGE, GL_LINEAR);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

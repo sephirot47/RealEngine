@@ -27,7 +27,6 @@ private:
     FrameDrawer(const FrameDrawer&) {}
 
     static const float screenMesh[12];
-    static const char *vshaderSource;
 
 public:
 
