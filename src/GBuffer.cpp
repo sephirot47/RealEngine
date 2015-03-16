@@ -19,7 +19,7 @@ const std::string GBuffer::vshaderSource =
 
 GBuffer::GBuffer(int width, int height) : FrameBuffer(width, height)
 {
-    //Create the program
+    // Create the program
     Shader *vshader = new Shader(); vshader->CreateFromSourceCode(vshaderSource, GL_VERTEX_SHADER);
     Shader *fshader = new Shader(); fshader->Create("fshader", GL_FRAGMENT_SHADER);
     program = new ShaderProgram();
