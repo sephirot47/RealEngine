@@ -47,6 +47,8 @@ public:
     void SetUvTextureName(std::string name);
     void SetDepthTextureName(std::string name);
 
+    void SetFragmentShader(Shader *fshader);
+
     Texture *GetColorTexture();
     Texture *GetPositionTexture();
     Texture *GetNormalsTexture();
