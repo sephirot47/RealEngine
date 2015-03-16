@@ -20,7 +20,7 @@ const std::string GBuffer::vshaderSource =
 GBuffer::GBuffer(int width, int height) : FrameBuffer(width, height)
 {
     // Create the vertex shader
-    Shader *vshader = new Shader(); vshader->CreateFromSourceCode(vshaderSource, GL_VERTEX_SHADER);
+    vshader = new Shader(); vshader->CreateFromSourceCode(vshaderSource, GL_VERTEX_SHADER);
     //
 
     //Add depth buffer, this is mandatory
@@ -79,8 +79,23 @@ void GBuffer::SetDepthTextureName(string name)
     }
 }
 
+void GBuffer::SetVertexShader(Shader *vshader)
+{
+    this->vshader = vshader;
+
+    if(fshader != 0)
+    {
+        program = new ShaderProgram();
+        program->AttachShader(*vshader);
+        program->AttachShader(*fshader);
+        program->Link();
+    }
+}
+
 void GBuffer::SetFragmentShader(Shader *fshader)
 {
+    this->fshader = fshader;
+
     program = new ShaderProgram();
     program->AttachShader(*vshader);
     program->AttachShader(*fshader);

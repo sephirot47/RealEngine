@@ -35,6 +35,7 @@ private:
     };
 
     ShaderProgram *program;
+    Shader *vshader, *fshader;
 
 public:
 
@@ -47,6 +48,7 @@ public:
     void SetUvTextureName(std::string name);
     void SetDepthTextureName(std::string name);
 
+    void SetVertexShader(Shader *vshader);
     void SetFragmentShader(Shader *fshader);
 
     Texture *GetColorTexture();
