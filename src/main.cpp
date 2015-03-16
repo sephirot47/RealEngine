@@ -68,7 +68,6 @@ void Init()
     framebuffer = new FrameBuffer(width, height);
     framebuffer->AddDrawingBuffer(GL_COLOR_ATTACHMENT0, GL_RGB, GL_RGB, GL_FLOAT,
                                   GL_CLAMP_TO_EDGE, GL_LINEAR);
-
     framebuffer->AddDrawingBuffer(GL_DEPTH_ATTACHMENT, GL_DEPTH_COMPONENT24, GL_DEPTH_COMPONENT, GL_FLOAT,
                                   GL_CLAMP_TO_EDGE, GL_NEAREST);
     //
@@ -80,6 +79,8 @@ void RenderScene()
 {
     //luigiMesh->SetDrawingMode(GL_LINES);
 
+    framebuffer->AddDrawingBuffer(GL_COLOR_ATTACHMENT0, GL_RGB, GL_RGB, GL_FLOAT,
+                                  GL_CLAMP_TO_EDGE, GL_LINEAR);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     mat4 model(1.0f);
     appTime += 0.1f;

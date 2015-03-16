@@ -36,6 +36,8 @@ public:
                           GLenum wrapMode = GL_CLAMP_TO_EDGE,
                           GLenum scaleMode = GL_LINEAR);
 
+    void DeleteDrawingBuffer(GLenum attachment);
+
     Texture *GetTexture(GLenum target);
     GLuint GetObject() const { return object; }
 };

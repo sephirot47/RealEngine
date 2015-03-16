@@ -33,6 +33,8 @@ void FrameBuffer::AddDrawingBuffer(GLenum attachment,
                                    GLenum wrapMode,
                                    GLenum scaleMode)
 {
+    DeleteDrawingBuffer(attachment); //Borralo si ya existia
+
     ++numBuffers;
     drawBuffers.push_back(attachment);
 
@@ -45,28 +47,21 @@ void FrameBuffer::AddDrawingBuffer(GLenum attachment,
     Bind(); //Aqui se llama a glDrawBuffers
     glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, GL_TEXTURE_2D, texture->GetObject(), 0);
     UnBind();
-
-    /*
-    if(drawBuffers[i] >= GL_COLOR_ATTACHMENT0 && drawBuffers[i] <= GL_COLOR_ATTACHMENT15)
-    {
-        Texture *texture = new Texture();
-        texture->SetData(0, width, height, GL_RGB, GL_RGB, GL_FLOAT);
-        texture->SetWrapMode(GL_CLAMP_TO_EDGE);
-        texture->SetScaleMode(GL_LINEAR);
-        textures.push_back(texture);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, bufs[i], GL_TEXTURE_2D, texture->GetObject(), 0);
-    }
-    else if(drawBuffers[i] == GL_DEPTH_ATTACHMENT)
-    {
-        Texture *texture = new Texture();
-        texture->SetData(0, width, height, GL_DEPTH_COMPONENT24, GL_DEPTH_COMPONENT, GL_FLOAT);
-        texture->SetWrapMode(GL_CLAMP_TO_EDGE);
-        texture->SetScaleMode(GL_NEAREST);
-        textures.push_back(texture);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,  GL_TEXTURE_2D, texture->GetObject(), 0);
-    }
-*/
 }
+
+void FrameBuffer::DeleteDrawingBuffer(GLenum attachment)
+{
+    for(int i = 0; i < numBuffers; ++i)
+    {
+        if(drawBuffers[i] == attachment)
+        {
+            --numBuffers;
+            drawBuffers.erase(drawBuffers.begin() + i);
+            delete textures[i];
+        }
+    }
+}
+
 
 Texture *FrameBuffer::GetTexture(GLenum target)
 {
