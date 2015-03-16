@@ -29,9 +29,14 @@ public:
     void Bind() const;
     void UnBind() const;
 
-    Texture *GetTexture(GLenum target);
-    void SetDrawingBuffers(int n, GLenum* bufs);
+    void AddDrawingBuffer(GLenum attachment,
+                          GLenum format,
+                          GLenum internalFormat,
+                          GLenum type,
+                          GLenum wrapMode = GL_CLAMP_TO_EDGE,
+                          GLenum scaleMode = GL_LINEAR);
 
+    Texture *GetTexture(GLenum target);
     GLuint GetObject() const { return object; }
 };
 

@@ -66,8 +66,11 @@ void Init()
 
     //FRAMEBUFFER THINGS
     framebuffer = new FrameBuffer(width, height);
-    GLenum buffers[] = {GL_COLOR_ATTACHMENT0, GL_DEPTH_ATTACHMENT};
-    framebuffer->SetDrawingBuffers(2, buffers);
+    framebuffer->AddDrawingBuffer(GL_COLOR_ATTACHMENT0, GL_RGB, GL_RGB, GL_FLOAT,
+                                  GL_CLAMP_TO_EDGE, GL_LINEAR);
+
+    framebuffer->AddDrawingBuffer(GL_DEPTH_ATTACHMENT, GL_DEPTH_COMPONENT24, GL_DEPTH_COMPONENT, GL_FLOAT,
+                                  GL_CLAMP_TO_EDGE, GL_NEAREST);
     //
 }
 
