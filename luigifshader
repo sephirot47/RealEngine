@@ -11,6 +11,7 @@ vec3 lightPos = vec3(100*sin(time*3.0), -50, 100*cos(time*3.0)), lightDir = (0.0
 
 float discretisa(float light)
 {
+return light;
 	if(light < 0.2) return 0.2;
 	if(light < 0.6) return 0.6;
 	return 0.9;

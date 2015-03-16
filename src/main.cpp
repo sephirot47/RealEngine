@@ -27,14 +27,14 @@ void Init()
     luigiProgram->AttachShader(*luigivshader);
     luigiProgram->Link();
 
-    Image *img = new Image(); img->LoadFromFile("luigiD.jpg");
+    Image *img = new Image(); img->LoadFromFile("gordaco.bmp");
     luigiTexture = new Texture();
     luigiTexture->SetData(img->GetData(), img->GetWidth(), img->GetHeight(), img->GetFormat(), img->GetFormat(), GL_UNSIGNED_BYTE);
 
     luigiProgram->AttachTexture("tex", *luigiTexture);
 
     luigiMesh = new Mesh();
-    luigiMesh->LoadFromFile("luigi.obj");
+    luigiMesh->LoadFromFile("gordaco.obj");
     luigiMesh->SetShaderProgram(*luigiProgram);
     //
 
@@ -46,14 +46,14 @@ void Init()
     gordacoProgram->AttachShader(*gordacovshader);
     gordacoProgram->Link();
 
-    img->LoadFromFile("gordaco.bmp");
+    img->LoadFromFile("luigiD.jpg");
     gordacoTexture = new Texture();
     gordacoTexture->SetData(img->GetData(), img->GetWidth(), img->GetHeight(), img->GetFormat(), img->GetFormat(), GL_UNSIGNED_BYTE);
 
     gordacoProgram->AttachTexture("tex", *gordacoTexture);
 
     gordacoMesh = new Mesh();
-    gordacoMesh->LoadFromFile("gordaco.obj");
+    gordacoMesh->LoadFromFile("sphere.obj");
     gordacoMesh->SetShaderProgram(*gordacoProgram);
     //
 
@@ -75,6 +75,8 @@ float rot = 0.0f, luigiRot = 0.0f, appTime = 0.0f;
 
 void RenderScene()
 {
+    //luigiMesh->SetDrawingMode(GL_LINES);
+
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     mat4 model(1.0f);
     appTime += 0.1f;
@@ -100,10 +102,10 @@ void RenderScene()
     gordacoMesh->GetShaderProgram()->SetUniform("projection", projection);
     gordacoMesh->GetShaderProgram()->SetUniform("time", appTime);
     model = mat4(1.0f);
-    translate = vec3(0.25f, -0.3f, -1.5f);
+    translate = vec3(0.2f, -0.05f, -1.5f);
     T = glm::translate(model, translate);
     R = glm::rotate_slow(model, rot, axis);
-    scale = vec3(0.005);
+    scale = vec3(0.2);
     S = glm::scale(model, scale);
     model = T * R * S;
     gordacoMesh->GetShaderProgram()->SetUniform("model", model);

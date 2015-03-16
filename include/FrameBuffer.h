@@ -24,7 +24,7 @@ private:
 public:
 
     FrameBuffer(int widht, int height);
-    ~FrameBuffer();
+    virtual ~FrameBuffer();
 
     void Bind() const;
     void UnBind() const;
