@@ -28,6 +28,7 @@ public:
     ~Shader();
 
     bool Create(const std::string filepath, GLuint type);
+    bool CreateFromSourceCode(const std::string code, GLuint type);
     GLuint GetObject() const { return object; }
 };
 

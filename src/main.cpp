@@ -71,6 +71,8 @@ void Init()
     framebuffer->AddDrawingBuffer(GL_DEPTH_ATTACHMENT, GL_DEPTH_COMPONENT24, GL_DEPTH_COMPONENT, GL_FLOAT,
                                   GL_CLAMP_TO_EDGE, GL_NEAREST);
     //
+
+    GBuffer *gbuffer = new GBuffer(width, height);
 }
 
 float rot = 0.0f, luigiRot = 0.0f, appTime = 0.0f;

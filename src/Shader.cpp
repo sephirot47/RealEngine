@@ -45,3 +45,33 @@ bool Shader::Create(const std::string filepath, GLuint type)
     }
     return true;
 }
+
+bool Shader::CreateFromSourceCode(const std::string code, GLuint type)
+{
+    object = glCreateShader(type);
+
+    int srcCodeLength = code.length();
+
+    char *srcCodeC = new char[srcCodeLength+1];
+    strcpy(srcCodeC, code.c_str());
+    srcCodeC[srcCodeLength] = '\0';
+
+    object = glCreateShader(type);
+    glShaderSource(object, 1, &srcCodeC, &srcCodeLength);
+    delete[] srcCodeC;
+
+    glCompileShader(object);
+
+    int compilationResult;
+    glGetShaderiv(object, GL_COMPILE_STATUS, &compilationResult);
+
+    if(compilationResult == GL_FALSE)
+    {
+        char shaderErrorLog[1000];
+        glGetShaderInfoLog(object, 1000, 0, shaderErrorLog);
+        DbgError("The shader contains errors! It can't be compiled:" << shaderErrorLog);
+        glDeleteShader(object);
+        return false;
+    }
+    return true;
+}
