@@ -49,6 +49,13 @@ void FrameBuffer::AddDrawingBuffer(GLenum attachment,
     UnBind();
 }
 
+bool FrameBuffer::ExistsDrawingBuffer(GLenum attachment)
+{
+    for(int i = 0; i < numBuffers; ++i)
+        if(drawBuffers[i] == attachment) return true;
+    return false;
+}
+
 void FrameBuffer::DeleteDrawingBuffer(GLenum attachment)
 {
     for(int i = 0; i < numBuffers; ++i)

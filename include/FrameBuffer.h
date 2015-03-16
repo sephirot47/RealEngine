@@ -36,6 +36,8 @@ public:
                           GLenum wrapMode = GL_CLAMP_TO_EDGE,
                           GLenum scaleMode = GL_LINEAR);
 
+    bool ExistsDrawingBuffer(GLenum attachment);
+
     void DeleteDrawingBuffer(GLenum attachment);
 
     Texture *GetTexture(GLenum target);
