@@ -11,7 +11,7 @@ out vec2 fuv;
 out vec3 fnormal;
 
 void main()  
-{  
+{   
     fpos = (model * vec4(inpos, 1.0)).xyz;
     fuv = inuv;
     fnormal = normalize((model * vec4(innormal, 0.0)).xyz);

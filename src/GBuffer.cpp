@@ -48,9 +48,7 @@ GBuffer::~GBuffer()
 
 void GBuffer::Draw() const
 {
-    UnBind(); //dibuja en el screeeeen
 
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     screenMeshVao->Bind();
     program->Use();
 
@@ -61,6 +59,13 @@ void GBuffer::Draw() const
 
     program->UnUse();
     screenMeshVao->UnBind();
+}
+
+void GBuffer::DrawToScreen() const
+{
+    UnBind(); //dibuja en el screeeeen
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    Draw();
 }
 
 

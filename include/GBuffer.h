@@ -45,6 +45,7 @@ public:
     ~GBuffer();
 
     void Draw() const;
+    void DrawToScreen() const;
 
     void SetVertexColorLocation(int location, VBO &vbo);
     void SetVertexPositonLocation(int location, VBO &vbo);

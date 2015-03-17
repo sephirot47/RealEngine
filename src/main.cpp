@@ -76,7 +76,8 @@ void RenderScene()
         mesh->Draw();
     gbuffer->UnBind();
 
-    gbuffer->Draw();
+    gbuffer->DrawToScreen();
+
 }
 
 bool IsPressed(int keyCode)

@@ -12,13 +12,6 @@ out vec3 outpos;
 out vec2 outuv;
 out vec3 outnormal;
 
-float discretisa(float light)
-{
-	if(light < 0.2) return 0.2;
-	if(light < 0.6) return 0.6;
-	return 0.9;
-}
-
 void main()  
 {  
     outcolor = texture(tex, vec2(fuv.x, 1.0 - fuv.y));
