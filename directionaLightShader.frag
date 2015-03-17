@@ -17,13 +17,13 @@ void main()
     vec3 position = texture(pos, sceneuv).xyz;
     vec3 normal = normalize(texture(normals, sceneuv).xyz);
 
-    float brightness = clamp( dot(-normalize(lightDir), normal), 0.0, 1.0 );
+    float brightness = max(0.0, dot(-normalize(lightDir), normal));
     
     float isBg = texture(depth, sceneuv).x > 0.99 ? 1.0 : 0.0;
     if(isBg > 0.98) 
 	outcolor = texture(colors, sceneuv);
     else 
-	outcolor = vec4(texture(colors, sceneuv).xyz + lightIntensity * lightColor * brightness, 1.0);
+	outcolor = vec4(texture(colors, sceneuv).xyz + texture(colors, sceneuv).xyz * lightIntensity * lightColor * brightness, 1.0);
 	
     //outcolor = vec4(lightColor, 1.0);
     outpos = texture(pos, sceneuv).xyz;

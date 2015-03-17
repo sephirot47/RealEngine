@@ -16,7 +16,7 @@ GBuffer *gbuffer;
 Texture *texture;
 Mesh *mesh, *gordacoMesh;
 
-Light *light, *light2;
+Light *light, *light2, *light3, *light4;
 
 void Init()
 {
@@ -31,14 +31,14 @@ void Init()
     program->AttachShader(*vshader);
     program->Link();
 
-    Image *img = new Image(); img->LoadFromFile("gordaco.bmp");
+    Image *img = new Image(); img->LoadFromFile("luigiD.jpg");
     texture = new Texture();
     texture->SetData(img->GetData(), img->GetWidth(), img->GetHeight(), img->GetFormat(), img->GetFormat(), GL_UNSIGNED_BYTE);
 
     program->AttachTexture("tex", *texture);
 
     mesh = new Mesh();
-    mesh->LoadFromFile("gordaco.obj");
+    mesh->LoadFromFile("luigi.obj");
     mesh->SetShaderProgram(*program);
 
     img->LoadFromFile("luigiD.jpg");
@@ -58,9 +58,19 @@ void Init()
     light->SetIntensity(1.0f);
 
     light2 = new Light(DirectionalLight);
-    light2->SetDirection(vec3(-1.0f, 0.0f, -1.0f));
+    light2->SetDirection(vec3(-1.0f, 0.0f, 0.0f));
     light2->SetColor(vec3(0.0f, 1.0f, 0.0f));
-    light2->SetIntensity(0.5f);
+    light2->SetIntensity(1.0f);
+
+    light3 = new Light(DirectionalLight);
+    light3->SetDirection(vec3(0.0f, -1.0f, 0.2f));
+    light3->SetColor(vec3(0.0f, 0.0f, 1.0f));
+    light3->SetIntensity(1.0f);
+
+    light4 = new Light(DirectionalLight);
+    light4->SetDirection(vec3(0.0f, 1.0f, -0.5));
+    light4->SetColor(vec3(1.0f, 1.0f, 0.0f));
+    light4->SetIntensity(1.0f);
 }
 
 float rot = 0.0f, luigiRot = 0.0f, appTime = 0.0f;
@@ -72,7 +82,7 @@ void RenderScene()
     mat4 model(1.0f), normalMatrix(1.0f);
     appTime += 0.1f;
     //luigiRot += 0.03f;
-    vec3 axis(.0, 1.0, 0.0), translate(-0.3f, -0.3f, -1.5f), scale(0.004);
+    vec3 axis(.0, 1.0, 0.0), translate(-0.3f, -0.3f, -1.5f), scale(0.005);
     mat4 T = glm::translate(model, translate);
     mat4 R = glm::rotate_slow(model, rot, axis);
     mat4 S = glm::scale(model, scale);
@@ -91,8 +101,22 @@ void RenderScene()
         mesh->Draw();
     gbuffer->UnBind();
 
+    light->SetDirection(vec3(-sin(appTime), cos(appTime), -1.0f));
+    light2->SetDirection(vec3(-cos(appTime), -0.3f, sin(appTime)));
+    light3->SetDirection(vec3(0.2f, sin(appTime), cos(appTime)));
+    light4->SetDirection(vec3(sin(appTime), -cos(appTime), -0.5));
+
+    float intensidaz = (cos(appTime * abs(sin(appTime))) * 0.5 + 0.5) * 5.0f;
+    light->SetIntensity(intensidaz);
+    light2->SetIntensity(5.0f-intensidaz);
+    light3->SetIntensity(intensidaz);
+    light4->SetIntensity(intensidaz);
+
     light->Apply(*gbuffer);
     light2->Apply(*gbuffer);
+    light3->Apply(*gbuffer);
+    light4->Apply(*gbuffer);
+
     gbuffer->DrawToScreen();
 }
 
@@ -125,8 +149,8 @@ int main()
         while(SDL_PollEvent(&event))
         {
             if(event.type == SDL_QUIT) running = false;
-            if (event.type == SDL_KEYDOWN && IsPressed(SDLK_RIGHT)) rot += 0.03;
-            if (event.type == SDL_KEYDOWN && IsPressed(SDLK_LEFT)) rot -= 0.03;
+            if (event.type == SDL_KEYDOWN && IsPressed(SDLK_RIGHT)) rot += 0.3;
+            if (event.type == SDL_KEYDOWN && IsPressed(SDLK_LEFT)) rot -= 0.3;
         }
 
         RenderScene();
