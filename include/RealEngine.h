@@ -28,5 +28,6 @@
 #include "VAO.h"
 #include "GBuffer.h"
 #include "Mesh.h"
+#include "Light.h"
 
 #endif // REALENGINE_H

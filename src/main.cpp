@@ -16,6 +16,8 @@ GBuffer *gbuffer;
 Texture *texture;
 Mesh *mesh, *gordacoMesh;
 
+Light *light, *light2;
+
 void Init()
 {
     glClearColor(0.0, 0.0, 0.3, 1.0);
@@ -49,35 +51,49 @@ void Init()
     gbuffer->SetFragmentUvTextureName("uvs");
     gbuffer->SetFragmentNormalsTextureName("normals");
     gbuffer->SetFragmentDepthTextureName("depth");
+
+    light = new Light(DirectionalLight);
+    light->SetDirection(vec3(1.0f, 0.0f, -1.0f));
+    light->SetColor(vec3(1.0f, 0.0f, 0.0f));
+    light->SetIntensity(1.0f);
+
+    light2 = new Light(DirectionalLight);
+    light2->SetDirection(vec3(-1.0f, 0.0f, -1.0f));
+    light2->SetColor(vec3(0.0f, 1.0f, 0.0f));
+    light2->SetIntensity(0.5f);
 }
 
 float rot = 0.0f, luigiRot = 0.0f, appTime = 0.0f;
 
 void RenderScene()
 {
+    glDepthFunc(GL_LEQUAL);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    mat4 model(1.0f);
+    mat4 model(1.0f), normalMatrix(1.0f);
     appTime += 0.1f;
-    luigiRot += 0.03f;
+    //luigiRot += 0.03f;
     vec3 axis(.0, 1.0, 0.0), translate(-0.3f, -0.3f, -1.5f), scale(0.004);
     mat4 T = glm::translate(model, translate);
-    mat4 R = glm::rotate_slow(model, luigiRot, axis);
+    mat4 R = glm::rotate_slow(model, rot, axis);
     mat4 S = glm::scale(model, scale);
     model = T * R * S;
+    normalMatrix = R * S;
 
     mat4 projection = perspective(45.0f * 3.1415f/180.0f, 1.0f, 0.1f, 100.0f);
     mesh->GetShaderProgram()->SetUniform("projection", projection);
     mesh->GetShaderProgram()->SetUniform("time", appTime);
     mesh->GetShaderProgram()->SetUniform("model", model);
+    mesh->GetShaderProgram()->SetUniform("normalMatrix", normalMatrix);
 
     gbuffer->Bind();
-        gbuffer->GetShaderProgram()->SetUniform("time", appTime);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        gbuffer->GetShaderProgram()->SetUniform("time", appTime);
         mesh->Draw();
     gbuffer->UnBind();
 
+    light->Apply(*gbuffer);
+    light2->Apply(*gbuffer);
     gbuffer->DrawToScreen();
-
 }
 
 bool IsPressed(int keyCode)

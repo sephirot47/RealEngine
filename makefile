@@ -1,6 +1,6 @@
 all: main.exe
 
-main.exe: main.o Shader.o ShaderProgram.o stb_image.o Debug.o Time.o VBO.o VAO.o Image.o Texture.o FileLoader.o FrameBuffer.o FrameDrawer.o Mesh.o GBuffer.o
+main.exe: main.o Shader.o ShaderProgram.o stb_image.o Debug.o Time.o VBO.o VAO.o Image.o Texture.o FileLoader.o FrameBuffer.o FrameDrawer.o Mesh.o GBuffer.o Light.o
 	g++ -std=c++11 *.o -o main.exe -Iinclude -lGL -lGLU -lSDL2
 
 main.o: src/main.cpp
@@ -47,6 +47,9 @@ Mesh.o: src/Mesh.cpp
 
 GBuffer.o: src/GBuffer.cpp
 	g++ -std=c++11 -c src/GBuffer.cpp -Iinclude -lGL -lGLU -lSDL2
+
+Light.o: src/Light.cpp
+	g++ -std=c++11 -c src/Light.cpp -Iinclude -lGL -lGLU -lSDL2
 
 clean:
 	rm -rf *.exe *.o *~
