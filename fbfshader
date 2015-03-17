@@ -8,6 +8,12 @@ in vec2 sceneuv;
 
 void main()  
 {  
-    gl_FragColor = texture(colors, sceneuv) * 0.3;
+    float timeBig = (sin(time/3.0) * 0.5 + 0.5);
+    if(timeBig > 0.9) gl_FragColor = texture(colors, sceneuv);
+    else if(timeBig > 0.7) gl_FragColor = texture(pos, sceneuv);
+    else if(timeBig > 0.4) gl_FragColor = texture(uvs, sceneuv);
+    else if(timeBig > 0.1) gl_FragColor = texture(normals, sceneuv);
+    else gl_FragColor = texture(depth, sceneuv);
+gl_FragColor = texture(normals, sceneuv);
 }
 

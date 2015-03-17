@@ -42,7 +42,7 @@ public:
 
     void DeleteDrawingBuffer(GLenum attachment);
 
-    Texture *GetTexture(GLenum target) const;
+    Texture *GetTexture(GLenum attachment) const;
     GLuint GetObject() const { return object; }
 };
 

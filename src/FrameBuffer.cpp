@@ -70,10 +70,10 @@ void FrameBuffer::DeleteDrawingBuffer(GLenum attachment)
 }
 
 
-Texture *FrameBuffer::GetTexture(GLenum target) const
+Texture *FrameBuffer::GetTexture(GLenum attachment) const
 {
     for(int i = 0; i < numBuffers; ++i)
-        if(drawBuffers[i] == target)
+        if(drawBuffers[i] == attachment)
             return textures[i];
     return 0;
 }

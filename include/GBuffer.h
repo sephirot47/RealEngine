@@ -22,8 +22,6 @@ class GBuffer : public FrameBuffer
 {
 private:
 
-    std::string colorsName, posName, uvName, normalsName, depthName;
-
     static const float screenMesh[12];
     static const std::string vshaderSource;
 
@@ -36,7 +34,7 @@ private:
         DepthAttachment = GL_DEPTH_ATTACHMENT
     };
 
-    VAO *vao;
+    VAO *screenMeshVao;
     VBO *screenMeshVbo;
     ShaderProgram *program;
     Shader *vshader, *fshader;
@@ -55,13 +53,12 @@ public:
 
     void SetFragmentColorTextureName(std::string name);
     void SetFragmentPositionTextureName(std::string name);
-    void SetFragmentNormalsTextureName(std::string name);
     void SetFragmentUvTextureName(std::string name);
+    void SetFragmentNormalsTextureName(std::string name);
     void SetFragmentDepthTextureName(std::string name);
 
-    void SetVertexShader(Shader *vshader);
-
     VAO *GetVAO() const;
+    ShaderProgram *GetShaderProgram() const;
     Texture *GetColorTexture() const;
     Texture *GetPositionTexture() const;
     Texture *GetNormalsTexture() const;
