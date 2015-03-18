@@ -1,6 +1,5 @@
 #version 130
 
-uniform float time;
 uniform mat4 projection, model, normalMatrix;
 
 in vec3 inpos;

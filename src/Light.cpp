@@ -5,24 +5,11 @@ const float Light::screenMesh[12] = {1.0f, -1.0f, 0.0f,
                                     -1.0f,  1.0f, 0.0f,
                                     -1.0f, -1.0f, 0.0f};
 
-const std::string Light::vshaderSource =
-    "#version 130\n\r"
-    ""
-    "in vec3 pos;"
-    "out vec2 sceneuv;"
-    ""
-    "void main()"
-    "{"
-        "gl_Position = vec4(pos, 1.0);"
-        "sceneuv = (pos.xy + vec2(1.0, 1.0))/2.0;"
-    "}";
-
-
 Light::Light(LightType type)
 {
     // Create the vertex shader
-    vshader = new Shader(); vshader->CreateFromSourceCode(vshaderSource, GL_VERTEX_SHADER);
-    fshader = new Shader(); fshader->Create("assets/shaders/directionaLightShader.frag", GL_FRAGMENT_SHADER);
+    vshader = new Shader(); vshader->Create("Assets/Shaders/Light/default.vert", GL_VERTEX_SHADER);
+    fshader = new Shader(); fshader->Create("Assets/Shaders/Light/Directional/default.frag", GL_FRAGMENT_SHADER);
 
     program = new ShaderProgram();
     program->AttachShader(*vshader);

@@ -23,7 +23,6 @@ class GBuffer : public FrameBuffer
 private:
 
     static const float screenMesh[12];
-    static const std::string vshaderSource;
 
     enum
     {

@@ -6,7 +6,7 @@ uniform sampler2D colors, pos, uvs, normals, depth;
 
 in vec2 sceneuv;
 
-void main()  
+void main()
 {  
     gl_FragColor = vec4(texture(colors, sceneuv).xyz, 1.0);
 }

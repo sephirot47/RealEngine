@@ -5,22 +5,10 @@ const float GBuffer::screenMesh[12] = {1.0f, -1.0f, 0.0f,
                                       -1.0f,  1.0f, 0.0f,
                                       -1.0f, -1.0f, 0.0f};
 
-const std::string GBuffer::vshaderSource =
-    "#version 130\n\r"
-    ""
-    "in vec3 pos;"
-    "out vec2 sceneuv;"
-    ""
-    "void main()"
-    "{"
-        "gl_Position = vec4(pos, 1.0);"
-        "sceneuv = (pos.xy + vec2(1.0, 1.0))/2.0;"
-    "}";
-
 GBuffer::GBuffer(int width, int height, Shader &fshader) : FrameBuffer(width, height)
 {
     // Create the vertex shader
-    vshader = new Shader(); vshader->CreateFromSourceCode(vshaderSource, GL_VERTEX_SHADER);
+    vshader = new Shader(); vshader->Create("Assets/Shaders/FrameBuffer/default.vert", GL_VERTEX_SHADER);
     this->fshader = &fshader;
     program = new ShaderProgram();
     program->AttachShader(*vshader);

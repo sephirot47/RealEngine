@@ -10,7 +10,6 @@ using namespace std;
 
 const float width = 1500, height = 800;
 
-FrameBuffer *framebuffer;
 GBuffer *gbuffer;
 
 Mesh *mesh, *mesh2;
@@ -23,8 +22,8 @@ void Init()
     glEnable(GL_DEPTH_TEST);
 
     //LUIGI THINGS
-    Shader *fshader = new Shader(); fshader->Create("assets/shaders/fshader", GL_FRAGMENT_SHADER);
-    Shader *vshader = new Shader(); vshader->Create("assets/shaders/vshader", GL_VERTEX_SHADER);
+    Shader *fshader = new Shader(); fshader->Create("Assets/Shaders/Mesh/default.frag", GL_FRAGMENT_SHADER);
+    Shader *vshader = new Shader(); vshader->Create("Assets/Shaders/Mesh/default.vert", GL_VERTEX_SHADER);
     ShaderProgram *program = new ShaderProgram();
     program->AttachShader(*fshader);
     program->AttachShader(*vshader);
@@ -34,24 +33,24 @@ void Init()
     program2->AttachShader(*vshader);
     program2->Link();
 
-    Image *img = new Image(); img->LoadFromFile("assets/textures/luigiD.jpg");
+    Image *img = new Image(); img->LoadFromFile("Assets/Textures/luigiD.jpg");
     Texture *texture = new Texture();
     texture->SetData(img->GetData(), img->GetWidth(), img->GetHeight(), img->GetFormat(), img->GetFormat(), GL_UNSIGNED_BYTE);
     program->AttachTexture("tex", *texture);
     mesh = new Mesh();
-    mesh->LoadFromFile("assets/models/luigi.obj");
+    mesh->LoadFromFile("Assets/Models/luigi.obj");
     mesh->SetShaderProgram(*program);
 
-    Image *img2 = new Image(); img2->LoadFromFile("assets/textures/gordaco.bmp");
+    Image *img2 = new Image(); img2->LoadFromFile("Assets/Textures/gordaco.bmp");
     Texture *texture2 = new Texture();
     texture2->SetData(img2->GetData(), img2->GetWidth(), img2->GetHeight(), img2->GetFormat(), img2->GetFormat(), GL_UNSIGNED_BYTE);
     program2->AttachTexture("tex", *texture2);
     mesh2 = new Mesh();
-    mesh2->LoadFromFile("assets/models/gordaco.obj");
+    mesh2->LoadFromFile("Assets/Models/gordaco.obj");
     mesh2->SetShaderProgram(*program2);
     //
 
-    Shader *finalfshader = new Shader(); finalfshader->Create("assets/shaders/fbfshader", GL_FRAGMENT_SHADER);
+    Shader *finalfshader = new Shader(); finalfshader->Create("Assets/Shaders/FrameBuffer/default.frag", GL_FRAGMENT_SHADER);
     gbuffer = new GBuffer(width, height, *finalfshader);
     gbuffer->SetFragmentColorTextureName("colors");
     gbuffer->SetFragmentPositionTextureName("pos");
