@@ -22,7 +22,7 @@ Light::Light(LightType type)
 {
     // Create the vertex shader
     vshader = new Shader(); vshader->CreateFromSourceCode(vshaderSource, GL_VERTEX_SHADER);
-    fshader = new Shader(); fshader->Create("directionaLightShader.frag", GL_FRAGMENT_SHADER);
+    fshader = new Shader(); fshader->Create("assets/shaders/directionaLightShader.frag", GL_FRAGMENT_SHADER);
 
     program = new ShaderProgram();
     program->AttachShader(*vshader);
