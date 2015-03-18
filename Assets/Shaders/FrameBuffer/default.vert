@@ -1,7 +1,7 @@
 #version 130
 
 in vec3 pos;
-out vec2 sceneuv; 
+layout(location = 0) out vec2 sceneuv; 
 
 void main()
 {  
