@@ -13,7 +13,7 @@ out vec3 outnormal;
 
 void main()  
 {  
-    outcolor = texture(tex, vec2(fuv.x, 1.0 - fuv.y));
+    outcolor = texture(tex, vec2(fuv.x, 1.0 - fuv.y)) * 0.1;
     outpos = fpos;
     outuv = fuv;
     outnormal = fnormal;

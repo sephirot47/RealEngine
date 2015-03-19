@@ -1,6 +1,6 @@
 #version 130
 
-uniform mat4 projection, model, normalMatrix;
+uniform mat4 projection, view, model, normalMatrix;
 
 in vec3 inpos;
 in vec2 inuv;
@@ -12,10 +12,10 @@ out vec3 fnormal;
 
 void main()  
 {    
-    fpos = (model * vec4(inpos, 1.0)).xyz;
+    fpos = (model * view * vec4(inpos, 1.0)).xyz;
     fuv = inuv;    
     fnormal = normalize((normalMatrix * vec4(innormal, 0.0)).xyz);
 
-    gl_Position = projection * model * vec4(inpos, 1.0);
+    gl_Position = projection * view * model * vec4(inpos, 1.0);
 }
 

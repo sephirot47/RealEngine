@@ -1,8 +1,10 @@
 #version 130	
 
+uniform mat4 camView, camViewInverse, lightModel;
+
 uniform sampler2D colors, pos, uvs, normals, depth;
 
-uniform vec3 lightDir, lightColor;
+uniform vec3 lightPosition, lightDir, lightColor;
 uniform float lightIntensity;
 
 in vec2 sceneuv;
@@ -14,11 +16,14 @@ out vec3 outnormal;
 
 void main()  
 {  
+    vec3 lightPos = (camView * vec4(lightPosition, 1.0)).xyz;
     vec3 position = texture(pos, sceneuv).xyz;
     vec3 normal = normalize(texture(normals, sceneuv).xyz);
 
     float brightness = max(0.0, dot(-normalize(lightDir), normal));
     
+    float dirToLitVertex;
+
     float isBg = texture(depth, sceneuv).x > 0.99 ? 1.0 : 0.0;
     if(isBg > 0.98) 
 	outcolor = texture(colors, sceneuv);

@@ -11,10 +11,9 @@ using namespace std;
 const float width = 1500, height = 800;
 
 GBuffer *gbuffer;
-
 Mesh *mesh, *mesh2;
-
-Light *light, *light2, *light3, *light4;
+Light *light;
+vec3 cameraRot, cameraPos;
 
 void Init()
 {
@@ -58,25 +57,14 @@ void Init()
     gbuffer->SetFragmentNormalsTextureName("normals");
     gbuffer->SetFragmentDepthTextureName("depth");
 
-    light = new Light(DirectionalLight);
+    light = new Light(DirectionalLight, width, height);
+    light->SetPosition(vec3(0.0f, 0.0f, -100.0f));
     light->SetDirection(vec3(1.0f, 0.0f, -1.0f));
-    light->SetColor(vec3(1.0f, 0.0f, 0.0f));
-    light->SetIntensity(1.0f);
+    light->SetColor(vec3(0.0f, 1.0f, 0.0f));
+    light->SetIntensity(20.0f);
 
-    light2 = new Light(DirectionalLight);
-    light2->SetDirection(vec3(-1.0f, 0.0f, 0.0f));
-    light2->SetColor(vec3(0.0f, 1.0f, 0.0f));
-    light2->SetIntensity(1.0f);
-
-    light3 = new Light(DirectionalLight);
-    light3->SetDirection(vec3(0.0f, -1.0f, 0.2f));
-    light3->SetColor(vec3(0.0f, 0.0f, 1.0f));
-    light3->SetIntensity(1.0f);
-
-    light4 = new Light(DirectionalLight);
-    light4->SetDirection(vec3(0.0f, 1.0f, -0.5));
-    light4->SetColor(vec3(0.0f, 1.0f, 1.0f));
-    light4->SetIntensity(1.0f);
+    cameraPos = vec3(0, 0, -1.0f);
+    cameraRot = vec3(0, 0,  0.0f);
 }
 
 float rot = 0.0f, luigiRot = 0.0f, appTime = 0.0f;
@@ -95,10 +83,16 @@ void RenderScene()
     model = T * R * S;
     normalMatrix = R * S;
 
+    mat4 view = mat4(1.0f);
+    T = glm::translate(view, cameraPos);
+    R = glm::translate(view, cameraRot);
+    view = glm::inverse(T * R);
+
     mat4 projection = perspective(45.0f * 3.1415f/180.0f, width/height, 0.1f, 100.0f);
     mesh->GetShaderProgram()->SetUniform("projection", projection);
     mesh->GetShaderProgram()->SetUniform("time", appTime);
     mesh->GetShaderProgram()->SetUniform("model", model);
+    mesh->GetShaderProgram()->SetUniform("view", view);
     mesh->GetShaderProgram()->SetUniform("normalMatrix", normalMatrix);
 
     mesh2->GetShaderProgram()->SetUniform("projection", projection);
@@ -110,6 +104,7 @@ void RenderScene()
     S = glm::scale(model, scale);
     model = T * R * S;
     mesh2->GetShaderProgram()->SetUniform("model", model);
+    mesh2->GetShaderProgram()->SetUniform("view", view);
     mesh2->GetShaderProgram()->SetUniform("normalMatrix", normalMatrix);
 
     gbuffer->Bind();
@@ -119,21 +114,7 @@ void RenderScene()
         mesh2->Draw();
     gbuffer->UnBind();
 
-    light->SetDirection(vec3(-sin(appTime), cos(appTime), -1.0f));
-    light2->SetDirection(vec3(-cos(appTime), -sin(appTime), sin(appTime)));
-    light3->SetDirection(vec3(-cos(appTime), sin(appTime), cos(appTime)));
-    light4->SetDirection(vec3(sin(appTime), -cos(appTime), -0.5));
-
-    float intensidaz = (cos(appTime * abs(sin(appTime))) * 0.5 + 0.5) * 10.0f;
-    light->SetIntensity(intensidaz * abs(cos(appTime)));
-    light2->SetIntensity(intensidaz * abs(sin(appTime)));
-    light3->SetIntensity(intensidaz * abs(sin(appTime + 3.1415926)));
-    light4->SetIntensity(intensidaz * abs(cos(appTime + 3.1415926)));
-
-    light->Apply(*gbuffer);
-    light2->Apply(*gbuffer);
-    light3->Apply(*gbuffer);
-    light4->Apply(*gbuffer);
+    light->ApplyLight(*gbuffer, view);
 
     gbuffer->DrawToScreen();
 }
@@ -166,9 +147,12 @@ int main()
         SDL_Event event;
         while(SDL_PollEvent(&event))
         {
+            float camSpeed = 0.3f;
             if(event.type == SDL_QUIT) running = false;
-            if (event.type == SDL_KEYDOWN && IsPressed(SDLK_RIGHT)) rot += 0.3;
-            if (event.type == SDL_KEYDOWN && IsPressed(SDLK_LEFT)) rot -= 0.3;
+            if (event.type == SDL_KEYDOWN && IsPressed(SDLK_RIGHT)) cameraPos.x += camSpeed;
+            if (event.type == SDL_KEYDOWN && IsPressed(SDLK_LEFT)) cameraPos.x -= camSpeed;
+            if (event.type == SDL_KEYDOWN && IsPressed(SDLK_UP)) cameraPos.z -= camSpeed;
+            if (event.type == SDL_KEYDOWN && IsPressed(SDLK_DOWN)) cameraPos.z += camSpeed;
         }
 
         RenderScene();

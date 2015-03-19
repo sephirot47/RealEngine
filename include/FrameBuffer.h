@@ -25,7 +25,7 @@ protected:
 
 public:
 
-    FrameBuffer(int widht, int height);
+    FrameBuffer(int width, int height);
     virtual ~FrameBuffer();
 
     void Bind() const;
