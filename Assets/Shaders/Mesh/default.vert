@@ -12,7 +12,7 @@ out vec3 fnormal;
 
 void main()  
 {    
-    fpos = (model * view * vec4(inpos, 1.0)).xyz;
+    fpos = (model * vec4(inpos, 1.0)).xyz;
     fuv = inuv;    
     fnormal = normalize((normalMatrix * vec4(innormal, 0.0)).xyz);
 

@@ -57,11 +57,6 @@ void Mesh::Draw()
     vao->UnBind();
 }
 
-void Mesh::Draw(Texture &texture)
-{
-    Draw();
-}
-
 void Mesh::SetDrawingMode(GLenum drawingMode)
 {
     this->drawingMode = drawingMode;
@@ -70,6 +65,12 @@ void Mesh::SetDrawingMode(GLenum drawingMode)
 void Mesh::SetShaderProgram(ShaderProgram &shaderProgram)
 {
     program = &shaderProgram;
+}
+
+
+int Mesh::GetNumVertices() const
+{
+    return numVertices;
 }
 
 VAO* Mesh::GetVAO() const
@@ -105,4 +106,9 @@ Shader* Mesh::GetVertexShader() const
 ShaderProgram* Mesh::GetShaderProgram() const
 {
     return program;
+}
+
+GLenum Mesh::GetDrawingMode() const
+{
+    return drawingMode;
 }

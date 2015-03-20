@@ -24,10 +24,11 @@ private:
     static const float screenMesh[12];
     static const std::string vshaderSource;
 
-    VAO *screenMeshVao;
-    VBO *screenMeshVbo;
-    ShaderProgram *program;
-    Shader *vshader, *fshader;
+    VAO *lightVao;
+    VBO *lightVbo;
+    ShaderProgram *lightProgram, *shadowProgram;
+    Shader *lightvshader, *shadowvshader,
+           *lightfshader, *shadowfshader;
     FrameBuffer *shadowBuffer;
 
     glm::vec3 pos, dir;
@@ -42,7 +43,7 @@ public:
     Light(LightType type, float screenWidth, float screenHeight);
     ~Light();
 
-    void BufferShadow(Mesh &m, float screenWidth, float screenHeight);
+    void BufferMeshShadow(Mesh &m, float screenWidth, float screenHeight);
     void ApplyLight(GBuffer &gbuffer, glm::mat4 &camView) const;
 
     void SetPosition(glm::vec3 position);
@@ -51,6 +52,7 @@ public:
     void SetIntensity(float intensity);
     void SetShadow(float shadow);
 
+    FrameBuffer *GetShadowBuffer() const;
     glm::vec3 GetPosition() const;
     glm::vec3 GetDirection() const;
     glm::vec3 GetColor() const;

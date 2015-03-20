@@ -17,7 +17,7 @@ out vec3 outnormal;
 void main()  
 {  
     vec3 lightPos = (camView * vec4(lightPosition, 1.0)).xyz;
-    vec3 position = texture(pos, sceneuv).xyz;
+    vec3 position = (camView * vec4(texture(pos, sceneuv).xyz, 1.0)).xyz;
     vec3 normal = normalize(texture(normals, sceneuv).xyz);
 
     float brightness = max(0.0, dot(-normalize(lightDir), normal));

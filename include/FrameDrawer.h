@@ -35,6 +35,7 @@ public:
 
     void Draw() const;
     void AttachFragmentShader(Shader &fshader, std::string sceneTextureUniformName, std::string depthTextureUniformName);
+
     ShaderProgram* GetProgram() const { return program; }
 };
 
