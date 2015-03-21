@@ -18,7 +18,7 @@ private:
     Shader *vshader, *fshader;
     ShaderProgram *program;
     GLenum drawingMode;
-    mat4 model;
+    mat4 model, normalMatrix;
 
     int numVertices;
 
@@ -28,9 +28,11 @@ public:
 
     void LoadFromFile(const char *filepath);
 
-    void Draw();
+    void Draw(mat4 &projection, mat4 &view);
 
     void SetDrawingMode(GLenum drawingMode);
+    void SetNormalMatrix(mat4 normalMatrix);
+    void SetModelMatrix(mat4 modelMatrix);
     void SetShaderProgram(ShaderProgram &shaderProgram);
 
     int GetNumVertices() const;
@@ -42,6 +44,8 @@ public:
     Shader* GetFragmentShader() const;
     ShaderProgram* GetShaderProgram() const;
     GLenum GetDrawingMode() const;
+    mat4 GetModelMatrix() const;
+    mat4 GetNormalMatrix() const;
 };
 
 #endif // MESH_H

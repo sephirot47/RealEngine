@@ -58,6 +58,9 @@ public:
     glm::vec3 GetColor() const;
     float GetIntensity() const;
     float GetShadow() const;
+
+    mat4 GetView() const;
+    mat4 GetProjection(float screenWidth, float screenHeight) const;
 };
 
 #endif // LIGHT_H

@@ -55,7 +55,7 @@ void Init()
     mesh2->SetShaderProgram(*program2);
 
     meshSphere = new Mesh();
-    meshSphere->LoadFromFile("Assets/Models/sphere.obj");
+    meshSphere->LoadFromFile("Assets/Models/quad.obj");
     meshSphere->SetShaderProgram(*program3);
     //
 
@@ -68,10 +68,10 @@ void Init()
     gbuffer->SetFragmentDepthTextureName("depth");
 
     light = new Light(DirectionalLight, width, height);
-    light->SetPosition(vec3(0.0f, 100.0f, -10.0f));
+    light->SetPosition(vec3(0.0f, 5.0f, -1.5f));
     light->SetDirection(vec3(0.0f, -1.0f, 0.0f));
-    light->SetColor(vec3(0.0f, 1.0f, 1.0f));
-    light->SetIntensity(10.0f);
+    light->SetColor(vec3(1.0f, 1.0f, 1.0f));
+    light->SetIntensity(8.0f);
 
     cameraPos = vec3(0, 0, 0.0f);
     cameraRot = vec3(0, 0, 0.0f);
@@ -82,7 +82,7 @@ float rot = 0.0f, sphereRot = 0.0f, appTime = 0.0f;
 void RenderScene()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    mat4 model(1.0f), normalMatrix(1.0f);
+    mat4 model(1.0f);
     appTime += 0.03f;
     sphereRot += 0.03f;
     vec3 axis(.0, 1.0, 0.0), translate(-0.3f, -0.5f, -1.5f), scale(0.005);
@@ -90,63 +90,51 @@ void RenderScene()
     mat4 R = glm::rotate_slow(model, rot, axis);
     mat4 S = glm::scale(model, scale);
     model = T * R * S;
-    normalMatrix = R * S;
-
-    mat4 view = mat4(1.0f);
-    T = glm::translate(view, cameraPos);
-    R = glm::rotate_slow(view, rot, axis);
-    view = glm::inverse(T * R);
-
-    mat4 projection = perspective(45.0f * 3.1415f/180.0f, width/height, 0.1f, 100.0f);
-    //mat4 projection = ortho(-1.0f, 1.0f, -1.0f, 1.0f, .1f, 9999.0f);
-    mesh->GetShaderProgram()->SetUniform("projection", projection);
-    mesh->GetShaderProgram()->SetUniform("time", appTime);
-    mesh->GetShaderProgram()->SetUniform("model", model);
-    mesh->GetShaderProgram()->SetUniform("view", view);
-    mesh->GetShaderProgram()->SetUniform("normalMatrix", normalMatrix);
-
-    mesh2->GetShaderProgram()->SetUniform("projection", projection);
-    mesh2->GetShaderProgram()->SetUniform("time", appTime);
-    model = mat4(1.0f);
-    translate = vec3(0.0f, -0.4f, -3.5f);
-    scale = vec3(0.01f);
-    T = glm::translate(model, translate);
-    S = glm::scale(model, scale);
-    model = T * R * S;
-    mesh2->GetShaderProgram()->SetUniform("model", model);
-    mesh2->GetShaderProgram()->SetUniform("view", view);
-    mesh2->GetShaderProgram()->SetUniform("normalMatrix", normalMatrix);
-
-    meshSphere->GetShaderProgram()->SetUniform("projection", projection);
-    meshSphere->GetShaderProgram()->SetUniform("time", appTime);
-    model = mat4(1.0f);
-    translate = vec3(0.4f, 0.0f, -3.0f);
-    scale = vec3(0.01f);
-    T = glm::translate(model, translate);
-    R = glm::rotate_slow(model, sphereRot, axis);
-    scale = vec3(0.5f);
-    S = glm::scale(model, scale);
-    model = T * R * S;
-    meshSphere->GetShaderProgram()->SetUniform("model", model);
-    meshSphere->GetShaderProgram()->SetUniform("view", view);
-    meshSphere->GetShaderProgram()->SetUniform("normalMatrix", normalMatrix);
 
     gbuffer->Bind();
         gbuffer->ClearColorDepth();
-        gbuffer->GetShaderProgram()->SetUniform("time", appTime);
-        mesh->Draw();
-        mesh2->Draw();
-        meshSphere->Draw();
+
+        mat4 projection = perspective(45.0f * 3.1415f/180.0f, width/height, 0.1f, 100.0f);
+        mesh->SetModelMatrix(model);
+        mesh->SetNormalMatrix(R * S);
+
+        model = mat4(1.0f);
+        translate = vec3(0.0f, -0.4f, -3.5f);
+        scale = vec3(0.01f);
+        T = glm::translate(model, translate);
+        S = glm::scale(model, scale);
+        mesh2->SetModelMatrix(T * R * S);
+        mesh2->SetNormalMatrix(R * S);
+
+        model = mat4(1.0f);
+        translate = vec3(-1.0f, 0.0f, -2.5f);
+        scale = vec3(0.01f);
+        T = glm::translate(model, translate);
+        R = glm::rotate_slow(model, 0.0f, axis);
+        scale = vec3(0.5f);
+        S = glm::scale(model, scale);
+        meshSphere->SetModelMatrix(T * R * S);
+        meshSphere->SetNormalMatrix(R * S);
+
+        mat4 view = mat4(1.0f);
+        T = glm::translate(view, cameraPos);
+        R = glm::rotate_slow(view, rot, axis);
+        view = glm::inverse(T * R);
+
+        mesh->Draw(projection, view);
+        mesh2->Draw(projection, view);
+        meshSphere->Draw(projection, view);
+
+        light->BufferMeshShadow(*mesh, width, height);
+        //light->BufferMeshShadow(*mesh2, width, height);
+
+        meshSphere->GetShaderProgram()->AttachTexture("tex", *light->GetShadowBuffer()->GetTexture(GL_DEPTH_ATTACHMENT));
+
+        light->ApplyLight(*gbuffer, view);
+
+        gbuffer->DrawToScreen();
+
     gbuffer->UnBind();
-
-    light->BufferMeshShadow(*mesh, width, height);
-    light->BufferMeshShadow(*mesh2, width, height);
-
-    meshSphere->GetShaderProgram()->AttachTexture("tex", *light->GetShadowBuffer()->GetTexture(GL_DEPTH_ATTACHMENT));
-
-    light->ApplyLight(*gbuffer, view);
-
-    gbuffer->DrawToScreen();
 }
 
 bool IsPressed(int keyCode)

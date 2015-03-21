@@ -3,6 +3,7 @@
 Mesh::Mesh()
 {
     numVertices = 0;
+    model = mat4(1.0f);
 }
 
 Mesh::~Mesh()
@@ -46,11 +47,15 @@ void Mesh::LoadFromFile(const char *filepath)
     }
 }
 
-void Mesh::Draw()
+void Mesh::Draw(mat4 &projection, mat4 &view)
 {
     vao->Bind();
     program->Use();
 
+    program->SetUniform("projection", projection);
+    program->SetUniform("view", view);
+    program->SetUniform("model", model);
+    program->SetUniform("normalMatrix", normalMatrix);
     glDrawArrays(drawingMode, 0, numVertices);
 
     program->UnUse();
@@ -61,6 +66,17 @@ void Mesh::SetDrawingMode(GLenum drawingMode)
 {
     this->drawingMode = drawingMode;
 }
+
+void Mesh::SetModelMatrix(mat4 modelMatrix)
+{
+    this->model = modelMatrix;
+}
+
+void Mesh::SetNormalMatrix(mat4 normalMatrix)
+{
+    this->model = model;
+}
+
 
 void Mesh::SetShaderProgram(ShaderProgram &shaderProgram)
 {
@@ -111,4 +127,14 @@ ShaderProgram* Mesh::GetShaderProgram() const
 GLenum Mesh::GetDrawingMode() const
 {
     return drawingMode;
+}
+
+mat4 Mesh::GetModelMatrix() const
+{
+    return model;
+}
+
+mat4 Mesh::GetNormalMatrix() const
+{
+    return normalMatrix;
 }

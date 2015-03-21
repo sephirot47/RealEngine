@@ -37,10 +37,11 @@ private:
     VBO *screenMeshVbo;
     ShaderProgram *program;
     Shader *vshader, *fshader;
+    float width, height;
 
 public:
 
-    GBuffer(int width, int height, Shader &fshader);
+    GBuffer(float width, float height, Shader &fshader);
     ~GBuffer();
 
     void Draw() const;
@@ -64,6 +65,9 @@ public:
     Texture *GetNormalsTexture() const;
     Texture *GetUvTexture() const;
     Texture *GetDepthTexture() const;
+
+    float GetWidth() const;
+    float GetHeight() const;
 };
 
 #endif // GBUFFER_H

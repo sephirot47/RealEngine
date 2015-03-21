@@ -51,18 +51,12 @@ Light::~Light()
 
 }
 
-//Give the quaternion of the rotation from one direction to another(NOT POSITIONS pene)
-quat QuaternionFromTo(vec3 from, vec3 to)
+quat LookAt(const vec3 eye, const vec3 lookTo, const vec3 up)
 {
-    from = normalize(from);
-    to = normalize(to);
-    vec3 a = cross(from, to);
-    quat q;
-    q.x = a.x; q.y = a.y; q.z = a.z;
-    float d = dot(from, to);
-    if(abs(d) > 0.99999f) return quat(); //return identity(do nothing)
-    q.w = sqrt(from.length() * from.length() * to.length() * to.length()) + d;
-    return normalize(q);
+    if(eye == lookTo) return quat();
+
+    mat4 m = lookAt(eye, lookTo, up);
+    return quat_cast(transpose(m));
 }
 
 //Guarda en el depthbuffer la depth de la mesh enfocada desde la luz
@@ -73,25 +67,9 @@ void Light::BufferMeshShadow(Mesh &m, float screenWidth, float screenHeight)
 
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-            mat4 lightProjection = ortho(-100.0f, 100.0f, -100.0f, 100.0f, .1f, 9999.0f); //near & far must be > 0 (eventhough openGL uses < 0)
-            //mat4 lightProjection = perspective(45.0f * 3.1415f/180.0f, screenWidth/screenHeight, 0.1f, 100.0f); //near & far must be > 0 (eventhough openGL uses < 0)
-            shadowProgram->SetUniform("lightProjection", lightProjection);
-
-            mat4 lightView = mat4(1.0f);
-            mat4 T = translate(lightView, pos);
-            quat rot = QuaternionFromTo(vec3(0.01), vec3(0.01) + dir * 999.0f);
-            mat4 R = mat4_cast(rot);
-
-            lightView = T * R;
-            lightView = inverse(lightView);
-
-            ////
-            ////
-            ////FALTA MULTIPLICAR POR EL MODEL DE LA MESH, HACE FALTA SETMODEL EN MESH Y TAL pene
-            ////
-            ////
-
-            shadowProgram->SetUniform("lightView", lightView);
+            shadowProgram->SetUniform("modelMatrix", m.GetModelMatrix());
+            shadowProgram->SetUniform("lightView", GetView());
+            shadowProgram->SetUniform("lightProjection", GetProjection(screenWidth, screenHeight));
 
             VAO *shadowVao = new VAO();
             shadowVao->AddAttribute(*m.GetVBOPos(), 0, 3, GL_FLOAT, GL_FALSE, 0, 0);
@@ -118,15 +96,16 @@ void Light::ApplyLight(GBuffer &gbuffer, glm::mat4 &camView) const
         lightProgram->AttachTexture("uvs", *gbuffer.GetUvTexture());
         lightProgram->AttachTexture("normals", *gbuffer.GetNormalsTexture());
         lightProgram->AttachTexture("depth", *gbuffer.GetDepthTexture());
+        lightProgram->AttachTexture("shadowDepthBuffer", *shadowBuffer->GetTexture(GL_DEPTH_ATTACHMENT));
 
         lightProgram->SetUniform("camView", camView);
-
         mat4 camViewInverse = inverse(camView);
         lightProgram->SetUniform("camViewInverse", camViewInverse);
 
-        mat4 lightModel = mat4(1.0f);
-        lightModel = translate(lightModel, pos);
-        lightProgram->SetUniform("lightModel", lightModel);
+        mat4 lightView = GetView();
+        shadowProgram->SetUniform("lightView", lightView);
+        mat4 lightProjection = GetProjection(gbuffer.GetWidth(), gbuffer.GetHeight());
+        shadowProgram->SetUniform("lightProjection", lightProjection);
 
         lightProgram->SetUniform("lightPosition", pos);
         lightProgram->SetUniform("lightDir", dir);
@@ -194,5 +173,23 @@ float Light::GetIntensity() const
 float Light::GetShadow() const
 {
     return shadow;
+}
+
+mat4 Light::GetView() const
+{
+    mat4 lightView = mat4(1.0f);
+    mat4 T = translate(lightView, pos);
+    vec3 lookTo = pos + dir * 999.0f, up = vec3(0, 1, 0);
+    quat rot = LookAt(pos, lookTo, cross(lookTo, up));
+    mat4 R = mat4_cast(rot);
+    lightView = T * R;
+    return inverse(lightView);
+}
+
+mat4 Light::GetProjection(float screenWidth, float screenHeight) const
+{
+    float zoom = 2.0f;
+    float heightLength = zoom * screenHeight/screenWidth;
+    return ortho(-zoom, zoom, -heightLength, heightLength, .1f, 9999.0f);
 }
 

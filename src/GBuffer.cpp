@@ -5,8 +5,11 @@ const float GBuffer::screenMesh[12] = {1.0f, -1.0f, 0.0f,
                                       -1.0f,  1.0f, 0.0f,
                                       -1.0f, -1.0f, 0.0f};
 
-GBuffer::GBuffer(int width, int height, Shader &fshader) : FrameBuffer(width, height)
+GBuffer::GBuffer(float width, float height, Shader &fshader) : FrameBuffer(width, height)
 {
+    this->width = width;
+    this->height = height;
+
     // Create the vertex shader
     vshader = new Shader(); vshader->Create("Assets/Shaders/FrameBuffer/default.vert", GL_VERTEX_SHADER);
     this->fshader = &fshader;
@@ -110,4 +113,15 @@ Texture *GBuffer::GetUvTexture() const
 Texture *GBuffer::GetDepthTexture() const
 {
     return GetTexture(DepthAttachment);
+}
+
+
+float GBuffer::GetWidth() const
+{
+    return width;
+}
+
+float GBuffer::GetHeight() const
+{
+    return height;
 }

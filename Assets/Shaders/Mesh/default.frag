@@ -11,9 +11,9 @@ out vec3 outpos;
 out vec2 outuv;
 out vec3 outnormal;
 
-void main()  
+void main()
 {  
-    outcolor = texture(tex, vec2(fuv.x, 1.0 - fuv.y)) * 0.1;
+    outcolor = texture(tex, vec2(fuv.x, 1.0 - fuv.y)) * 0.05;
     outpos = fpos;
     outuv = fuv;
     outnormal = fnormal;
