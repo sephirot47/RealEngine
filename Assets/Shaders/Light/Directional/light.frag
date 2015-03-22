@@ -1,34 +1,43 @@
 #version 130	
 
-uniform mat4 camView, camViewInverse, lightView, lightProjection;
-uniform vec3 lightPosition, lightDir, lightColor;
+uniform mat4 inverseCamView, camView, lightView, lightProjection;
+uniform vec3 lightDir, lightColor;
 uniform float lightIntensity;
-uniform sampler2D colors, pos, uvs, normals, depth, shadowDepthBuffer;
+uniform sampler2D colors, pos, normals, depth, shadowDepthBuffer;
 
-in vec2 sceneuv;
+in vec2 screenuv;
 
 out vec4 outcolor;
 
 void main()  
 {  
-    vec3 position = vec4(texture(pos, sceneuv).xyz, 1.0).xyz;
-    vec3 normal = normalize(texture(normals, sceneuv).xyz);
+    float isBg = texture(depth, screenuv).x > 0.9999 ? 1.0 : 0.0;
+    if(isBg > 0.5)  { outcolor = texture(colors, screenuv); return; }
 
-    vec3 projectedPositionFromLight = (lightProjection * lightView * vec4(position, 1.0)).xyz;
-    float distLightToObstruding = texture( shadowDepthBuffer, projectedPositionFromLight.xy/2.0 + vec2(0.5, 0.5) ).z;
-    //distLightToObstruding = texture(shadowDepthBuffer, sceneuv).z;
-    float difOffset = 0.01;
-	outcolor = vec4(vec3(normal), 1);
-	return;
-    if( abs(distLightToObstruding - projectedPositionFromLight.z) < difOffset)
+    vec3 worldPosition = texture(pos, screenuv).xyz;
+    vec3 normal = normalize(texture(normals, screenuv).xyz);
+
+    vec3 projectedPositionFromLight = (lightProjection * lightView * vec4(worldPosition, 1.0)).xyz;
+    vec2 shadowBufferUv = vec2(projectedPositionFromLight.x * 0.5 + 0.5, projectedPositionFromLight.y * 0.5 + 0.5);
+    float distLightToBlocking = texture2D( shadowDepthBuffer, shadowBufferUv ).x;
+    float distLightToPixel = -projectedPositionFromLight.z * 0.5 + 0.5;
+    float difOffset = 0.000001;
+
+    //outcolor = texture(shadowDepthBuffer, sceneuv); return;
+   // outcolor = vec4( vec3(texture(shadowDepthBuffer, shadowBufferUv).z), 1); return;
+    //outcolor = vec4(vec3(distLightToPixel), 1.0);return;
+    //if(distLightToPixel > 0.6) outcolor = vec4(1, 0, 0, 1.0);
+    //else outcolor = vec4(1,1,1,1);
+    //return;
+
+    if(distLightToPixel - distLightToBlocking > difOffset)
     {
-	outcolor = vec4(1, 1, 1, 1);
+	outcolor = vec4(texture(colors, screenuv).xyz * 0.9, 1.0);
+	//outcolor = vec4(1, 0, 0, 0);
 	return;
     }
 
     float brightness = max(0.0, dot(-normalize(lightDir), normal));
-    float isBg = texture(depth, sceneuv).x > 0.99 ? 1.0 : 0.0;
-    if(isBg > 0.98)  outcolor = texture(colors, sceneuv);
-    else  outcolor = vec4(texture(colors, sceneuv).xyz + texture(colors, sceneuv).xyz * lightIntensity * lightColor * brightness, 1.0);
+    outcolor = vec4(texture(colors, screenuv).xyz + texture(colors, screenuv).xyz * lightIntensity * lightColor * brightness, 1.0);
 }
 

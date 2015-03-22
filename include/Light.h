@@ -43,6 +43,7 @@ public:
     Light(LightType type, float screenWidth, float screenHeight);
     ~Light();
 
+    void ClearBufferMeshShadow();
     void BufferMeshShadow(Mesh &m, float screenWidth, float screenHeight);
     void ApplyLight(GBuffer &gbuffer, glm::mat4 &camView) const;
 

@@ -2,7 +2,6 @@
 
 uniform mat4 lightProjection, lightView, modelMatrix;
 
-//We just need the position here, nothing else :)
 in vec3 pos;	
 
 void main()
