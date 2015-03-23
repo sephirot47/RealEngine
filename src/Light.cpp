@@ -37,7 +37,7 @@ Light::Light(LightType type, float screenWidth, float screenHeight)
        //Buffer for the depth
     shadowBuffer = new FrameBuffer(screenWidth, screenHeight);
     shadowBuffer->AddDrawingBuffer(GL_DEPTH_ATTACHMENT, GL_DEPTH_COMPONENT24, GL_DEPTH_COMPONENT,
-                                   GL_FLOAT, GL_CLAMP_TO_EDGE, GL_NEAREST);
+                                   GL_FLOAT, GL_CLAMP_TO_EDGE, GL_LINEAR);
     //
 
     pos = vec3(0, 0, 10);
@@ -56,6 +56,8 @@ void Light::BufferMeshShadow(Mesh &m, float screenWidth, float screenHeight)
 {
     shadowBuffer->Bind();
         shadowProgram->Use();
+        glEnable(GL_CULL_FACE);
+        glCullFace(GL_FRONT);
             shadowProgram->SetUniform("modelMatrix", m.GetModelMatrix());
             shadowProgram->SetUniform("lightView", GetView());
             shadowProgram->SetUniform("lightProjection", GetProjection(screenWidth, screenHeight));
@@ -67,6 +69,7 @@ void Light::BufferMeshShadow(Mesh &m, float screenWidth, float screenHeight)
             shadowVao->UnBind();
             delete shadowVao;
 
+            glDisable(GL_CULL_FACE);
         shadowProgram->UnUse();
     shadowBuffer->UnBind();
 }
@@ -74,7 +77,6 @@ void Light::BufferMeshShadow(Mesh &m, float screenWidth, float screenHeight)
 void Light::ClearBufferMeshShadow()
 {
     shadowBuffer->Bind();
-        glClearDepth(1.0f);
         shadowBuffer->ClearDepth();
     shadowBuffer->UnBind();
 }
@@ -91,7 +93,7 @@ void Light::ApplyLight(GBuffer &gbuffer, glm::mat4 &camView) const
 
         lightProgram->AttachTexture("colors", *gbuffer.GetColorTexture());
         lightProgram->AttachTexture("pos", *gbuffer.GetPositionTexture());
-        //lightProgram->AttachTexture("uvs", *gbuffer.GetUvTexture());
+        lightProgram->AttachTexture("uvs", *gbuffer.GetUvTexture());
         lightProgram->AttachTexture("normals", *gbuffer.GetNormalsTexture());
         lightProgram->AttachTexture("depth", *gbuffer.GetDepthTexture());
         lightProgram->AttachTexture("shadowDepthBuffer", *shadowBuffer->GetTexture(GL_DEPTH_ATTACHMENT));
@@ -184,17 +186,16 @@ mat4 Light::GetView() const
 {
     mat4 lightView = mat4(1.0f);
     mat4 T = translate(lightView, pos);
-    vec3 lookTo = pos + dir * 999.0f, up = vec3(0, 1, 0);
+    vec3 lookTo = pos +  dir * 99.0f, up = vec3(0, 1, 0);
     quat rot = LookAt(pos, lookTo, up);
     mat4 R = mat4_cast(rot);
-    lightView = T * R;
-    return inverse(lightView);
+    return inverse(T * R);
 }
 
 mat4 Light::GetProjection(float screenWidth, float screenHeight) const
 {
-    float zoom = 1.0f;
+    float zoom = 2.0f;
     //return perspective(45.0f * 3.1415f/180.0f, screenWidth/screenHeight, 0.1f, 10.0f);
-    return ortho<float>(-zoom, zoom, -zoom, zoom, .1f, 10.0f);
+    return ortho<float>(-zoom, zoom, -zoom, zoom, 0.5f, 10.0f);
 }
 

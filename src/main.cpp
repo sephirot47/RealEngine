@@ -14,6 +14,7 @@ GBuffer *gbuffer;
 Mesh *mesh, *mesh2, *meshSphere;
 Light *light;
 vec3 cameraRot, cameraPos;
+Texture *texture;
 
 void Init()
 {
@@ -39,7 +40,7 @@ void Init()
     program3->Link();
 
     Image *img = new Image(); img->LoadFromFile("Assets/Textures/luigiD.jpg");
-    Texture *texture = new Texture();
+    texture = new Texture();
     texture->SetData(img->GetData(), img->GetWidth(), img->GetHeight(), img->GetFormat(), img->GetFormat(), GL_UNSIGNED_BYTE);
     program->AttachTexture("tex", *texture);
     mesh = new Mesh();
@@ -68,10 +69,8 @@ void Init()
     gbuffer->SetFragmentDepthTextureName("depth");
 
     light = new Light(DirectionalLight, width, height);
-    light->SetPosition(vec3(0.0f, 1.0f, -5.0f));
-    light->SetDirection(vec3(0.0f, -0.0f, -1.0f));
-    //light->SetPosition(vec3(0.0f, 1.0f, 10.0f));
-    //light->SetDirection(vec3(0.0f, 0.0f, -1.0f));
+    light->SetPosition(vec3(0.0f, 0.0f, 1.5f));
+    light->SetDirection(vec3(0.01f, -0.01f, -1.0f));
     light->SetColor(vec3(1.0f, 1.0f, 1.0f));
     light->SetIntensity(20.0f);
 
@@ -85,7 +84,10 @@ void RenderScene()
 {
     //light->SetPosition(cameraPos);
 
-    light->SetPosition(vec3(sin(appTime), cos(appTime) * 0.5, sin(appTime) + 3.0f));
+    light->SetPosition(vec3(0.0f, 0.1f, 5.0f));
+    DbgLog(light->GetPosition());
+    //light->SetDirection(-light->GetPosition());
+
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     appTime += 0.03f;
     sphereRot += 0.03f;
@@ -101,7 +103,7 @@ void RenderScene()
 
         mat4 projection = perspective(45.0f * 3.1415f/180.0f, width/height, 0.1f, 100.0f);
         model = mat4(1.0f);
-        translate = vec3(0.0f, -0.8f, -1.5f);
+        translate = vec3(0.0f, 0.0f, 2.5f /*+ sin(appTime) * 50.0f*/ );
         scale = vec3(0.005);
         T = glm::translate(model, translate);
         S = glm::scale(model, scale);
@@ -109,7 +111,7 @@ void RenderScene()
         mesh->SetNormalMatrix(R * S);
 
         model = mat4(1.0f);
-        translate = vec3(-0.0f, -0.4f, -3.5f);
+        translate = vec3(-0.0f, -0.3f, -3.5f);
         scale = vec3(0.01f);
         T = glm::translate(model, translate);
         S = glm::scale(model, scale);
@@ -117,11 +119,11 @@ void RenderScene()
         mesh2->SetNormalMatrix(R * S);
 
         model = mat4(1.0f);
-        translate = vec3(-1.0f, 0.0f, -2.5f);
+        translate = vec3(-0.0f, 0.0f, -4.0f);
         scale = vec3(0.01f);
         T = glm::translate(model, translate);
         R = glm::rotate_slow(model, 0.0f, axis);
-        scale = vec3(0.5f);
+        scale = vec3(5.0f);
         S = glm::scale(model, scale);
         meshSphere->SetModelMatrix(T * R * S);
         meshSphere->SetNormalMatrix(R * S);
@@ -131,15 +133,19 @@ void RenderScene()
         R = glm::rotate_slow(view, rot, axis);
         view = glm::inverse(T * R);
 
-        mesh->Draw(projection, view);
-        mesh2->Draw(projection, view);
-        meshSphere->Draw(projection, view);
 
         light->ClearBufferMeshShadow();
         light->BufferMeshShadow(*mesh, width, height);
         light->BufferMeshShadow(*mesh2, width, height);
         light->BufferMeshShadow(*meshSphere, width, height);
 
+        gbuffer->Bind();
+
+        mesh->Draw(projection, view);
+        mesh2->Draw(projection, view);
+       // meshSphere->Draw(projection, view);
+
+        meshSphere->GetShaderProgram()->AttachTexture("tex", *texture);
         meshSphere->GetShaderProgram()->AttachTexture("tex", *light->GetShadowBuffer()->GetTexture(GL_DEPTH_ATTACHMENT));
 
         light->ApplyLight(*gbuffer, view);

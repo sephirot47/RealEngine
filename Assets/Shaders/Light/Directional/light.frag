@@ -1,9 +1,14 @@
 #version 130	
 
-uniform mat4 inverseCamView, camView, lightView, lightProjection;
+uniform mat4 lightProjection, lightView;
 uniform vec3 lightDir, lightColor;
 uniform float lightIntensity;
 uniform sampler2D colors, pos, normals, depth, shadowDepthBuffer;
+
+mat4 biasMatrix = mat4(0.5, 0.0, 0.0, 0.0,
+		       0.0, 0.5, 0.0, 0.0,
+		       0.0, 0.0, 0.5, 0.0,
+		       0.5, 0.5, 0.5, 1.0);
 
 in vec2 screenuv;
 
@@ -12,32 +17,20 @@ out vec4 outcolor;
 void main()  
 {  
     float isBg = texture(depth, screenuv).x > 0.9999 ? 1.0 : 0.0;
-    if(isBg > 0.5)  { outcolor = texture(colors, screenuv); return; }
+    if(isBg > 0.5)  { outcolor = vec4(0.2, 0.0, 0.0, 1.0); return; }
 
     vec3 worldPosition = texture(pos, screenuv).xyz;
     vec3 normal = normalize(texture(normals, screenuv).xyz);
-
-    vec3 projectedPositionFromLight = (lightProjection * lightView * vec4(worldPosition, 1.0)).xyz;
-    vec2 shadowBufferUv = vec2(projectedPositionFromLight.x * 0.5 + 0.5, projectedPositionFromLight.y * 0.5 + 0.5);
-    float distLightToBlocking = texture2D( shadowDepthBuffer, shadowBufferUv ).x;
-    float distLightToPixel = -projectedPositionFromLight.z * 0.5 + 0.5;
-    float difOffset = 0.000001;
-
-    //outcolor = texture(shadowDepthBuffer, sceneuv); return;
-   // outcolor = vec4( vec3(texture(shadowDepthBuffer, shadowBufferUv).z), 1); return;
-    //outcolor = vec4(vec3(distLightToPixel), 1.0);return;
-    //if(distLightToPixel > 0.6) outcolor = vec4(1, 0, 0, 1.0);
-    //else outcolor = vec4(1,1,1,1);
-    //return;
-
-    if(distLightToPixel - distLightToBlocking > difOffset)
+    vec4 shadowCoord = biasMatrix * lightProjection * lightView * vec4(worldPosition, 1.0);
+    
+   // outcolor = vec4(vec3( shadowCoord.z ), 1); return;
+    float shadow = 1.0;
+    if(shadowCoord.z - texture(shadowDepthBuffer, shadowCoord.xy).z > 0.001 )
     {
-	outcolor = vec4(texture(colors, screenuv).xyz * 0.9, 1.0);
-	//outcolor = vec4(1, 0, 0, 0);
-	return;
+	shadow = 0.1;
     }
 
     float brightness = max(0.0, dot(-normalize(lightDir), normal));
-    outcolor = vec4(texture(colors, screenuv).xyz + texture(colors, screenuv).xyz * lightIntensity * lightColor * brightness, 1.0);
+    outcolor = vec4(texture(colors, screenuv).xyz + texture(colors, screenuv).xyz * lightIntensity * lightColor * brightness * shadow, 1.0);
 }
 

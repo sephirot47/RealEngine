@@ -1,7 +1,7 @@
 #version 130
 
 uniform mat4 projection, view, model, normalMatrix;
-
+ 
 in vec3 inpos;
 in vec2 inuv;
 in vec3 innormal;
