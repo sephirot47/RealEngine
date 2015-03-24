@@ -2,12 +2,12 @@
 
 uniform sampler2D tex;
 
-in vec3 fpos;
+in vec4 fpos;
 in vec2 fuv;
 in vec3 fnormal;
 
 out vec4 outcolor;
-out vec3 outpos;
+out vec4 outpos;
 out vec2 outuv;
 out vec3 outnormal;
 

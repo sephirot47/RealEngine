@@ -74,7 +74,7 @@ void Mesh::SetModelMatrix(mat4 modelMatrix)
 
 void Mesh::SetNormalMatrix(mat4 normalMatrix)
 {
-    this->model = model;
+    this->normalMatrix = normalMatrix;
 }
 
 

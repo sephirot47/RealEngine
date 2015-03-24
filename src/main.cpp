@@ -1,3 +1,4 @@
+
 #include <iostream>
 #include <vector>
 #include <SDL2/SDL.h>
@@ -20,6 +21,8 @@ void Init()
 {
     glClearColor(0.0, 0.0, 0.3, 1.0);
     glEnable(GL_DEPTH_TEST);
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
     glDepthFunc(GL_LEQUAL);
 
     //LUIGI THINGS
@@ -69,24 +72,22 @@ void Init()
     gbuffer->SetFragmentDepthTextureName("depth");
 
     light = new Light(DirectionalLight, width, height);
-    light->SetPosition(vec3(0.0f, 0.0f, 1.5f));
+    light->SetPosition(vec3(0.0f, 0.0f, 5.0f));
     light->SetDirection(vec3(0.01f, -0.01f, -1.0f));
     light->SetColor(vec3(1.0f, 1.0f, 1.0f));
-    light->SetIntensity(20.0f);
+    light->SetIntensity(50.0f);
 
-    cameraPos = vec3(0, 0, 0.0f);
+    cameraPos = vec3(0, 0, 7.0f);
     cameraRot = vec3(0, 0, 0.0f);
 }
 
 float rot = 0.0f, sphereRot = 0.0f, appTime = 0.0f;
+bool lightMode = false;
 
 void RenderScene()
 {
-    //light->SetPosition(cameraPos);
-
-    light->SetPosition(vec3(0.0f, 0.1f, 5.0f));
-    DbgLog(light->GetPosition());
-    //light->SetDirection(-light->GetPosition());
+    light->SetPosition(vec3(0.0f, 0.0f, 15.0f));
+    light->SetDirection(-light->GetPosition());
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     appTime += 0.03f;
@@ -94,36 +95,40 @@ void RenderScene()
 
     mat4 model(1.0f);
     vec3 axis(.0, 1.0, 0.0), translate, scale;
-    mat4 T = glm::translate(model, translate);
+    mat4 T = glm::translate(model,  translate);
     mat4 R = glm::rotate_slow(model, rot, axis);
     mat4 S = glm::scale(model, scale);
 
     gbuffer->Bind();
         gbuffer->ClearColorDepth();
 
-        mat4 projection = perspective(45.0f * 3.1415f/180.0f, width/height, 0.1f, 100.0f);
+        mat4 projection = perspective(45.0f * 3.1415f/180.0f, width/height, 1.0f, 20.0f);
+        if(lightMode) projection = light->GetProjection(width, height);
+
         model = mat4(1.0f);
-        translate = vec3(0.0f, 0.0f, 2.5f /*+ sin(appTime) * 50.0f*/ );
-        scale = vec3(0.005);
+        translate = vec3(1.0f, 0.1f, 3.0f /*+  * 50.0f*/ );
+        scale = vec3(0.01f);
         T = glm::translate(model, translate);
+        R = glm::rotate_slow(model, sphereRot, axis);
         S = glm::scale(model, scale);
         mesh->SetModelMatrix(T * R * S);
         mesh->SetNormalMatrix(R * S);
 
         model = mat4(1.0f);
-        translate = vec3(-0.0f, -0.3f, -3.5f);
-        scale = vec3(0.01f);
+        translate = vec3(-0.0f, -0.3f, 0.0f);
+        scale = vec3(0.001f);
         T = glm::translate(model, translate);
+        R = glm::rotate_slow(model, 0.0f, axis);
         S = glm::scale(model, scale);
         mesh2->SetModelMatrix(T * R * S);
         mesh2->SetNormalMatrix(R * S);
 
         model = mat4(1.0f);
-        translate = vec3(-0.0f, 0.0f, -4.0f);
-        scale = vec3(0.01f);
+        translate = vec3(0.0f, 0.5f, -4.0f);
+        scale = vec3(0.00f);
         T = glm::translate(model, translate);
         R = glm::rotate_slow(model, 0.0f, axis);
-        scale = vec3(5.0f);
+        scale = vec3(6.0f);
         S = glm::scale(model, scale);
         meshSphere->SetModelMatrix(T * R * S);
         meshSphere->SetNormalMatrix(R * S);
@@ -132,23 +137,23 @@ void RenderScene()
         T = glm::translate(view, cameraPos);
         R = glm::rotate_slow(view, rot, axis);
         view = glm::inverse(T * R);
+        if(lightMode) view = light->GetView();
 
+        meshSphere->GetShaderProgram()->AttachTexture("tex", *texture);
+       // meshSphere->GetShaderProgram()->AttachTexture("tex", *light->GetShadowBuffer()->GetTexture(GL_DEPTH_ATTACHMENT));
+
+        mesh->Draw(projection, view);
+        //mesh2->Draw(projection, view);
+        meshSphere->Draw(projection, view);
 
         light->ClearBufferMeshShadow();
         light->BufferMeshShadow(*mesh, width, height);
-        light->BufferMeshShadow(*mesh2, width, height);
+        //light->BufferMeshShadow(*mesh2, width, height);
         light->BufferMeshShadow(*meshSphere, width, height);
 
         gbuffer->Bind();
 
-        mesh->Draw(projection, view);
-        mesh2->Draw(projection, view);
-       // meshSphere->Draw(projection, view);
-
-        meshSphere->GetShaderProgram()->AttachTexture("tex", *texture);
-        meshSphere->GetShaderProgram()->AttachTexture("tex", *light->GetShadowBuffer()->GetTexture(GL_DEPTH_ATTACHMENT));
-
-        light->ApplyLight(*gbuffer, view);
+        light->ApplyLight(*gbuffer, view, projection);
 
         gbuffer->DrawToScreen();
 
@@ -189,6 +194,7 @@ int main()
             if (event.type == SDL_KEYDOWN && IsPressed(SDLK_LEFT)) cameraPos.x -= camSpeed;
             if (event.type == SDL_KEYDOWN && IsPressed(SDLK_UP)) cameraPos.z -= camSpeed;
             if (event.type == SDL_KEYDOWN && IsPressed(SDLK_DOWN)) cameraPos.z += camSpeed;
+            if (event.type == SDL_KEYDOWN && IsPressed(SDLK_0)) lightMode = !lightMode;
         }
 
         RenderScene();

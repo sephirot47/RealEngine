@@ -36,8 +36,13 @@ Light::Light(LightType type, float screenWidth, float screenHeight)
 
        //Buffer for the depth
     shadowBuffer = new FrameBuffer(screenWidth, screenHeight);
-    shadowBuffer->AddDrawingBuffer(GL_DEPTH_ATTACHMENT, GL_DEPTH_COMPONENT24, GL_DEPTH_COMPONENT,
+    shadowBuffer->AddDrawingBuffer(GL_DEPTH_ATTACHMENT, GL_DEPTH_COMPONENT16, GL_DEPTH_COMPONENT,
                                    GL_FLOAT, GL_CLAMP_TO_EDGE, GL_LINEAR);
+    glBindTexture(GL_TEXTURE_2D, shadowBuffer->GetTexture(GL_DEPTH_ATTACHMENT)->GetObject());
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
+    glBindTexture(GL_TEXTURE_2D, 0);
+
     //
 
     pos = vec3(0, 0, 10);
@@ -56,8 +61,9 @@ void Light::BufferMeshShadow(Mesh &m, float screenWidth, float screenHeight)
 {
     shadowBuffer->Bind();
         shadowProgram->Use();
-        glEnable(GL_CULL_FACE);
-        glCullFace(GL_FRONT);
+
+            glCullFace(GL_FRONT);
+
             shadowProgram->SetUniform("modelMatrix", m.GetModelMatrix());
             shadowProgram->SetUniform("lightView", GetView());
             shadowProgram->SetUniform("lightProjection", GetProjection(screenWidth, screenHeight));
@@ -65,11 +71,12 @@ void Light::BufferMeshShadow(Mesh &m, float screenWidth, float screenHeight)
             VAO *shadowVao = new VAO();
             shadowVao->AddAttribute(*m.GetVBOPos(), 0, 3, GL_FLOAT, GL_FALSE, 0, 0);
             shadowVao->Bind();
-                glDrawArrays(m.GetDrawingMode(), 0, m.GetNumVertices()); //Draw in order to get the depth from the light view
+                glDrawArrays(m.GetDrawingMode(), 0, m.GetNumVertices());
             shadowVao->UnBind();
             delete shadowVao;
 
-            glDisable(GL_CULL_FACE);
+            glCullFace(GL_BACK);
+
         shadowProgram->UnUse();
     shadowBuffer->UnBind();
 }
@@ -77,14 +84,15 @@ void Light::BufferMeshShadow(Mesh &m, float screenWidth, float screenHeight)
 void Light::ClearBufferMeshShadow()
 {
     shadowBuffer->Bind();
-        shadowBuffer->ClearDepth();
+        glClearDepth(1.0);
+        shadowBuffer->ClearColorDepth();
     shadowBuffer->UnBind();
 }
 
 
-void Light::ApplyLight(GBuffer &gbuffer, glm::mat4 &camView) const
+void Light::ApplyLight(GBuffer &gbuffer, const glm::mat4 &camView, const glm::mat4 &camProjection) const
 {
-    glDisable(GL_DEPTH_TEST);
+    //glDisable(GL_DEPTH_TEST);
     if(type == DirectionalLight)
     {
         gbuffer.Bind();
@@ -98,7 +106,8 @@ void Light::ApplyLight(GBuffer &gbuffer, glm::mat4 &camView) const
         lightProgram->AttachTexture("depth", *gbuffer.GetDepthTexture());
         lightProgram->AttachTexture("shadowDepthBuffer", *shadowBuffer->GetTexture(GL_DEPTH_ATTACHMENT));
 
-        lightProgram->SetUniform("camView", camView);
+        mat4 camProjectionInverse = inverse(camProjection);
+        lightProgram->SetUniform("camProjectionInverse", camProjectionInverse);
         mat4 camViewInverse = inverse(camView);
         lightProgram->SetUniform("camViewInverse", camViewInverse);
 
@@ -117,7 +126,7 @@ void Light::ApplyLight(GBuffer &gbuffer, glm::mat4 &camView) const
         lightProgram->UnUse();
         lightVao->UnBind();
     }
-    glEnable(GL_DEPTH_TEST);
+    //glEnable(GL_DEPTH_TEST);
 }
 
 void Light::SetPosition(glm::vec3 position)
@@ -194,8 +203,9 @@ mat4 Light::GetView() const
 
 mat4 Light::GetProjection(float screenWidth, float screenHeight) const
 {
-    float zoom = 2.0f;
-    //return perspective(45.0f * 3.1415f/180.0f, screenWidth/screenHeight, 0.1f, 10.0f);
-    return ortho<float>(-zoom, zoom, -zoom, zoom, 0.5f, 10.0f);
+    float width = 14.0f;
+    float height = width * screenHeight/screenWidth;
+    //return infinitePerspective(45.0f * 3.1415f/180.0f, screenWidth/screenHeight, -10.0f);
+    return ortho(-width, width, -height, height, 0.9f, 20.0f);
 }
 

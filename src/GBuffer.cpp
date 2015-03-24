@@ -25,7 +25,7 @@ GBuffer::GBuffer(float width, float height, Shader &fshader) : FrameBuffer(width
     screenMeshVao->AddAttribute(*screenMeshVbo, 0, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
     //Add buffers
-    AddDrawingBuffer(ColorAttachment, GL_RGB, GL_RGB, GL_FLOAT, GL_REPEAT, GL_LINEAR);
+    AddDrawingBuffer(ColorAttachment, GL_RGBA, GL_RGBA, GL_FLOAT, GL_REPEAT, GL_LINEAR);
     AddDrawingBuffer(PositionAttachment, GL_RGB, GL_RGB, GL_FLOAT, GL_REPEAT, GL_LINEAR);
     AddDrawingBuffer(UvAttachment, GL_RGB, GL_RGB, GL_FLOAT, GL_REPEAT, GL_LINEAR);
     AddDrawingBuffer(NormalsAttachment, GL_RGB, GL_RGB, GL_FLOAT, GL_REPEAT, GL_LINEAR);

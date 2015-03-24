@@ -45,7 +45,7 @@ public:
 
     void ClearBufferMeshShadow();
     void BufferMeshShadow(Mesh &m, float screenWidth, float screenHeight);
-    void ApplyLight(GBuffer &gbuffer, glm::mat4 &camView) const;
+    void ApplyLight(GBuffer &gbuffer, const glm::mat4 &camView, const glm::mat4 &camProjection) const;
 
     void SetPosition(glm::vec3 position);
     void SetDirection(glm::vec3 direction);
