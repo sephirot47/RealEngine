@@ -1,3 +1,4 @@
+qtcreator
 gedit Assets/Shaders/Mesh/*  &
 gedit Assets/Shaders/FrameBuffer/* &
 gedit Assets/Shaders/Light/*.vert &

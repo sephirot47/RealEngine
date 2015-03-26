@@ -35,12 +35,12 @@ Light::Light(LightType type, float screenWidth, float screenHeight)
     shadowProgram->Link();
 
        //Buffer for the depth
+    DbgLog(screenWidth << ", " << screenHeight);
     shadowBuffer = new FrameBuffer(screenWidth, screenHeight);
     shadowBuffer->AddDrawingBuffer(GL_DEPTH_ATTACHMENT, GL_DEPTH_COMPONENT16, GL_DEPTH_COMPONENT,
                                    GL_FLOAT, GL_CLAMP_TO_EDGE, GL_LINEAR);
+    shadowBuffer->Bind();
     glBindTexture(GL_TEXTURE_2D, shadowBuffer->GetTexture(GL_DEPTH_ATTACHMENT)->GetObject());
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
     glBindTexture(GL_TEXTURE_2D, 0);
 
     //
@@ -62,7 +62,7 @@ void Light::BufferMeshShadow(Mesh &m, float screenWidth, float screenHeight)
     shadowBuffer->Bind();
         shadowProgram->Use();
 
-            glCullFace(GL_FRONT);
+            //glCullFace(GL_FRONT);
 
             shadowProgram->SetUniform("modelMatrix", m.GetModelMatrix());
             shadowProgram->SetUniform("lightView", GetView());
@@ -92,7 +92,7 @@ void Light::ClearBufferMeshShadow()
 
 void Light::ApplyLight(GBuffer &gbuffer, const glm::mat4 &camView, const glm::mat4 &camProjection) const
 {
-    //glDisable(GL_DEPTH_TEST);
+    glDisable(GL_DEPTH_TEST);
     if(type == DirectionalLight)
     {
         gbuffer.Bind();
@@ -126,7 +126,7 @@ void Light::ApplyLight(GBuffer &gbuffer, const glm::mat4 &camView, const glm::ma
         lightProgram->UnUse();
         lightVao->UnBind();
     }
-    //glEnable(GL_DEPTH_TEST);
+    glEnable(GL_DEPTH_TEST);
 }
 
 void Light::SetPosition(glm::vec3 position)
@@ -203,9 +203,8 @@ mat4 Light::GetView() const
 
 mat4 Light::GetProjection(float screenWidth, float screenHeight) const
 {
-    float width = 14.0f;
+    float width = 10.0f;
     float height = width * screenHeight/screenWidth;
-    //return infinitePerspective(45.0f * 3.1415f/180.0f, screenWidth/screenHeight, -10.0f);
-    return ortho(-width, width, -height, height, 0.9f, 20.0f);
+    return ortho(-width, width, -height, height, 0.0f, 40.0f);
 }
 

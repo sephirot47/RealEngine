@@ -105,6 +105,7 @@ using namespace glm;
 ostream& operator<<(ostream &log, const vec3 &v);
 ostream& operator<<(ostream &log, const quat &q);
 ostream& operator<<(ostream &log, const vec2 &v);
+ostream& operator<<(ostream &log, const vec4 &v);
 ostream& operator<<(ostream &log, const string &str);
 ostream& operator<<(ostream &log, const mat4 &v);
 

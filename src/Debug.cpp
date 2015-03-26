@@ -79,6 +79,12 @@ ostream& operator<<(ostream &log, const vec3 &v)
     return log;
 }
 
+ostream& operator<<(ostream &log, const vec4 &v)
+{
+    log << "(" << v.x << ", " << v.y << ", " << v.z << ", " << v.w << ")";
+    return log;
+}
+
 ostream& operator<<(ostream &log, const quat &q)
 {
     log << "(" << q.x << ", " << q.y << ", " << q.z << ", " << q.w << ")";

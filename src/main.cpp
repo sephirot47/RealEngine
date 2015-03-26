@@ -12,8 +12,8 @@ using namespace std;
 const float width = 1500, height = 800;
 
 GBuffer *gbuffer;
-Mesh *mesh, *mesh2, *meshSphere;
-Light *light;
+Mesh *mesh, *mesh2, *meshQuad;
+Light *light, *light2;
 vec3 cameraRot, cameraPos;
 Texture *texture;
 
@@ -36,7 +36,6 @@ void Init()
     program2->AttachShader(*fshader);
     program2->AttachShader(*vshader);
     program2->Link();
-
     ShaderProgram *program3 = new ShaderProgram();
     program3->AttachShader(*fshader);
     program3->AttachShader(*vshader);
@@ -58,9 +57,13 @@ void Init()
     mesh2->LoadFromFile("Assets/Models/gordaco.obj");
     mesh2->SetShaderProgram(*program2);
 
-    meshSphere = new Mesh();
-    meshSphere->LoadFromFile("Assets/Models/quad.obj");
-    meshSphere->SetShaderProgram(*program3);
+    Image *img3 = new Image(); img3->LoadFromFile("Assets/Textures/wall.jpg");
+    Texture *texture3 = new Texture();
+    texture3->SetData(img3->GetData(), img3->GetWidth(), img3->GetHeight(), img3->GetFormat(), img3->GetFormat(), GL_UNSIGNED_BYTE);
+    program3->AttachTexture("tex", *texture3);
+    meshQuad = new Mesh();
+    meshQuad->LoadFromFile("Assets/Models/quad.obj");
+    meshQuad->SetShaderProgram(*program3);
     //
 
     Shader *finalfshader = new Shader(); finalfshader->Create("Assets/Shaders/FrameBuffer/default.frag", GL_FRAGMENT_SHADER);
@@ -72,10 +75,16 @@ void Init()
     gbuffer->SetFragmentDepthTextureName("depth");
 
     light = new Light(DirectionalLight, width, height);
-    light->SetPosition(vec3(0.0f, 0.0f, 5.0f));
-    light->SetDirection(vec3(0.01f, -0.01f, -1.0f));
+    light->SetPosition(vec3(0.0f, 0.5f, 10.0f));
+    light->SetDirection(-light->GetPosition());
     light->SetColor(vec3(1.0f, 1.0f, 1.0f));
-    light->SetIntensity(50.0f);
+    light->SetIntensity(0.2f);
+
+    light2 = new Light(DirectionalLight, width, height);
+    light2->SetPosition(vec3(0.0f, -1.0f, 10.0f));
+    light2->SetDirection(vec3(-light2->GetPosition()));
+    light2->SetColor(vec3(0.0f, 1.0f, 0.0f));
+    light2->SetIntensity(1.0f);
 
     cameraPos = vec3(0, 0, 7.0f);
     cameraRot = vec3(0, 0, 0.0f);
@@ -86,7 +95,7 @@ bool lightMode = false;
 
 void RenderScene()
 {
-    light->SetPosition(vec3(0.0f, 0.0f, 15.0f));
+    light->SetPosition(vec3(0.0f, 0.5f, 10.0f));
     light->SetDirection(-light->GetPosition());
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -106,8 +115,8 @@ void RenderScene()
         if(lightMode) projection = light->GetProjection(width, height);
 
         model = mat4(1.0f);
-        translate = vec3(1.0f, 0.1f, 3.0f /*+  * 50.0f*/ );
-        scale = vec3(0.01f);
+        translate = vec3(sin(appTime) * 0.8f, 0.0f, 3.0f /*+  * 50.0f*/ );
+        scale = vec3(0.005f);
         T = glm::translate(model, translate);
         R = glm::rotate_slow(model, sphereRot, axis);
         S = glm::scale(model, scale);
@@ -116,7 +125,7 @@ void RenderScene()
 
         model = mat4(1.0f);
         translate = vec3(-0.0f, -0.3f, 0.0f);
-        scale = vec3(0.001f);
+        scale = vec3(0.02f);
         T = glm::translate(model, translate);
         R = glm::rotate_slow(model, 0.0f, axis);
         S = glm::scale(model, scale);
@@ -125,13 +134,13 @@ void RenderScene()
 
         model = mat4(1.0f);
         translate = vec3(0.0f, 0.5f, -4.0f);
-        scale = vec3(0.00f);
+        scale = vec3(0.005f);
         T = glm::translate(model, translate);
         R = glm::rotate_slow(model, 0.0f, axis);
         scale = vec3(6.0f);
         S = glm::scale(model, scale);
-        meshSphere->SetModelMatrix(T * R * S);
-        meshSphere->SetNormalMatrix(R * S);
+        meshQuad->SetModelMatrix(T * R * S);
+        meshQuad->SetNormalMatrix(R * S);
 
         mat4 view = mat4(1.0f);
         T = glm::translate(view, cameraPos);
@@ -139,21 +148,24 @@ void RenderScene()
         view = glm::inverse(T * R);
         if(lightMode) view = light->GetView();
 
-        meshSphere->GetShaderProgram()->AttachTexture("tex", *texture);
-       // meshSphere->GetShaderProgram()->AttachTexture("tex", *light->GetShadowBuffer()->GetTexture(GL_DEPTH_ATTACHMENT));
-
         mesh->Draw(projection, view);
-        //mesh2->Draw(projection, view);
-        meshSphere->Draw(projection, view);
+        mesh2->Draw(projection, view);
+        meshQuad->Draw(projection, view);
 
         light->ClearBufferMeshShadow();
         light->BufferMeshShadow(*mesh, width, height);
-        //light->BufferMeshShadow(*mesh2, width, height);
-        light->BufferMeshShadow(*meshSphere, width, height);
+        light->BufferMeshShadow(*mesh2, width, height);
+        light->BufferMeshShadow(*meshQuad, width, height);
+
+        light2->ClearBufferMeshShadow();
+        light2->BufferMeshShadow(*mesh, width, height);
+        light2->BufferMeshShadow(*mesh2, width, height);
+        light2->BufferMeshShadow(*meshQuad, width, height);
 
         gbuffer->Bind();
 
         light->ApplyLight(*gbuffer, view, projection);
+        //light2->ApplyLight(*gbuffer, view, projection);
 
         gbuffer->DrawToScreen();
 
