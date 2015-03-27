@@ -42,9 +42,9 @@ public:
     bool ExistsDrawingBuffer(GLenum attachment);
     void DeleteDrawingBuffer(GLenum attachment);
 
-    void ClearColor() const { glClear(GL_COLOR_BUFFER_BIT); }
-    void ClearDepth() const { glClear(GL_DEPTH_BUFFER_BIT); }
-    void ClearColorDepth() const { glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); }
+    void ClearColor() const;
+    void ClearDepth() const;
+    void ClearColorDepth() const;
 
     Texture *GetTexture(GLenum attachment) const;
     GLuint GetObject() const { return object; }

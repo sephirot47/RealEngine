@@ -5,14 +5,14 @@ const float GBuffer::screenMesh[12] = {1.0f, -1.0f, 0.0f,
                                       -1.0f,  1.0f, 0.0f,
                                       -1.0f, -1.0f, 0.0f};
 
-GBuffer::GBuffer(float width, float height, Shader &fshader) : FrameBuffer(width, height)
+GBuffer::GBuffer(float width, float height) : FrameBuffer(width, height)
 {
     this->width = width;
     this->height = height;
 
     // Create the vertex shader
     vshader = new Shader(); vshader->Create("Assets/Shaders/FrameBuffer/default.vert", GL_VERTEX_SHADER);
-    this->fshader = &fshader;
+    fshader = new Shader(); fshader->Create("Assets/Shaders/FrameBuffer/default.frag", GL_FRAGMENT_SHADER);
     program = new ShaderProgram();
     program->AttachShader(*vshader);
     program->AttachShader(*(this->fshader));

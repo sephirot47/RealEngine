@@ -43,7 +43,7 @@ private:
 
 public:
 
-    GBuffer(float width, float height, Shader &fshader);
+    GBuffer(float width, float height);
     ~GBuffer();
 
     void Draw() const;

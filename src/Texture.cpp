@@ -47,6 +47,13 @@ void Texture::SetData(const void *data, int width, int height, GLenum format, GL
     StateManager::Pop();
 }
 
+void Texture::LoadFromFile(const std::string filepath) const
+{
+    Image *img = new Image(); img->LoadFromFile(filepath);
+    SetData(img->GetData(), img->GetWidth(), img->GetHeight(), img->GetFormat(), img->GetFormat(), GL_UNSIGNED_BYTE);
+    delete img;
+}
+
 void Texture::Bind() const
 {
     glBindTexture(GL_TEXTURE_2D, object);

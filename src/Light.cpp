@@ -11,14 +11,11 @@ Light::Light(LightType type, float screenWidth, float screenHeight)
 
     this->type = type;
 
-    //Light stuff
-       //VAO & VBO
     lightVbo = new VBO();
     lightVbo->SetData(Light::screenMesh, sizeof(Light::screenMesh));
     lightVao = new VAO();
     lightVao->AddAttribute(*lightVbo, 0, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
-    //Shaders & ShaderProgram
     if(type == DirectionalLight)
     {
         lightvshader = new Shader(); lightvshader->Create("Assets/Shaders/Light/light.vert", GL_VERTEX_SHADER);
@@ -34,10 +31,8 @@ Light::Light(LightType type, float screenWidth, float screenHeight)
     lightProgram->AttachShader(*lightvshader);
     lightProgram->AttachShader(*lightfshader);
     lightProgram->Link();
-    //
 
-    //Shadow stuff
-        //Shaders & ShaderProgram
+
     shadowvshader = new Shader(); shadowvshader->Create("Assets/Shaders/Light/Directional/shadow.vert", GL_VERTEX_SHADER);
     shadowfshader = new Shader(); shadowfshader->Create("Assets/Shaders/Light/Directional/shadow.frag", GL_FRAGMENT_SHADER);
     shadowProgram = new ShaderProgram();
@@ -45,16 +40,9 @@ Light::Light(LightType type, float screenWidth, float screenHeight)
     shadowProgram->AttachShader(*shadowfshader);
     shadowProgram->Link();
 
-       //Buffer for the depth
-    DbgLog(screenWidth << ", " << screenHeight);
     shadowBuffer = new FrameBuffer(screenWidth, screenHeight);
     shadowBuffer->AddDrawingBuffer(GL_DEPTH_ATTACHMENT, GL_DEPTH_COMPONENT16, GL_DEPTH_COMPONENT,
                                    GL_FLOAT, GL_CLAMP_TO_EDGE, GL_LINEAR);
-    shadowBuffer->Bind();
-    glBindTexture(GL_TEXTURE_2D, shadowBuffer->GetTexture(GL_DEPTH_ATTACHMENT)->GetObject());
-    glBindTexture(GL_TEXTURE_2D, 0);
-
-    //
 
     pos = vec3(0, 0, 10);
     dir = vec3(0, 0, -1);

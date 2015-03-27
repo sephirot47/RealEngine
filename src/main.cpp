@@ -1,4 +1,3 @@
-
 #include <iostream>
 #include <vector>
 #include <SDL2/SDL.h>
@@ -12,10 +11,10 @@ using namespace std;
 const float width = 1500, height = 800;
 
 GBuffer *gbuffer;
-Mesh *mesh, *mesh2, *meshQuad;
+Mesh *mesh1, *mesh2, *mesh3;
 Light *light, *light2;
+Material *material1, *material2, *material3;
 vec3 cameraRot, cameraPos;
-Texture *texture;
 
 void Init()
 {
@@ -25,49 +24,28 @@ void Init()
     glCullFace(GL_BACK);
     glDepthFunc(GL_LEQUAL);
 
-    //LUIGI THINGS
-    Shader *fshader = new Shader(); fshader->Create("Assets/Shaders/Mesh/default.frag", GL_FRAGMENT_SHADER);
-    Shader *vshader = new Shader(); vshader->Create("Assets/Shaders/Mesh/default.vert", GL_VERTEX_SHADER);
-    ShaderProgram *program = new ShaderProgram();
-    program->AttachShader(*fshader);
-    program->AttachShader(*vshader);
-    program->Link();
-    ShaderProgram *program2 = new ShaderProgram();
-    program2->AttachShader(*fshader);
-    program2->AttachShader(*vshader);
-    program2->Link();
-    ShaderProgram *program3 = new ShaderProgram();
-    program3->AttachShader(*fshader);
-    program3->AttachShader(*vshader);
-    program3->Link();
+    mesh1 = new Mesh();
+    mesh1->LoadFromFile("Assets/Models/luigi.obj");
+    Texture *texture1 = new Texture();
+    texture1->LoadFromFile("Assets/Textures/luigiD.jpg");
+    material1 = new Material();
+    material1->SetTexture(*texture1);
 
-    Image *img = new Image(); img->LoadFromFile("Assets/Textures/luigiD.jpg");
-    texture = new Texture();
-    texture->SetData(img->GetData(), img->GetWidth(), img->GetHeight(), img->GetFormat(), img->GetFormat(), GL_UNSIGNED_BYTE);
-    program->AttachTexture("tex", *texture);
-    mesh = new Mesh();
-    mesh->LoadFromFile("Assets/Models/luigi.obj");
-    mesh->SetShaderProgram(*program);
-
-    Image *img2 = new Image(); img2->LoadFromFile("Assets/Textures/gordaco.bmp");
-    Texture *texture2 = new Texture();
-    texture2->SetData(img2->GetData(), img2->GetWidth(), img2->GetHeight(), img2->GetFormat(), img2->GetFormat(), GL_UNSIGNED_BYTE);
-    program2->AttachTexture("tex", *texture2);
     mesh2 = new Mesh();
     mesh2->LoadFromFile("Assets/Models/gordaco.obj");
-    mesh2->SetShaderProgram(*program2);
+    Texture *texture2 = new Texture();
+    texture2->LoadFromFile("Assets/Textures/gordaco.bmp");
+    material2 = new Material();
+    material2->SetTexture(*texture2);
 
-    Image *img3 = new Image(); img3->LoadFromFile("Assets/Textures/wall.jpg");
+    mesh3 = new Mesh();
+    mesh3->LoadFromFile("Assets/Models/quad.obj");
     Texture *texture3 = new Texture();
-    texture3->SetData(img3->GetData(), img3->GetWidth(), img3->GetHeight(), img3->GetFormat(), img3->GetFormat(), GL_UNSIGNED_BYTE);
-    program3->AttachTexture("tex", *texture3);
-    meshQuad = new Mesh();
-    meshQuad->LoadFromFile("Assets/Models/quad.obj");
-    meshQuad->SetShaderProgram(*program3);
-    //
+    texture3->LoadFromFile("Assets/Textures/wall.jpg");
+    material3 = new Material();
+    material3->SetTexture(*texture3);
 
-    Shader *finalfshader = new Shader(); finalfshader->Create("Assets/Shaders/FrameBuffer/default.frag", GL_FRAGMENT_SHADER);
-    gbuffer = new GBuffer(width, height, *finalfshader);
+    gbuffer = new GBuffer(width, height);
     gbuffer->SetFragmentFinalColorTextureName("finalColors");
     gbuffer->SetFragmentTextureColorTextureName("textureColors");
     gbuffer->SetFragmentPositionTextureName("pos");
@@ -104,8 +82,6 @@ void RenderScene()
     light->SetDirection(-light->GetPosition());
 
     light2->SetRange((sin(appTime)*0.5+0.5) * 10.0f);
-    //light2->SetRange(2.0f);
-    //light2->SetPosition(vec3(cos(appTime) * 7.0f, 0.0f, 1.0f));
     light2->SetDirection(-light2->GetPosition());
 
     mat4 model(1.0f);
@@ -127,8 +103,8 @@ void RenderScene()
         T = glm::translate(model, translate);
         R = glm::rotate_slow(model, sphereRot, axis);
         S = glm::scale(model, scale);
-        mesh->SetModelMatrix(T * R * S);
-        mesh->SetNormalMatrix(R * S);
+        mesh1->SetModelMatrix(T * R * S);
+        mesh1->SetNormalMatrix(R * S);
 
         model = mat4(1.0f);
         translate = vec3(-0.0f, -0.3f, 0.0f);
@@ -146,8 +122,8 @@ void RenderScene()
         R = glm::rotate_slow(model, 0.0f, axis);
         scale = vec3(6.0f);
         S = glm::scale(model, scale);
-        meshQuad->SetModelMatrix(T * R * S);
-        meshQuad->SetNormalMatrix(R * S);
+        mesh3->SetModelMatrix(T * R * S);
+        mesh3->SetNormalMatrix(R * S);
 
         mat4 view = mat4(1.0f);
         T = glm::translate(view, cameraPos);
@@ -155,19 +131,19 @@ void RenderScene()
         view = glm::inverse(T * R);
         if(lightMode) view = light2->GetView();
 
-        mesh->Draw(projection, view);
-        mesh2->Draw(projection, view);
-        meshQuad->Draw(projection, view);
+        mesh1->Draw(*material1, projection, view);
+        mesh2->Draw(*material2, projection, view);
+        mesh3->Draw(*material3, projection, view);
 
         light->ClearBufferMeshShadow();
-        light->BufferMeshShadow(*mesh, width, height);
+        light->BufferMeshShadow(*mesh1, width, height);
         light->BufferMeshShadow(*mesh2, width, height);
-        light->BufferMeshShadow(*meshQuad, width, height);
+        light->BufferMeshShadow(*mesh3, width, height);
 
         light2->ClearBufferMeshShadow();
-        light2->BufferMeshShadow(*mesh, width, height);
+        light2->BufferMeshShadow(*mesh1, width, height);
         light2->BufferMeshShadow(*mesh2, width, height);
-        light2->BufferMeshShadow(*meshQuad, width, height);
+        light2->BufferMeshShadow(*mesh3, width, height);
 
         light->ApplyLight(*gbuffer, view, projection);
         light2->ApplyLight(*gbuffer, view, projection);

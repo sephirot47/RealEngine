@@ -24,7 +24,6 @@
 #include "Texture.h"
 #include "Image.h"
 #include "FrameBuffer.h"
-#include "FrameDrawer.h"
 #include "VAO.h"
 #include "GBuffer.h"
 #include "Mesh.h"

@@ -4,16 +4,26 @@ Mesh::Mesh()
 {
     numVertices = 0;
     model = mat4(1.0f);
+    vao = nullptr;
+    vboPos = vboUv = vboNormals = nullptr;
 }
 
 Mesh::~Mesh()
 {
-
+    if(vao) delete vao;
+    if(vboPos) delete vboPos;
+    if(vboUv) delete vboUv;
+    if(vboNormals) delete vboNormals;
 }
 
 void Mesh::LoadFromFile(const char *filepath)
 {
     StateManager::Push();
+
+    if(vao) delete vao;
+    if(vboPos) delete vboPos;
+    if(vboUv) delete vboUv;
+    if(vboNormals) delete vboNormals;
 
     std::vector<glm::vec3> pos, normals;
     std::vector<glm::vec2> uv;
@@ -22,7 +32,6 @@ void Mesh::LoadFromFile(const char *filepath)
     FileLoader::ReadOBJ(filepath, pos, uv, normals, triangles);
 
     drawingMode = triangles ? GL_TRIANGLES : GL_QUADS;
-
     numVertices = pos.size();
 
     vao = new VAO();
@@ -51,20 +60,22 @@ void Mesh::LoadFromFile(const char *filepath)
     StateManager::Pop();
 }
 
-void Mesh::Draw(mat4 &projection, mat4 &view)
+void Mesh::Draw(const Material &material, mat4 &projection, mat4 &view)
 {
+    if(not vao) return;
+
     StateManager::Push();
 
     vao->Bind();
-    program->Use();
+    material.BindForDrawing();
 
-    program->SetUniform("projection", projection);
-    program->SetUniform("view", view);
-    program->SetUniform("model", model);
-    program->SetUniform("normalMatrix", normalMatrix);
+    material.GetShaderProgram()->SetUniform("projection", projection);
+    material.GetShaderProgram()->SetUniform("view", view);
+    material.GetShaderProgram()->SetUniform("model", model);
+    material.GetShaderProgram()->SetUniform("normalMatrix", normalMatrix);
     glDrawArrays(drawingMode, 0, numVertices);
 
-    program->UnUse();
+    material.UnBindForDrawing();
     vao->UnBind();
 
     StateManager::Pop();
@@ -85,11 +96,6 @@ void Mesh::SetNormalMatrix(mat4 normalMatrix)
     this->normalMatrix = normalMatrix;
 }
 
-
-void Mesh::SetShaderProgram(ShaderProgram &shaderProgram)
-{
-    program = &shaderProgram;
-}
 
 
 int Mesh::GetNumVertices() const
@@ -115,21 +121,6 @@ VBO* Mesh::GetVBOUv() const
 VBO* Mesh::GetVBONormals() const
 {
     return vboNormals;
-}
-
-Shader* Mesh::GetFragmentShader() const
-{
-    return fshader;
-}
-
-Shader* Mesh::GetVertexShader() const
-{
-    return vshader;
-}
-
-ShaderProgram* Mesh::GetShaderProgram() const
-{
-    return program;
 }
 
 GLenum Mesh::GetDrawingMode() const

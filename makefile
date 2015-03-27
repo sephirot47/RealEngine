@@ -1,6 +1,6 @@
 all: main.exe
 
-main.exe: main.o Shader.o ShaderProgram.o stb_image.o Debug.o Time.o VBO.o VAO.o Image.o Texture.o FileLoader.o FrameBuffer.o FrameDrawer.o Mesh.o GBuffer.o Light.o StateManager.o
+main.exe: main.o Shader.o ShaderProgram.o stb_image.o Debug.o Time.o VBO.o VAO.o Image.o Texture.o FileLoader.o FrameBuffer.o Mesh.o GBuffer.o Light.o StateManager.o Material.o GameObject.o Scene.o
 	g++ -std=c++11 *.o -o main.exe -Iinclude -lGL -lGLU -lSDL2
 
 main.o: src/main.cpp
@@ -36,9 +36,6 @@ FileLoader.o: src/FileLoader.cpp
 FrameBuffer.o: src/FrameBuffer.cpp
 	g++ -std=c++11 -c src/FrameBuffer.cpp -Iinclude -lGL -lGLU -lSDL2
 
-FrameDrawer.o: src/FrameDrawer.cpp
-	g++ -std=c++11 -c src/FrameDrawer.cpp -Iinclude -lGL -lGLU -lSDL2
-
 stb_image.o: src/stb_image.cpp
 	g++ -std=c++11 -c src/stb_image.cpp -Iinclude -lGL -lGLU -lSDL2
 
@@ -53,6 +50,15 @@ Light.o: src/Light.cpp
 
 StateManager.o: src/StateManager.cpp
 	g++ -std=c++11 -c src/StateManager.cpp -Iinclude -lGL -lGLU -lSDL2
+
+Material.o: src/Material.cpp
+	g++ -std=c++11 -c src/Material.cpp -Iinclude -lGL -lGLU -lSDL2
+
+GameObject.o: src/GameObject.cpp
+	g++ -std=c++11 -c src/GameObject.cpp -Iinclude -lGL -lGLU -lSDL2
+
+Scene.o: src/Scene.cpp
+	g++ -std=c++11 -c src/Scene.cpp -Iinclude -lGL -lGLU -lSDL2
 
 clean:
 	rm -rf *.exe *.o *~

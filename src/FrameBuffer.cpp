@@ -73,6 +73,39 @@ void FrameBuffer::DeleteDrawingBuffer(GLenum attachment)
     }
 }
 
+void FrameBuffer::ClearColor() const
+{
+    StateManager::Push();
+
+    Bind();
+    glClear(GL_COLOR_BUFFER_BIT);
+    UnBind();
+
+    StateManager::Pop();
+}
+
+void FrameBuffer::ClearDepth() const
+{
+    StateManager::Push();
+
+    Bind();
+    glClear(GL_DEPTH_BUFFER_BIT);
+    UnBind();
+
+    StateManager::Pop();
+}
+
+void FrameBuffer::ClearColorDepth() const
+{
+    StateManager::Push();
+
+    Bind();
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    UnBind();
+
+    StateManager::Pop();
+}
+
 
 Texture *FrameBuffer::GetTexture(GLenum attachment) const
 {
