@@ -34,7 +34,7 @@ private:
 
     glm::vec3 pos, dir;
     glm::vec3 color;
-    float intensity;
+    float intensity, range;
     float shadow;
 
     LightType type;
@@ -52,6 +52,7 @@ public:
     void SetDirection(glm::vec3 direction);
     void SetColor(glm::vec3 color);
     void SetIntensity(float intensity);
+    void SetRange(float range);
     void SetShadow(float shadow);
 
     FrameBuffer *GetShadowBuffer() const;
@@ -59,6 +60,7 @@ public:
     glm::vec3 GetDirection() const;
     glm::vec3 GetColor() const;
     float GetIntensity() const;
+    float GetRange() const;
     float GetShadow() const;
 
     mat4 GetView() const;

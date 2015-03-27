@@ -81,11 +81,12 @@ void Init()
     light->SetColor(vec3(1.0f, 1.0f, 1.0f));
     light->SetIntensity(1.0f);
 
-    light2 = new Light(DirectionalLight, width, height);
-    light2->SetPosition(vec3(-5.0f, 5.0f, 5.0f));
+    light2 = new Light(PointLight, width, height);
+    light2->SetPosition(vec3(0.0f, 0.0f, 2.0f));
     light2->SetDirection(-light2->GetPosition());
-    light2->SetColor(vec3(0.0f, 1.0f, 1.0f));
+    light2->SetColor(vec3(1.0f, 0.0f, 0.0f));
     light2->SetIntensity(1.0f);
+    light2->SetRange(2.0f);
 
     cameraPos = vec3(0, 0, 7.0f);
     cameraRot = vec3(0, 0, 0.0f);
@@ -101,6 +102,11 @@ void RenderScene()
     sphereRot += 0.03f;
     light->SetPosition(vec3(sin(appTime) * 7.0f, 0.5f, 10.0f));
     light->SetDirection(-light->GetPosition());
+
+    light2->SetRange((sin(appTime)*0.5+0.5) * 10.0f);
+    //light2->SetRange(2.0f);
+    //light2->SetPosition(vec3(cos(appTime) * 7.0f, 0.0f, 1.0f));
+    light2->SetDirection(-light2->GetPosition());
 
     mat4 model(1.0f);
     vec3 axis(.0, 1.0, 0.0), translate, scale;
@@ -162,8 +168,8 @@ void RenderScene()
         light2->BufferMeshShadow(*mesh2, width, height);
         light2->BufferMeshShadow(*meshQuad, width, height);
 
-        light2->ApplyLight(*gbuffer, view, projection);
         light->ApplyLight(*gbuffer, view, projection);
+        light2->ApplyLight(*gbuffer, view, projection);
 
         gbuffer->DrawToScreen();
 
@@ -204,6 +210,8 @@ int main()
             if (event.type == SDL_KEYDOWN && IsPressed(SDLK_LEFT)) cameraPos.x -= camSpeed;
             if (event.type == SDL_KEYDOWN && IsPressed(SDLK_UP)) cameraPos.z -= camSpeed;
             if (event.type == SDL_KEYDOWN && IsPressed(SDLK_DOWN)) cameraPos.z += camSpeed;
+            if (event.type == SDL_KEYDOWN && IsPressed(SDLK_s)) cameraPos.y -= camSpeed;
+            if (event.type == SDL_KEYDOWN && IsPressed(SDLK_w)) cameraPos.y += camSpeed;
             if (event.type == SDL_KEYDOWN && IsPressed(SDLK_0)) lightMode = !lightMode;
         }
 

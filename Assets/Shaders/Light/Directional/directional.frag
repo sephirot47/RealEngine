@@ -2,8 +2,8 @@
 
 uniform mat4 camProjectionInverse, camViewInverse;
 uniform mat4 lightProjection, lightView;
-uniform vec3 lightDir, lightColor;
-uniform float lightIntensity;
+uniform vec3 lightPosition, lightDir, lightColor;
+uniform float lightIntensity, lightShadow, lightRange;
 uniform sampler2D finalColors, textureColors, pos, uvs, normals, depth;
 uniform sampler2D shadowDepthBuffer;
 
@@ -22,14 +22,20 @@ out vec3 outnormal;
 
 
 void main()  
-{  
+{
+    if(texture(depth, screenuv).x > 0.9999)
+    {
+	outFinalColors = vec4(texture(finalColors, screenuv).xyz, 1);
+ 	return;
+    }
+
     vec4 worldPosition = vec4(texture(pos, screenuv).xyz, 1);
     vec4 projectionCoord = lightProjection * lightView * worldPosition;
     projectionCoord /= projectionCoord.w;
     vec4 shadowCoord = biasMatrix * projectionCoord;
 
     float shadow = 1.0;
-    if(texture(shadowDepthBuffer, shadowCoord.xy).z < shadowCoord.z - 0.005 ) shadow = 0.3;
+    if(texture(shadowDepthBuffer, shadowCoord.xy).z < shadowCoord.z - 0.005 ) shadow = lightShadow;
 
     vec3 normal = normalize(texture(normals, screenuv).xyz);
     float brightness = max(0.0, dot(-normalize(lightDir), normal));

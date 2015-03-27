@@ -58,6 +58,8 @@ Light::Light(LightType type, float screenWidth, float screenHeight)
     dir = vec3(0, 0, -1);
     color = vec3(1, 1, 1);
     intensity = 1.0f;
+    range = 2.0f;
+    shadow = 0.3f;
 }
 
 Light::~Light()
@@ -127,6 +129,8 @@ void Light::ApplyLight(GBuffer &gbuffer, const glm::mat4 &camView, const glm::ma
         lightProgram->SetUniform("lightProjection", lightProjection);
 
         lightProgram->SetUniform("lightPosition", pos);
+        lightProgram->SetUniform("lightRange", range);
+        lightProgram->SetUniform("lightShadow", shadow);
         lightProgram->SetUniform("lightDir", dir);
         lightProgram->SetUniform("lightColor", color);
         lightProgram->SetUniform("lightIntensity", intensity);
@@ -159,10 +163,17 @@ void Light::SetIntensity(float intensity)
     this->intensity = intensity;
 }
 
+void Light::SetRange(float range)
+{
+    this->range = range;
+}
+
 void Light::SetShadow(float shadow)
 {
     this->shadow = shadow;
 }
+
+
 
 FrameBuffer *Light::GetShadowBuffer() const
 {
@@ -187,6 +198,11 @@ glm::vec3 Light::GetColor() const
 float Light::GetIntensity() const
 {
     return intensity;
+}
+
+float Light::GetRange() const
+{
+    return range;
 }
 
 float Light::GetShadow() const
