@@ -213,6 +213,8 @@ int main()
             if (event.type == SDL_KEYDOWN && IsPressed(SDLK_s)) cameraPos.y -= camSpeed;
             if (event.type == SDL_KEYDOWN && IsPressed(SDLK_w)) cameraPos.y += camSpeed;
             if (event.type == SDL_KEYDOWN && IsPressed(SDLK_0)) lightMode = !lightMode;
+            if (event.type == SDL_KEYDOWN && IsPressed(SDLK_1)) light->SetEnabled(!light->GetEnabled());
+            if (event.type == SDL_KEYDOWN && IsPressed(SDLK_2)) light2->SetEnabled(!light2->GetEnabled());
         }
 
         RenderScene();

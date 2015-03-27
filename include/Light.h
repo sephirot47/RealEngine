@@ -37,6 +37,8 @@ private:
     float intensity, range;
     float shadow;
 
+    bool enabled;
+
     LightType type;
 
 public:
@@ -54,6 +56,7 @@ public:
     void SetIntensity(float intensity);
     void SetRange(float range);
     void SetShadow(float shadow);
+    void SetEnabled(bool enabled);
 
     FrameBuffer *GetShadowBuffer() const;
     glm::vec3 GetPosition() const;
@@ -62,6 +65,7 @@ public:
     float GetIntensity() const;
     float GetRange() const;
     float GetShadow() const;
+    bool GetEnabled() const;
 
     mat4 GetView() const;
     mat4 GetProjection(float screenWidth, float screenHeight) const;

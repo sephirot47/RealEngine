@@ -60,6 +60,8 @@ Light::Light(LightType type, float screenWidth, float screenHeight)
     intensity = 1.0f;
     range = 2.0f;
     shadow = 0.3f;
+
+    enabled = true;
 }
 
 Light::~Light()
@@ -103,6 +105,8 @@ void Light::ClearBufferMeshShadow()
 
 void Light::ApplyLight(GBuffer &gbuffer, const glm::mat4 &camView, const glm::mat4 &camProjection) const
 {
+    if(!enabled) return;
+
     glDisable(GL_DEPTH_TEST);
     if(type == DirectionalLight || type == PointLight)
     {
@@ -173,6 +177,11 @@ void Light::SetShadow(float shadow)
     this->shadow = shadow;
 }
 
+void Light::SetEnabled(bool enabled)
+{
+    this->enabled = enabled;
+}
+
 
 
 FrameBuffer *Light::GetShadowBuffer() const
@@ -209,6 +218,14 @@ float Light::GetShadow() const
 {
     return shadow;
 }
+
+bool Light::GetEnabled() const
+{
+    return enabled;
+}
+
+
+
 
 quat LookAt(const vec3 eye, const vec3 lookTo, const vec3 up)
 {
