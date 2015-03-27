@@ -25,6 +25,8 @@ FrameDrawer::~FrameDrawer()
 
 void FrameDrawer::Draw() const
 {
+    StateManager::Push();
+
     if(!fshader)
     {
         DbgError("You must attach a created fragment shader to the frame drawer in order to draw something");
@@ -41,6 +43,8 @@ void FrameDrawer::Draw() const
 
     program->UnUse();
     vao->UnBind();
+
+    StateManager::Pop();
 }
 
 void FrameDrawer::AttachFragmentShader(Shader &fshader, std::string sceneTextureUniformName, std::string depthTextureUniformName)

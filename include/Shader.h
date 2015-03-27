@@ -11,7 +11,8 @@
 #include <GL/glu.h>
 #include <GL/glext.h>
 
-#include "../include/Debug.h"
+#include "StateManager.h"
+#include "Debug.h"
 
 
 class Shader

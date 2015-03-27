@@ -8,6 +8,7 @@
 #include <fstream>
 #include <sstream>
 
+#include "StateManager.h"
 #include "stb_image.h"
 #include "Shader.h"
 #include "ShaderProgram.h"

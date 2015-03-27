@@ -13,7 +13,7 @@
 struct GLState
 {
     GLint vbo, vao, framebuffer, depthFunc, cullFaceMode, program, texture2d;
-    GLboolean depthTest, cullFace;
+    GLboolean depthTest, cullFace, vertexArraysActivated;
 };
 
 class StateManager

@@ -7,6 +7,8 @@ const float Light::screenMesh[12] = {1.0f, -1.0f, 0.0f,
 
 Light::Light(LightType type, float screenWidth, float screenHeight)
 {
+    StateManager::Push();
+
     this->type = type;
 
     //Light stuff
@@ -62,6 +64,8 @@ Light::Light(LightType type, float screenWidth, float screenHeight)
     shadow = 0.3f;
 
     enabled = true;
+
+    StateManager::Pop();
 }
 
 Light::~Light()
@@ -98,10 +102,14 @@ void Light::BufferMeshShadow(Mesh &m, float screenWidth, float screenHeight)
 
 void Light::ClearBufferMeshShadow()
 {
+    StateManager::Push();
+
     shadowBuffer->Bind();
         glClearDepth(1.0);
         shadowBuffer->ClearColorDepth();
     shadowBuffer->UnBind();
+
+    StateManager::Pop();
 }
 
 

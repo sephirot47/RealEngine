@@ -13,6 +13,8 @@ Mesh::~Mesh()
 
 void Mesh::LoadFromFile(const char *filepath)
 {
+    StateManager::Push();
+
     std::vector<glm::vec3> pos, normals;
     std::vector<glm::vec2> uv;
     bool triangles;
@@ -45,10 +47,14 @@ void Mesh::LoadFromFile(const char *filepath)
         vboNormals->SetData(&normals[0], normals.size() * sizeof(vec3));
         vao->AddAttribute(*vboNormals, index++, 3, GL_FLOAT, GL_FALSE, 0, 0);
     }
+
+    StateManager::Pop();
 }
 
 void Mesh::Draw(mat4 &projection, mat4 &view)
 {
+    StateManager::Push();
+
     vao->Bind();
     program->Use();
 
@@ -60,6 +66,8 @@ void Mesh::Draw(mat4 &projection, mat4 &view)
 
     program->UnUse();
     vao->UnBind();
+
+    StateManager::Pop();
 }
 
 void Mesh::SetDrawingMode(GLenum drawingMode)

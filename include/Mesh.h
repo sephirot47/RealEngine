@@ -1,6 +1,7 @@
 #ifndef MESH_H
 #define MESH_H
 
+#include "StateManager.h"
 #include "FileLoader.h"
 #include "Shader.h"
 #include "ShaderProgram.h"

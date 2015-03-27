@@ -6,6 +6,7 @@
 #include <GL/glu.h>
 #include <GL/glext.h>
 #include "VBO.h"
+#include "StateManager.h"
 
 class VAO
 {

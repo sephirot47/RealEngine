@@ -7,6 +7,7 @@
 #include <GL/glext.h>
 
 #include "Debug.h"
+#include "StateManager.h"
 
 class Texture
 {

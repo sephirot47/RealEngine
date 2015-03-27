@@ -12,9 +12,13 @@ VBO::~VBO()
 
 void VBO::SetData(const void *data, int size) const
 {
+    StateManager::Push();
+
     glBindBuffer(GL_ARRAY_BUFFER, object);
     glBufferData(GL_ARRAY_BUFFER, size, data, GL_STATIC_DRAW);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    StateManager::Pop();
 }
 
 void VBO::Bind() const

@@ -14,25 +14,37 @@ Texture::~Texture()
 
 void Texture::SetWrapMode(GLenum mode) const
 {
+    StateManager::Push();
+
     Bind();
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, mode);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, mode);
     UnBind();
+
+    StateManager::Pop();
 }
 
 void Texture::SetScaleMode(GLenum mode) const
 {
+    StateManager::Push();
+
     Bind();
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, mode);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, mode);
     UnBind();
+
+    StateManager::Pop();
 }
 
 void Texture::SetData(const void *data, int width, int height, GLenum format, GLenum internalFormat, GLenum type) const
 {
+    StateManager::Push();
+
     Bind();
     glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, internalFormat, type, data);
     UnBind();
+
+    StateManager::Pop();
 }
 
 void Texture::Bind() const

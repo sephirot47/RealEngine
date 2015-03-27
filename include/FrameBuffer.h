@@ -7,6 +7,7 @@
 #include <GL/glu.h>
 #include <GL/glext.h>
 
+#include "StateManager.h"
 #include "Texture.h"
 #include "Debug.h"
 

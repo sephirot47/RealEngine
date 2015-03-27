@@ -33,6 +33,8 @@ void FrameBuffer::AddDrawingBuffer(GLenum attachment,
                                    GLenum wrapMode,
                                    GLenum scaleMode)
 {
+    StateManager::Push();
+
     DeleteDrawingBuffer(attachment); //Borralo si ya existia
 
     ++numBuffers;
@@ -47,6 +49,8 @@ void FrameBuffer::AddDrawingBuffer(GLenum attachment,
     Bind(); //Aqui se llama a glDrawBuffers
     glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, GL_TEXTURE_2D, texture->GetObject(), 0);
     UnBind();
+
+    StateManager::Pop();
 }
 
 bool FrameBuffer::ExistsDrawingBuffer(GLenum attachment)

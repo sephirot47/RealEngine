@@ -7,6 +7,8 @@
 #include <GL/glu.h>
 #include <GL/glext.h>
 
+#include "StateManager.h"
+
 class VBO
 {
 private:

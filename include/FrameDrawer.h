@@ -6,6 +6,7 @@
 #include <GL/glu.h>
 #include <GL/glext.h>
 
+#include "StateManager.h"
 #include "VAO.h"
 #include "VBO.h"
 #include "Shader.h"

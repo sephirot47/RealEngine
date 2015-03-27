@@ -2,20 +2,30 @@
 
 VAO::VAO()
 {
+    StateManager::Push();
+
     glEnableClientState(GL_VERTEX_ARRAY);
     glGenVertexArrays(1, &object);
     glDisableClientState(GL_VERTEX_ARRAY);
+
+    StateManager::Pop();
 }
 
 VAO::~VAO()
 {
+    StateManager::Push();
+
     glEnableClientState(GL_VERTEX_ARRAY);
     glDeleteVertexArrays(1, &object);
     glDisableClientState(GL_VERTEX_ARRAY);
+
+    StateManager::Pop();
 }
 
 void VAO::AddAttribute(const VBO &vbo, GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, GLuint offset) const
 {
+    StateManager::Push();
+
     glEnableClientState(GL_VERTEX_ARRAY);
     glBindVertexArray(object);
 
@@ -26,6 +36,8 @@ void VAO::AddAttribute(const VBO &vbo, GLuint index, GLint size, GLenum type, GL
 
     glBindVertexArray(0);
     glDisableClientState(GL_VERTEX_ARRAY);
+
+    StateManager::Pop();
 }
 
 void VAO::Bind() const

@@ -16,6 +16,7 @@
 #include "Texture.h"
 #include "Shader.h"
 #include "Debug.h"
+#include "StateManager.h"
 
 class ShaderProgram
 {
