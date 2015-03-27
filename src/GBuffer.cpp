@@ -25,10 +25,11 @@ GBuffer::GBuffer(float width, float height, Shader &fshader) : FrameBuffer(width
     screenMeshVao->AddAttribute(*screenMeshVbo, 0, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
     //Add buffers
-    AddDrawingBuffer(ColorAttachment, GL_RGB, GL_RGB, GL_FLOAT, GL_REPEAT, GL_LINEAR);
+    AddDrawingBuffer(FinalColorAttachment, GL_RGBA, GL_RGBA, GL_FLOAT, GL_REPEAT, GL_LINEAR);
+    AddDrawingBuffer(TextureColorAttachment, GL_RGBA, GL_RGBA, GL_FLOAT, GL_REPEAT, GL_LINEAR);
     AddDrawingBuffer(PositionAttachment, GL_RGBA32F, GL_RGB, GL_FLOAT, GL_REPEAT, GL_LINEAR);
     AddDrawingBuffer(UvAttachment, GL_RGB, GL_RGB, GL_FLOAT, GL_REPEAT, GL_LINEAR);
-    AddDrawingBuffer(NormalsAttachment, GL_RGB, GL_RGB, GL_FLOAT, GL_REPEAT, GL_LINEAR);
+    AddDrawingBuffer(NormalsAttachment, GL_RGBA32F, GL_RGB, GL_FLOAT, GL_REPEAT, GL_LINEAR);
     AddDrawingBuffer(DepthAttachment, GL_DEPTH_COMPONENT24, GL_DEPTH_COMPONENT, GL_FLOAT, GL_CLAMP_TO_EDGE, GL_NEAREST);
     //
 }
@@ -39,6 +40,9 @@ GBuffer::~GBuffer()
 
 void GBuffer::Draw() const
 {
+    UnBind();
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
     screenMeshVao->Bind();
     program->Use();
 
@@ -53,15 +57,18 @@ void GBuffer::Draw() const
 
 void GBuffer::DrawToScreen() const
 {
-    UnBind(); //dibuja en el screeeeen
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     Draw();
 }
 
 
-void GBuffer::SetFragmentColorTextureName(std::string name)
+void GBuffer::SetFragmentFinalColorTextureName(std::string name)
 {
-    program->AttachTexture(name, *GetColorTexture());
+    program->AttachTexture(name, *GetFinalColorTexture());
+}
+
+void GBuffer::SetFragmentTextureColorTextureName(std::string name)
+{
+    program->AttachTexture(name, *GetTextureColorTexture());
 }
 
 void GBuffer::SetFragmentPositionTextureName(std::string name)
@@ -90,9 +97,14 @@ ShaderProgram *GBuffer::GetShaderProgram() const
     return program;
 }
 
-Texture *GBuffer::GetColorTexture() const
+Texture *GBuffer::GetFinalColorTexture() const
 {
-    return GetTexture(ColorAttachment);
+    return GetTexture(FinalColorAttachment);
+}
+
+Texture *GBuffer::GetTextureColorTexture() const
+{
+    return GetTexture(TextureColorAttachment);
 }
 
 Texture *GBuffer::GetPositionTexture() const

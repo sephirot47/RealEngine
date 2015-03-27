@@ -18,20 +18,21 @@
 #include "VBO.h"
 #include "glm/glm.hpp"
 
+enum
+{
+    FinalColorAttachment = GL_COLOR_ATTACHMENT0,
+    TextureColorAttachment = GL_COLOR_ATTACHMENT1,
+    PositionAttachment = GL_COLOR_ATTACHMENT2,
+    UvAttachment = GL_COLOR_ATTACHMENT3,
+    NormalsAttachment = GL_COLOR_ATTACHMENT4,
+    DepthAttachment = GL_DEPTH_ATTACHMENT
+};
+
 class GBuffer : public FrameBuffer
 {
 private:
 
     static const float screenMesh[12];
-
-    enum
-    {
-        ColorAttachment = GL_COLOR_ATTACHMENT0,
-        PositionAttachment = GL_COLOR_ATTACHMENT1,
-        UvAttachment = GL_COLOR_ATTACHMENT2,
-        NormalsAttachment = GL_COLOR_ATTACHMENT3,
-        DepthAttachment = GL_DEPTH_ATTACHMENT
-    };
 
     VAO *screenMeshVao;
     VBO *screenMeshVbo;
@@ -52,7 +53,8 @@ public:
     void SetVertexUvLocation(int location, VBO &vbo);
     void SetVertexNormalsLocation(int location, VBO &vbo);
 
-    void SetFragmentColorTextureName(std::string name);
+    void SetFragmentFinalColorTextureName(std::string name);
+    void SetFragmentTextureColorTextureName(std::string name);
     void SetFragmentPositionTextureName(std::string name);
     void SetFragmentUvTextureName(std::string name);
     void SetFragmentNormalsTextureName(std::string name);
@@ -60,7 +62,8 @@ public:
 
     VAO *GetVAO() const;
     ShaderProgram *GetShaderProgram() const;
-    Texture *GetColorTexture() const;
+    Texture *GetFinalColorTexture() const;
+    Texture *GetTextureColorTexture() const;
     Texture *GetPositionTexture() const;
     Texture *GetNormalsTexture() const;
     Texture *GetUvTexture() const;

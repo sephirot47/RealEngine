@@ -37,9 +37,6 @@ void FrameDrawer::Draw() const
     vao->Bind();
     program->Use();
 
-    //program->SetUniform("width",  float(frameBuffer->GetWidth()));
-    //program->SetUniform("height", float(frameBuffer->GetHeight()));
-
     glDrawArrays(GL_QUADS, 0, 4);
 
     program->UnUse();
@@ -54,8 +51,5 @@ void FrameDrawer::AttachFragmentShader(Shader &fshader, std::string sceneTexture
     program->AttachShader(*vshader);
     program->AttachShader(fshader);
     program->Link();
-
-    //program->AttachTexture(sceneTextureUniformName, *frameBuffer->GetColorTexture());
-    //program->AttachTexture(depthTextureUniformName, *frameBuffer->GetDepthTexture());
 }
 

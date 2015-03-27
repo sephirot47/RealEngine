@@ -14,7 +14,8 @@
 
 enum LightType
 {
-    DirectionalLight
+    DirectionalLight,
+    PointLight
 };
 
 class Light

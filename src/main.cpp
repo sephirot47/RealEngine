@@ -68,22 +68,23 @@ void Init()
 
     Shader *finalfshader = new Shader(); finalfshader->Create("Assets/Shaders/FrameBuffer/default.frag", GL_FRAGMENT_SHADER);
     gbuffer = new GBuffer(width, height, *finalfshader);
-    gbuffer->SetFragmentColorTextureName("colors");
+    gbuffer->SetFragmentFinalColorTextureName("finalColors");
+    gbuffer->SetFragmentTextureColorTextureName("textureColors");
     gbuffer->SetFragmentPositionTextureName("pos");
     gbuffer->SetFragmentUvTextureName("uvs");
     gbuffer->SetFragmentNormalsTextureName("normals");
     gbuffer->SetFragmentDepthTextureName("depth");
 
     light = new Light(DirectionalLight, width, height);
-    light->SetPosition(vec3(0.0f, 0.5f, 10.0f));
+    light->SetPosition(vec3(10.0f, 0.5f, 10.0f));
     light->SetDirection(-light->GetPosition());
     light->SetColor(vec3(1.0f, 1.0f, 1.0f));
-    light->SetIntensity(0.2f);
+    light->SetIntensity(1.0f);
 
     light2 = new Light(DirectionalLight, width, height);
-    light2->SetPosition(vec3(0.0f, -1.0f, 10.0f));
-    light2->SetDirection(vec3(-light2->GetPosition()));
-    light2->SetColor(vec3(0.0f, 1.0f, 0.0f));
+    light2->SetPosition(vec3(-5.0f, 5.0f, 5.0f));
+    light2->SetDirection(-light2->GetPosition());
+    light2->SetColor(vec3(0.0f, 1.0f, 1.0f));
     light2->SetIntensity(1.0f);
 
     cameraPos = vec3(0, 0, 7.0f);
@@ -95,12 +96,11 @@ bool lightMode = false;
 
 void RenderScene()
 {
-    light->SetPosition(vec3(0.0f, 0.5f, 10.0f));
-    light->SetDirection(-light->GetPosition());
-
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     appTime += 0.03f;
     sphereRot += 0.03f;
+    light->SetPosition(vec3(sin(appTime) * 7.0f, 0.5f, 10.0f));
+    light->SetDirection(-light->GetPosition());
 
     mat4 model(1.0f);
     vec3 axis(.0, 1.0, 0.0), translate, scale;
@@ -112,7 +112,7 @@ void RenderScene()
         gbuffer->ClearColorDepth();
 
         mat4 projection = perspective(45.0f * 3.1415f/180.0f, width/height, 1.0f, 20.0f);
-        if(lightMode) projection = light->GetProjection(width, height);
+        if(lightMode) projection = light2->GetProjection(width, height);
 
         model = mat4(1.0f);
         translate = vec3(sin(appTime) * 0.8f, 0.0f, 3.0f /*+  * 50.0f*/ );
@@ -146,7 +146,7 @@ void RenderScene()
         T = glm::translate(view, cameraPos);
         R = glm::rotate_slow(view, rot, axis);
         view = glm::inverse(T * R);
-        if(lightMode) view = light->GetView();
+        if(lightMode) view = light2->GetView();
 
         mesh->Draw(projection, view);
         mesh2->Draw(projection, view);
@@ -162,10 +162,8 @@ void RenderScene()
         light2->BufferMeshShadow(*mesh2, width, height);
         light2->BufferMeshShadow(*meshQuad, width, height);
 
-        gbuffer->Bind();
-
+        light2->ApplyLight(*gbuffer, view, projection);
         light->ApplyLight(*gbuffer, view, projection);
-        //light2->ApplyLight(*gbuffer, view, projection);
 
         gbuffer->DrawToScreen();
 

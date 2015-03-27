@@ -16,9 +16,18 @@ Light::Light(LightType type, float screenWidth, float screenHeight)
     lightVao = new VAO();
     lightVao->AddAttribute(*lightVbo, 0, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
-       //Shaders & ShaderProgram
-    lightvshader = new Shader(); lightvshader->Create("Assets/Shaders/Light/light.vert", GL_VERTEX_SHADER);
-    lightfshader = new Shader(); lightfshader->Create("Assets/Shaders/Light/Directional/light.frag", GL_FRAGMENT_SHADER);
+    //Shaders & ShaderProgram
+    if(type == DirectionalLight)
+    {
+        lightvshader = new Shader(); lightvshader->Create("Assets/Shaders/Light/light.vert", GL_VERTEX_SHADER);
+        lightfshader = new Shader(); lightfshader->Create("Assets/Shaders/Light/Directional/directional.frag", GL_FRAGMENT_SHADER);
+    }
+    else
+    {
+        lightvshader = new Shader(); lightvshader->Create("Assets/Shaders/Light/light.vert", GL_VERTEX_SHADER);
+        lightfshader = new Shader(); lightfshader->Create("Assets/Shaders/Light/Point/point.frag", GL_FRAGMENT_SHADER);
+    }
+
     lightProgram = new ShaderProgram();
     lightProgram->AttachShader(*lightvshader);
     lightProgram->AttachShader(*lightfshader);
@@ -62,7 +71,7 @@ void Light::BufferMeshShadow(Mesh &m, float screenWidth, float screenHeight)
     shadowBuffer->Bind();
         shadowProgram->Use();
 
-            //glCullFace(GL_FRONT);
+            glCullFace(GL_FRONT);
 
             shadowProgram->SetUniform("modelMatrix", m.GetModelMatrix());
             shadowProgram->SetUniform("lightView", GetView());
@@ -93,13 +102,14 @@ void Light::ClearBufferMeshShadow()
 void Light::ApplyLight(GBuffer &gbuffer, const glm::mat4 &camView, const glm::mat4 &camProjection) const
 {
     glDisable(GL_DEPTH_TEST);
-    if(type == DirectionalLight)
+    if(type == DirectionalLight || type == PointLight)
     {
         gbuffer.Bind();
         lightVao->Bind();
         lightProgram->Use();
 
-        lightProgram->AttachTexture("colors", *gbuffer.GetColorTexture());
+        lightProgram->AttachTexture("finalColors", *gbuffer.GetFinalColorTexture());
+        lightProgram->AttachTexture("textureColors", *gbuffer.GetTextureColorTexture());
         lightProgram->AttachTexture("pos", *gbuffer.GetPositionTexture());
         lightProgram->AttachTexture("uvs", *gbuffer.GetUvTexture());
         lightProgram->AttachTexture("normals", *gbuffer.GetNormalsTexture());
