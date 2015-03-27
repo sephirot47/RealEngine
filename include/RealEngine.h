@@ -29,5 +29,6 @@
 #include "GBuffer.h"
 #include "Mesh.h"
 #include "Light.h"
+#include "StateManager.h"
 
 #endif // REALENGINE_H

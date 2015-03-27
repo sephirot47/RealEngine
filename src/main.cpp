@@ -114,6 +114,7 @@ void RenderScene()
     mat4 R = glm::rotate_slow(model, rot, axis);
     mat4 S = glm::scale(model, scale);
 
+
     gbuffer->Bind();
         gbuffer->ClearColorDepth();
 

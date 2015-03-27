@@ -72,6 +72,8 @@ Light::~Light()
 //Guarda en el depthbuffer la depth de la mesh enfocada desde la luz
 void Light::BufferMeshShadow(Mesh &m, float screenWidth, float screenHeight)
 {
+    StateManager::Push();
+
     shadowBuffer->Bind();
         shadowProgram->Use();
 
@@ -88,10 +90,10 @@ void Light::BufferMeshShadow(Mesh &m, float screenWidth, float screenHeight)
             shadowVao->UnBind();
             delete shadowVao;
 
-            glCullFace(GL_BACK);
-
         shadowProgram->UnUse();
     shadowBuffer->UnBind();
+
+    StateManager::Pop();
 }
 
 void Light::ClearBufferMeshShadow()
@@ -106,6 +108,8 @@ void Light::ClearBufferMeshShadow()
 void Light::ApplyLight(GBuffer &gbuffer, const glm::mat4 &camView, const glm::mat4 &camProjection) const
 {
     if(!enabled) return;
+
+    StateManager::Push();
 
     glDisable(GL_DEPTH_TEST);
     if(type == DirectionalLight || type == PointLight)
@@ -143,8 +147,10 @@ void Light::ApplyLight(GBuffer &gbuffer, const glm::mat4 &camView, const glm::ma
 
         lightProgram->UnUse();
         lightVao->UnBind();
+        gbuffer.UnBind();
     }
-    glEnable(GL_DEPTH_TEST);
+
+    StateManager::Pop();
 }
 
 void Light::SetPosition(glm::vec3 position)
@@ -223,8 +229,6 @@ bool Light::GetEnabled() const
 {
     return enabled;
 }
-
-
 
 
 quat LookAt(const vec3 eye, const vec3 lookTo, const vec3 up)

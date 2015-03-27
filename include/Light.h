@@ -10,6 +10,7 @@
 #include "Mesh.h"
 #include "VAO.h"
 #include "VBO.h"
+#include "StateManager.h"
 #include "glm/glm.hpp"
 
 enum LightType
