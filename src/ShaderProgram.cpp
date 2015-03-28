@@ -62,17 +62,13 @@ void ShaderProgram::UnUse() const
 void ShaderProgram::AttachTexture(const std::string name, Texture &texture)
 {
     auto it = textureMap.find(name);
-    if(it != textureMap.end()) textureMap.erase(it);
-    textureMap.insert( textureMap.end(), TextureMapPair(name, &texture) );
+    if(it == textureMap.end()) textureMap.insert( textureMap.end(), TextureMapPair(name, &texture) );
 }
 
 void ShaderProgram::DetachTexture(const std::string name)
 {
     auto it = textureMap.find(name);
-    if(it != textureMap.end())
-    {
-        textureMap.erase(it);
-    }
+    if(it != textureMap.end()) textureMap.erase(it);
 }
 
 
@@ -83,37 +79,49 @@ GLint ShaderProgram::GetUniformLocation(const string name) const
 
 void ShaderProgram::SetUniform(const std::string name, float value) const
 {
+    StateManager::Push();
     Use();
     glUniform1f(GetUniformLocation(name), value);
+    StateManager::Pop();
 }
 
 void ShaderProgram::SetUniform(const string name, int value) const
 {
+    StateManager::Push();
     Use();
     glUniform1i(GetUniformLocation(name), value);
+    StateManager::Pop();
 }
 
 void ShaderProgram::SetUniform(const std::string  name, const glm::vec2 &value) const
 {
+    StateManager::Push();
     Use();
     glUniform2f(GetUniformLocation(name), value.x, value.y);
+    StateManager::Pop();
 }
 
 void ShaderProgram::SetUniform(const std::string  name, const glm::vec3 &value) const
 {
+    StateManager::Push();
     Use();
     glUniform3f(GetUniformLocation(name), value.x, value.y, value.z);
+    StateManager::Pop();
 }
 
 void ShaderProgram::SetUniform(const std::string  name, const glm::vec4 &value) const
 {
+    StateManager::Push();
     Use();
     glUniform4f(GetUniformLocation(name), value.x, value.y, value.z, value.w);
+    StateManager::Pop();
 }
 
 void ShaderProgram::SetUniform(const std::string  name, const glm::mat4 &value, GLboolean normalized) const
 {
+    StateManager::Push();
     Use();
     glUniformMatrix4fv(GetUniformLocation(name), 1, normalized, glm::value_ptr(value));
+    StateManager::Pop();
 }
 

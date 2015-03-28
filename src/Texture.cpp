@@ -36,12 +36,12 @@ void Texture::SetScaleMode(GLenum mode) const
     StateManager::Pop();
 }
 
-void Texture::SetData(const void *data, int width, int height, GLenum format, GLenum internalFormat, GLenum type) const
+void Texture::SetData(const void *data, int width, int height, GLint format, GLenum type, GLint internalFormat) const
 {
     StateManager::Push();
 
     Bind();
-    glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, internalFormat, type, data);
+    glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, format, type, data);
     UnBind();
 
     StateManager::Pop();
@@ -50,7 +50,7 @@ void Texture::SetData(const void *data, int width, int height, GLenum format, GL
 void Texture::LoadFromFile(const std::string filepath) const
 {
     Image *img = new Image(); img->LoadFromFile(filepath);
-    SetData(img->GetData(), img->GetWidth(), img->GetHeight(), img->GetFormat(), img->GetFormat(), GL_UNSIGNED_BYTE);
+    SetData(img->GetData(), img->GetWidth(), img->GetHeight(), img->GetFormat(), GL_UNSIGNED_BYTE, img->GetFormat());
     delete img;
 }
 

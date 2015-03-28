@@ -16,14 +16,14 @@ Light::Light(LightType type, float screenWidth, float screenHeight)
     lightVao = new VAO();
     lightVao->AddAttribute(*lightVbo, 0, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
+    lightvshader = new Shader(); lightvshader->Create("Assets/Shaders/Light/light.vert", GL_VERTEX_SHADER);
+
     if(type == DirectionalLight)
     {
-        lightvshader = new Shader(); lightvshader->Create("Assets/Shaders/Light/light.vert", GL_VERTEX_SHADER);
         lightfshader = new Shader(); lightfshader->Create("Assets/Shaders/Light/Directional/directional.frag", GL_FRAGMENT_SHADER);
     }
     else
     {
-        lightvshader = new Shader(); lightvshader->Create("Assets/Shaders/Light/light.vert", GL_VERTEX_SHADER);
         lightfshader = new Shader(); lightfshader->Create("Assets/Shaders/Light/Point/point.frag", GL_FRAGMENT_SHADER);
     }
 
@@ -31,7 +31,6 @@ Light::Light(LightType type, float screenWidth, float screenHeight)
     lightProgram->AttachShader(*lightvshader);
     lightProgram->AttachShader(*lightfshader);
     lightProgram->Link();
-
 
     shadowvshader = new Shader(); shadowvshader->Create("Assets/Shaders/Light/Directional/shadow.vert", GL_VERTEX_SHADER);
     shadowfshader = new Shader(); shadowfshader->Create("Assets/Shaders/Light/Directional/shadow.frag", GL_FRAGMENT_SHADER);
@@ -41,8 +40,8 @@ Light::Light(LightType type, float screenWidth, float screenHeight)
     shadowProgram->Link();
 
     shadowBuffer = new FrameBuffer(screenWidth, screenHeight);
-    shadowBuffer->AddDrawingBuffer(GL_DEPTH_ATTACHMENT, GL_DEPTH_COMPONENT16, GL_DEPTH_COMPONENT,
-                                   GL_FLOAT, GL_CLAMP_TO_EDGE, GL_LINEAR);
+    shadowBuffer->AddDrawingBuffer(GL_DEPTH_ATTACHMENT, GL_DEPTH_COMPONENT, GL_FLOAT, GL_DEPTH_COMPONENT16,
+                                   GL_CLAMP_TO_EDGE, GL_LINEAR);
 
     pos = vec3(0, 0, 10);
     dir = vec3(0, 0, -1);
@@ -113,14 +112,13 @@ void Light::ApplyLight(GBuffer &gbuffer, const glm::mat4 &camView, const glm::ma
         gbuffer.Bind();
         lightVao->Bind();
         lightProgram->Use();
-
         lightProgram->AttachTexture("finalColors", *gbuffer.GetFinalColorTexture());
-        lightProgram->AttachTexture("textureColors", *gbuffer.GetTextureColorTexture());
         lightProgram->AttachTexture("pos", *gbuffer.GetPositionTexture());
         lightProgram->AttachTexture("uvs", *gbuffer.GetUvTexture());
         lightProgram->AttachTexture("normals", *gbuffer.GetNormalsTexture());
+        lightProgram->AttachTexture("textureColors", *gbuffer.GetMaterialTextureTexture());
         lightProgram->AttachTexture("depth", *gbuffer.GetDepthTexture());
-        lightProgram->AttachTexture("shadowDepthBuffer", *shadowBuffer->GetTexture(GL_DEPTH_ATTACHMENT));
+        lightProgram->AttachTexture("shadowDepthBuffer", *(shadowBuffer->GetTexture(GL_DEPTH_ATTACHMENT)));
 
         mat4 camProjectionInverse = inverse(camProjection);
         lightProgram->SetUniform("camProjectionInverse", camProjectionInverse);
@@ -145,7 +143,6 @@ void Light::ApplyLight(GBuffer &gbuffer, const glm::mat4 &camView, const glm::ma
         lightVao->UnBind();
         gbuffer.UnBind();
     }
-
     StateManager::Pop();
 }
 

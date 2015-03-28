@@ -2,7 +2,5 @@
 
 out float depth; 
 
-void main() 
-{
-}
+void main() {}
 

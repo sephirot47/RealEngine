@@ -34,8 +34,8 @@ public:
 
     void AddDrawingBuffer(GLenum attachment,
                           GLenum format,
-                          GLenum internalFormat,
                           GLenum type,
+                          GLint internalFormat,
                           GLenum wrapMode = GL_CLAMP_TO_EDGE,
                           GLenum scaleMode = GL_LINEAR);
 

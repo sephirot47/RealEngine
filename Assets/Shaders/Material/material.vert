@@ -13,7 +13,7 @@ out vec3 fnormal;
 void main()  
 {    
     fpos = (model * vec4(inpos, 1)).xyz;
-    fuv = inuv;    
+    fuv = inuv;
     fnormal = normalize((normalMatrix * vec4(innormal, 0)).xyz);
 
     gl_Position = projection * view * model * vec4(inpos, 1);

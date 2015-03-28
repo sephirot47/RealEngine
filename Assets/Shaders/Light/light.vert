@@ -1,7 +1,6 @@
 #version 130
 
 in vec3 pos;
-
 out vec2 screenuv;
 
 void main()

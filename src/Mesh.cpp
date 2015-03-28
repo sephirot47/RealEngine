@@ -73,6 +73,7 @@ void Mesh::Draw(const Material &material, mat4 &projection, mat4 &view)
     material.GetShaderProgram()->SetUniform("view", view);
     material.GetShaderProgram()->SetUniform("model", model);
     material.GetShaderProgram()->SetUniform("normalMatrix", normalMatrix);
+
     glDrawArrays(drawingMode, 0, numVertices);
 
     material.UnBindForDrawing();

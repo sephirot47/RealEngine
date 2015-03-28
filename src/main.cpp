@@ -20,6 +20,7 @@ void Init()
 {
     glClearColor(0.0, 0.0, 0.3, 1.0);
     glEnable(GL_DEPTH_TEST);
+    glEnable(GL_TEXTURE_2D);
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
     glDepthFunc(GL_LEQUAL);
@@ -47,7 +48,7 @@ void Init()
 
     gbuffer = new GBuffer(width, height);
     gbuffer->SetFragmentFinalColorTextureName("finalColors");
-    gbuffer->SetFragmentTextureColorTextureName("textureColors");
+    gbuffer->SetFragmentMaterialTextureTextureName("textureColors");
     gbuffer->SetFragmentPositionTextureName("pos");
     gbuffer->SetFragmentUvTextureName("uvs");
     gbuffer->SetFragmentNormalsTextureName("normals");
@@ -90,7 +91,6 @@ void RenderScene()
     mat4 R = glm::rotate_slow(model, rot, axis);
     mat4 S = glm::scale(model, scale);
 
-
     gbuffer->Bind();
         gbuffer->ClearColorDepth();
 
@@ -98,7 +98,7 @@ void RenderScene()
         if(lightMode) projection = light2->GetProjection(width, height);
 
         model = mat4(1.0f);
-        translate = vec3(sin(appTime) * 0.8f, 0.0f, 3.0f /*+  * 50.0f*/ );
+        translate = vec3(sin(appTime) * 0.8f, 0.0f, 3.0f);
         scale = vec3(0.005f);
         T = glm::translate(model, translate);
         R = glm::rotate_slow(model, sphereRot, axis);

@@ -3,14 +3,14 @@
 
 Material::Material()
 {
-    ambientColor = vec3(0.1, 0.1, 0.1);
+    ambientColor = vec3(0.1, 1.0, 1.0);
     diffuseColor = vec3(0.5, 0.5, 0.5);
     specularColor = vec3(0.5, 0.5, 0.5);
     shininess = 60.0f;
     texture = nullptr;
 
-    vshader = new Shader(); vshader->Create("Assets/Shaders/Mesh/default.vert", GL_VERTEX_SHADER);
-    fshader = new Shader(); fshader->Create("Assets/Shaders/Mesh/default.frag", GL_FRAGMENT_SHADER);
+    vshader = new Shader(); vshader->Create("Assets/Shaders/Material/material.vert", GL_VERTEX_SHADER);
+    fshader = new Shader(); fshader->Create("Assets/Shaders/Material/material.frag", GL_FRAGMENT_SHADER);
     program = new ShaderProgram();
     program->AttachShader(*fshader);
     program->AttachShader(*vshader);
@@ -29,15 +29,12 @@ Material::~Material()
 void Material::BindForDrawing() const
 {
     if(not program) return;
-
     program->Use();
-    program->SetUniform("matAmbientColor", ambientColor);
-    program->SetUniform("matDiffuseColor", diffuseColor);
-    program->SetUniform("matSpecularColor", specularColor);
-    program->SetUniform("matShininess", shininess);
-
-    if(texture)
-        program->AttachTexture("matTexture", *texture);
+    program->SetUniform("material.diffuse", diffuseColor);
+    program->SetUniform("material.specular", specularColor);
+    program->SetUniform("material.shininess", shininess);
+program->AttachTexture("tex", *texture);
+    if(texture) program->AttachTexture("material.texture", *texture);
 }
 
 void Material::UnBindForDrawing() const
@@ -45,7 +42,6 @@ void Material::UnBindForDrawing() const
     if(not program) return;
     program->UnUse();
 }
-
 
 
 
@@ -66,7 +62,7 @@ void Material::SetSpecularColor(vec3 color)
 
 void Material::SetTexture(Texture &t)
 {
-    texture = &t;
+    this->texture = &t;
 }
 
 void Material::SetShininess(float shininess)

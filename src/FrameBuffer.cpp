@@ -28,8 +28,8 @@ void FrameBuffer::UnBind() const
 
 void FrameBuffer::AddDrawingBuffer(GLenum attachment,
                                    GLenum format,
-                                   GLenum internalFormat,
                                    GLenum type,
+                                   GLint internalFormat,
                                    GLenum wrapMode,
                                    GLenum scaleMode)
 {
@@ -41,13 +41,17 @@ void FrameBuffer::AddDrawingBuffer(GLenum attachment,
     drawBuffers.push_back(attachment);
 
     Texture *texture = new Texture();
-    texture->SetData(0, width, height, format, internalFormat, type);
+    texture->SetData(0, width, height, format, type, internalFormat);
     texture->SetWrapMode(wrapMode);
     texture->SetScaleMode(scaleMode);
     textures.push_back(texture);
 
     Bind(); //Aqui se llama a glDrawBuffers
+
     glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, GL_TEXTURE_2D, texture->GetObject(), 0);
+    if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+        DbgError("Error adding the attachment " << attachment << " to the framebuffer.");
+
     UnBind();
 
     StateManager::Pop();
@@ -69,6 +73,7 @@ void FrameBuffer::DeleteDrawingBuffer(GLenum attachment)
             --numBuffers;
             drawBuffers.erase(drawBuffers.begin() + i);
             delete textures[i];
+            textures.erase(textures.begin() + i);
         }
     }
 }
@@ -110,7 +115,6 @@ void FrameBuffer::ClearColorDepth() const
 Texture *FrameBuffer::GetTexture(GLenum attachment) const
 {
     for(int i = 0; i < numBuffers; ++i)
-        if(drawBuffers[i] == attachment)
-            return textures[i];
+        if(drawBuffers[i] == attachment) return textures[i];
     return 0;
 }

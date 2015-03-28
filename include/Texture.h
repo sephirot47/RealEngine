@@ -25,7 +25,7 @@ public:
 
     void SetWrapMode(GLenum mode) const;
     void SetScaleMode(GLenum mode) const;
-    void SetData(const void *data, int width, int height, GLenum format, GLenum internalFormat, GLenum type) const;
+    void SetData(const void *data, int width, int height, GLint format, GLenum type, GLint internalFormat) const;
 
     void LoadFromFile(const std::string filepath) const;
 
