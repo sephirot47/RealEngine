@@ -21,7 +21,7 @@ private:
 
     VAO *vao;
     VBO *vboPos, *vboUv, *vboNormals;
-    GLenum drawingMode;
+    GLenum renderMode;
     glm::mat4 model, normalMatrix;
 
     int numVertices;
@@ -32,10 +32,10 @@ public:
 
     void LoadFromFile(const char *filepath);
 
-    void Draw(const Material &material, glm::mat4 &projection, glm::mat4 &view);
+    void Render(const Material &material, glm::mat4 &projection, glm::mat4 &view);
     void Render(RenderTarget &renderTarget, const Material &material, glm::mat4 &projection, glm::mat4 &view);
 
-    void SetDrawingMode(GLenum drawingMode);
+    void SetRenderMode(GLenum renderMode);
     void SetNormalMatrix(glm::mat4 normalMatrix);
     void SetModelMatrix(glm::mat4 modelMatrix);
 
@@ -44,7 +44,7 @@ public:
     VBO* GetVBOPos() const;
     VBO* GetVBOUv() const;
     VBO* GetVBONormals() const;
-    GLenum GetDrawingMode() const;
+    GLenum GetRenderMode() const;
     glm::mat4 GetModelMatrix() const;
     glm::mat4 GetNormalMatrix() const;
 };

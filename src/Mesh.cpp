@@ -34,7 +34,7 @@ void Mesh::LoadFromFile(const char *filepath)
 
     FileLoader::ReadOBJ(filepath, pos, uv, normals, triangles);
 
-    drawingMode = triangles ? GL_TRIANGLES : GL_QUADS;
+    renderMode = triangles ? GL_TRIANGLES : GL_QUADS;
     numVertices = pos.size();
 
     vao = new VAO();
@@ -65,10 +65,16 @@ void Mesh::LoadFromFile(const char *filepath)
 
 void Mesh::Render(RenderTarget &renderTarget, const Material &material, glm::mat4 &projection, glm::mat4 &view)
 {
-    Draw(material, projection, view);
+    StateManager::Push();
+
+    renderTarget.BindRenderTarget();
+    Render(material, projection, view);
+    renderTarget.UnBindRenderTarget();
+
+    StateManager::Pop();
 }
 
-void Mesh::Draw(const Material &material, glm::mat4 &projection, glm::mat4 &view)
+void Mesh::Render(const Material &material, glm::mat4 &projection, glm::mat4 &view)
 {
     if(not vao) return;
 
@@ -82,7 +88,7 @@ void Mesh::Draw(const Material &material, glm::mat4 &projection, glm::mat4 &view
     material.GetShaderProgram()->SetUniform("model", model);
     material.GetShaderProgram()->SetUniform("normalMatrix", normalMatrix);
 
-    glDrawArrays(drawingMode, 0, numVertices);
+    glDrawArrays(renderMode, 0, numVertices);
 
     material.UnBind();
     vao->UnBind();
@@ -90,9 +96,9 @@ void Mesh::Draw(const Material &material, glm::mat4 &projection, glm::mat4 &view
     StateManager::Pop();
 }
 
-void Mesh::SetDrawingMode(GLenum drawingMode)
+void Mesh::SetRenderMode(GLenum renderMode)
 {
-    this->drawingMode = drawingMode;
+    this->renderMode = renderMode;
 }
 
 void Mesh::SetModelMatrix(glm::mat4 modelMatrix)
@@ -132,9 +138,9 @@ VBO* Mesh::GetVBONormals() const
     return vboNormals;
 }
 
-GLenum Mesh::GetDrawingMode() const
+GLenum Mesh::GetRenderMode() const
 {
-    return drawingMode;
+    return renderMode;
 }
 
 glm::mat4 Mesh::GetModelMatrix() const

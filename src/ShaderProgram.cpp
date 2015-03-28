@@ -37,7 +37,7 @@ void ShaderProgram::Link() const
     }
 }
 
-void ShaderProgram::Use() const
+void ShaderProgram::Bind() const
 {
     glUseProgram(object);
 
@@ -50,7 +50,7 @@ void ShaderProgram::Use() const
     }
 }
 
-void ShaderProgram::UnUse() const
+void ShaderProgram::UnBind() const
 {
     glUseProgram(0);
 
@@ -64,7 +64,6 @@ void ShaderProgram::UnUse() const
 
 void ShaderProgram::AttachTexture(const std::string name, Texture &texture)
 {
-
     auto it = textureMap.find(name);
     if(it != textureMap.end()) textureMap.erase(it);
     textureMap.insert( textureMap.end(), TextureMapPair(name, &texture) );
@@ -85,7 +84,7 @@ GLint ShaderProgram::GetUniformLocation(const std::string name) const
 void ShaderProgram::SetUniform(const std::string name, float value) const
 {
     StateManager::Push();
-    Use();
+    Bind();
     glUniform1f(GetUniformLocation(name), value);
     StateManager::Pop();
 }
@@ -93,7 +92,7 @@ void ShaderProgram::SetUniform(const std::string name, float value) const
 void ShaderProgram::SetUniform(const std::string name, int value) const
 {
     StateManager::Push();
-    Use();
+    Bind();
     glUniform1i(GetUniformLocation(name), value);
     StateManager::Pop();
 }
@@ -101,7 +100,7 @@ void ShaderProgram::SetUniform(const std::string name, int value) const
 void ShaderProgram::SetUniform(const std::string  name, const glm::vec2 &value) const
 {
     StateManager::Push();
-    Use();
+    Bind();
     glUniform2f(GetUniformLocation(name), value.x, value.y);
     StateManager::Pop();
 }
@@ -109,7 +108,7 @@ void ShaderProgram::SetUniform(const std::string  name, const glm::vec2 &value) 
 void ShaderProgram::SetUniform(const std::string  name, const glm::vec3 &value) const
 {
     StateManager::Push();
-    Use();
+    Bind();
     glUniform3f(GetUniformLocation(name), value.x, value.y, value.z);
     StateManager::Pop();
 }
@@ -117,7 +116,7 @@ void ShaderProgram::SetUniform(const std::string  name, const glm::vec3 &value) 
 void ShaderProgram::SetUniform(const std::string  name, const glm::vec4 &value) const
 {
     StateManager::Push();
-    Use();
+    Bind();
     glUniform4f(GetUniformLocation(name), value.x, value.y, value.z, value.w);
     StateManager::Pop();
 }
@@ -125,7 +124,7 @@ void ShaderProgram::SetUniform(const std::string  name, const glm::vec4 &value) 
 void ShaderProgram::SetUniform(const std::string  name, const glm::mat4 &value, GLboolean normalized) const
 {
     StateManager::Push();
-    Use();
+    Bind();
     glUniformMatrix4fv(GetUniformLocation(name), 1, normalized, glm::value_ptr(value));
     StateManager::Pop();
 }

@@ -52,8 +52,8 @@ public:
     GBuffer(float width, float height);
     ~GBuffer();
 
-    void Draw() const;
-    void DrawToScreen() const;
+    void Render() const;
+    void RenderToScreen() const;
 
     void SetFragmentFinalColorTextureName(std::string name);
     void SetFragmentMaterialTextureTextureName(std::string name);

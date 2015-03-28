@@ -38,8 +38,8 @@ public:
 
     void AttachShader(const Shader &shader) const;
     void Link() const;
-    void Use() const;
-    void UnUse() const;
+    void Bind() const;
+    void UnBind() const;
 
     void AttachTexture(const std::string name, Texture &texture);
     void DetachTexture(const std::string name);

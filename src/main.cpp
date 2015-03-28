@@ -31,7 +31,6 @@ void Init()
     mesh1->LoadFromFile("Assets/Models/luigi.obj");
     Texture *texture1 = new Texture();
     texture1->LoadFromFile("Assets/Textures/luigiD.jpg");
-    texture1->LoadFromFile("Assets/Textures/luigiD.jpg");
     material1 = new Material();
     material1->SetTexture(*texture1);
 
@@ -79,7 +78,6 @@ bool lightMode = false;
 
 void RenderScene()
 {
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     appTime += 0.03f;
     sphereRot += 0.03f;
     light->SetPosition(vec3(sin(appTime) * 7.0f, 0.5f, 10.0f));
@@ -94,66 +92,63 @@ void RenderScene()
     mat4 R = glm::rotate_slow(model, rot, axis);
     mat4 S = glm::scale(model, scale);
 
-    gbuffer->BindRenderTarget();
-        gbuffer->ClearColorDepth();
+    gbuffer->ClearColorDepth();
 
-        mat4 projection = perspective(45.0f * 3.1415f/180.0f, width/height, 1.0f, 20.0f);
-        if(lightMode) projection = light2->GetProjection(width, height);
+    mat4 projection = perspective(45.0f * 3.1415f/180.0f, width/height, 1.0f, 20.0f);
+    if(lightMode) projection = light2->GetProjection(width, height);
 
-        model = mat4(1.0f);
-        translate = vec3(sin(appTime) * 0.8f, 0.0f, 3.0f);
-        scale = vec3(0.005f);
-        T = glm::translate(model, translate);
-        R = glm::rotate_slow(model, sphereRot, axis);
-        S = glm::scale(model, scale);
-        mesh1->SetModelMatrix(T * R * S);
-        mesh1->SetNormalMatrix(R * S);
+    model = mat4(1.0f);
+    translate = vec3(sin(appTime) * 0.8f, 0.0f, 3.0f);
+    scale = vec3(0.005f);
+    T = glm::translate(model, translate);
+    R = glm::rotate_slow(model, sphereRot, axis);
+    S = glm::scale(model, scale);
+    mesh1->SetModelMatrix(T * R * S);
+    mesh1->SetNormalMatrix(R * S);
 
-        model = mat4(1.0f);
-        translate = vec3(-0.0f, -0.3f, 0.0f);
-        scale = vec3(0.02f);
-        T = glm::translate(model, translate);
-        R = glm::rotate_slow(model, 0.0f, axis);
-        S = glm::scale(model, scale);
-        mesh2->SetModelMatrix(T * R * S);
-        mesh2->SetNormalMatrix(R * S);
+    model = mat4(1.0f);
+    translate = vec3(-0.0f, -0.3f, 0.0f);
+    scale = vec3(0.02f);
+    T = glm::translate(model, translate);
+    R = glm::rotate_slow(model, 0.0f, axis);
+    S = glm::scale(model, scale);
+    mesh2->SetModelMatrix(T * R * S);
+    mesh2->SetNormalMatrix(R * S);
 
-        model = mat4(1.0f);
-        translate = vec3(0.0f, 0.5f, -4.0f);
-        scale = vec3(0.005f);
-        T = glm::translate(model, translate);
-        R = glm::rotate_slow(model, 0.0f, axis);
-        scale = vec3(6.0f);
-        S = glm::scale(model, scale);
-        mesh3->SetModelMatrix(T * R * S);
-        mesh3->SetNormalMatrix(R * S);
+    model = mat4(1.0f);
+    translate = vec3(0.0f, 0.5f, -4.0f);
+    scale = vec3(0.005f);
+    T = glm::translate(model, translate);
+    R = glm::rotate_slow(model, 0.0f, axis);
+    scale = vec3(6.0f);
+    S = glm::scale(model, scale);
+    mesh3->SetModelMatrix(T * R * S);
+    mesh3->SetNormalMatrix(R * S);
 
-        mat4 view = mat4(1.0f);
-        T = glm::translate(view, cameraPos);
-        R = glm::rotate_slow(view, rot, axis);
-        view = glm::inverse(T * R);
-        if(lightMode) view = light2->GetView();
+    mat4 view = mat4(1.0f);
+    T = glm::translate(view, cameraPos);
+    R = glm::rotate_slow(view, rot, axis);
+    view = glm::inverse(T * R);
+    if(lightMode) view = light2->GetView();
 
-        mesh1->Draw(*material1, projection, view);
-        mesh2->Draw(*material2, projection, view);
-        mesh3->Draw(*material3, projection, view);
+    mesh1->Render(*gbuffer, *material1, projection, view);
+    mesh2->Render(*gbuffer, *material2, projection, view);
+    mesh3->Render(*gbuffer, *material3, projection, view);
 
-        light->ClearBufferMeshShadow();
-        light->BufferMeshShadow(*mesh1, width, height);
-        light->BufferMeshShadow(*mesh2, width, height);
-        light->BufferMeshShadow(*mesh3, width, height);
+    light->ClearBufferMeshShadow();
+    light->ShadowMapMesh(*mesh1, width, height);
+    light->ShadowMapMesh(*mesh2, width, height);
+    light->ShadowMapMesh(*mesh3, width, height);
 
-        light2->ClearBufferMeshShadow();
-        light2->BufferMeshShadow(*mesh1, width, height);
-        light2->BufferMeshShadow(*mesh2, width, height);
-        light2->BufferMeshShadow(*mesh3, width, height);
+    light2->ClearBufferMeshShadow();
+    light2->ShadowMapMesh(*mesh1, width, height);
+    light2->ShadowMapMesh(*mesh2, width, height);
+    light2->ShadowMapMesh(*mesh3, width, height);
 
-        light->ApplyLight(*gbuffer, view, projection);
-        light2->ApplyLight(*gbuffer, view, projection);
+    light->ApplyLight(*gbuffer, view, projection);
+    light2->ApplyLight(*gbuffer, view, projection);
 
-        gbuffer->DrawToScreen();
-
-    gbuffer->UnBindRenderTarget();
+    gbuffer->RenderToScreen();
 }
 
 bool IsPressed(int keyCode)

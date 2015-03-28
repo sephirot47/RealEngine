@@ -31,7 +31,7 @@ Material::~Material()
 void Material::Bind() const
 {
     if(not program) return;
-    program->Use();
+    program->Bind();
     program->SetUniform("material.diffuse", diffuseColor);
     program->SetUniform("material.specular", specularColor);
     program->SetUniform("material.shininess", shininess);
@@ -42,7 +42,7 @@ void Material::Bind() const
 void Material::UnBind() const
 {
     if(not program) return;
-    program->UnUse();
+    program->UnBind();
 }
 
 void Material::SetAmbientColor(glm::vec3 color)

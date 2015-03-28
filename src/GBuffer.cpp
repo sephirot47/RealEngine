@@ -48,27 +48,30 @@ GBuffer::~GBuffer()
 {
 }
 
-void GBuffer::Draw() const
+void GBuffer::Render() const
 {
     StateManager::Push();
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     screenMeshVao->Bind();
-    program->Use();
+    program->Bind();
 
     glDrawArrays(GL_QUADS, 0, 4);
 
-    program->UnUse();
+    program->UnBind();
     screenMeshVao->UnBind();
 
     StateManager::Pop();
 }
 
-void GBuffer::DrawToScreen() const
+void GBuffer::RenderToScreen() const
 {
     StateManager::Push();
+
     UnBindRenderTarget();
-    Draw();
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    Render();
+
     StateManager::Pop();
 }
 

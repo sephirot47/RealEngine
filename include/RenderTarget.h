@@ -17,7 +17,7 @@ protected:
     RenderTarget() {}
     ~RenderTarget() {}
 
-protected:
+public:
 
     virtual void BindRenderTarget() const = 0;
     virtual void UnBindRenderTarget() const = 0;

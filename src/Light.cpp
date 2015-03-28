@@ -63,14 +63,14 @@ Light::~Light()
 
 }
 
-//Guarda en el depthbuffer la depth de la mesh enfocada desde la luz
-void Light::BufferMeshShadow(Mesh &m, float screenWidth, float screenHeight)
+void Light::ShadowMapMesh(Mesh &m, float screenWidth, float screenHeight)
 {
     StateManager::Push();
 
     shadowBuffer->BindRenderTarget();
-        shadowProgram->Use();
+        shadowProgram->Bind();
 
+            glEnable(GL_CULL_FACE);
             glCullFace(GL_FRONT);
 
             shadowProgram->SetUniform("modelMatrix", m.GetModelMatrix());
@@ -80,11 +80,11 @@ void Light::BufferMeshShadow(Mesh &m, float screenWidth, float screenHeight)
             VAO *shadowVao = new VAO();
             shadowVao->AddAttribute(*m.GetVBOPos(), 0, 3, GL_FLOAT, GL_FALSE, 0, 0);
             shadowVao->Bind();
-                glDrawArrays(m.GetDrawingMode(), 0, m.GetNumVertices());
+                glDrawArrays(m.GetRenderMode(), 0, m.GetNumVertices());
             shadowVao->UnBind();
             delete shadowVao;
 
-        shadowProgram->UnUse();
+        shadowProgram->UnBind();
     shadowBuffer->UnBindRenderTarget();
 
     StateManager::Pop();
@@ -113,7 +113,7 @@ void Light::ApplyLight(GBuffer &gbuffer, const glm::mat4 &camView, const glm::ma
     {
         gbuffer.BindRenderTarget();
         lightVao->Bind();
-        lightProgram->Use();
+        lightProgram->Bind();
         lightProgram->AttachTexture("finalColors", *gbuffer.GetFinalColorTexture());
         lightProgram->AttachTexture("pos", *gbuffer.GetPositionTexture());
         lightProgram->AttachTexture("uvs", *gbuffer.GetUvTexture());
@@ -141,7 +141,7 @@ void Light::ApplyLight(GBuffer &gbuffer, const glm::mat4 &camView, const glm::ma
 
         glDrawArrays(GL_QUADS, 0, 4);
 
-        lightProgram->UnUse();
+        lightProgram->UnBind();
         lightVao->UnBind();
         gbuffer.UnBindRenderTarget();
     }
