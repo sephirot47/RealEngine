@@ -2,6 +2,7 @@
 #define MESH_H
 
 #include "StateManager.h"
+#include "RenderTarget.h"
 #include "FileLoader.h"
 #include "Shader.h"
 #include "ShaderProgram.h"
@@ -32,6 +33,7 @@ public:
     void LoadFromFile(const char *filepath);
 
     void Draw(const Material &material, glm::mat4 &projection, glm::mat4 &view);
+    void Render(RenderTarget &renderTarget, const Material &material, glm::mat4 &projection, glm::mat4 &view);
 
     void SetDrawingMode(GLenum drawingMode);
     void SetNormalMatrix(glm::mat4 normalMatrix);

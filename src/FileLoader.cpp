@@ -6,7 +6,7 @@ using namespace RE;
 unsigned char* FileLoader::ReadImage(const char *filepath, int &components, int &width, int &height)
 {
     unsigned char* data = stbi_load(filepath, &width, &height, &components, 0);
-    if(data == 0)
+    if(data == nullptr)
     {
         DbgError("Error loading the texture '" << filepath << "', couldn't open/read the file.");
         return data;

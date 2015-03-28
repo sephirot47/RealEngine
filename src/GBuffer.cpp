@@ -48,11 +48,9 @@ GBuffer::~GBuffer()
 {
 }
 
-void GBuffer::DrawToScreen() const
+void GBuffer::Draw() const
 {
     StateManager::Push();
-
-    UnBind();
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     screenMeshVao->Bind();
@@ -63,6 +61,14 @@ void GBuffer::DrawToScreen() const
     program->UnUse();
     screenMeshVao->UnBind();
 
+    StateManager::Pop();
+}
+
+void GBuffer::DrawToScreen() const
+{
+    StateManager::Push();
+    UnBindRenderTarget();
+    Draw();
     StateManager::Pop();
 }
 

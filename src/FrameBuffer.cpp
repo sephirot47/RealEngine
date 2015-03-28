@@ -15,18 +15,21 @@ FrameBuffer::~FrameBuffer()
 {
     textures.clear();
     glDeleteFramebuffers(1, &object);
+
+    for(int i = 0; i < numBuffers; ++i) delete textures[i];
 }
 
-void FrameBuffer::Bind() const
+void FrameBuffer::BindRenderTarget() const
 {
     glBindFramebuffer(GL_FRAMEBUFFER, object);
     glDrawBuffers(numBuffers, &drawBuffers[0]);
 }
 
-void FrameBuffer::UnBind() const
+void FrameBuffer::UnBindRenderTarget() const
 {
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
+
 
 void FrameBuffer::AddDrawingBuffer(GLenum attachment,
                                    GLenum format,
@@ -48,18 +51,24 @@ void FrameBuffer::AddDrawingBuffer(GLenum attachment,
     texture->SetScaleMode(scaleMode);
     textures.push_back(texture);
 
-    Bind(); //Aqui se llama a glDrawBuffers
+    BindRenderTarget(); //Here glDrawBuffers is called
 
     glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, GL_TEXTURE_2D, texture->GetObject(), 0);
     if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
         DbgError("Error adding the attachment " << attachment << " to the framebuffer.");
 
-    UnBind();
+    UnBindRenderTarget();
 
     StateManager::Pop();
 }
 
-bool FrameBuffer::ExistsDrawingBuffer(GLenum attachment)
+
+void FrameBuffer::SetDrawingBuffers(int n, GLenum *attachments) const
+{
+    glDrawBuffers(n, attachments);
+}
+
+bool FrameBuffer::ExistsDrawingBuffer(GLenum attachment) const
 {
     for(int i = 0; i < numBuffers; ++i)
         if(drawBuffers[i] == attachment) return true;
@@ -83,27 +92,27 @@ void FrameBuffer::DeleteDrawingBuffer(GLenum attachment)
 void FrameBuffer::ClearColor() const
 {
     StateManager::Push();
-    Bind();
+    BindRenderTarget();
     glClear(GL_COLOR_BUFFER_BIT);
-    UnBind();
+    UnBindRenderTarget();
     StateManager::Pop();
 }
 
 void FrameBuffer::ClearDepth() const
 {
     StateManager::Push();
-    Bind();
+    BindRenderTarget();
     glClear(GL_DEPTH_BUFFER_BIT);
-    UnBind();
+    UnBindRenderTarget();
     StateManager::Pop();
 }
 
 void FrameBuffer::ClearColorDepth() const
 {
     StateManager::Push();
-    Bind();
+    BindRenderTarget();
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    UnBind();
+    UnBindRenderTarget();
     StateManager::Pop();
 }
 

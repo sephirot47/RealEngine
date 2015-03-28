@@ -52,12 +52,8 @@ public:
     GBuffer(float width, float height);
     ~GBuffer();
 
+    void Draw() const;
     void DrawToScreen() const;
-
-    void SetVertexColorLocation(int location, VBO &vbo);
-    void SetVertexPositonLocation(int location, VBO &vbo);
-    void SetVertexUvLocation(int location, VBO &vbo);
-    void SetVertexNormalsLocation(int location, VBO &vbo);
 
     void SetFragmentFinalColorTextureName(std::string name);
     void SetFragmentMaterialTextureTextureName(std::string name);

@@ -63,6 +63,11 @@ void Mesh::LoadFromFile(const char *filepath)
     StateManager::Pop();
 }
 
+void Mesh::Render(RenderTarget &renderTarget, const Material &material, glm::mat4 &projection, glm::mat4 &view)
+{
+    Draw(material, projection, view);
+}
+
 void Mesh::Draw(const Material &material, glm::mat4 &projection, glm::mat4 &view)
 {
     if(not vao) return;
@@ -70,7 +75,7 @@ void Mesh::Draw(const Material &material, glm::mat4 &projection, glm::mat4 &view
     StateManager::Push();
 
     vao->Bind();
-    material.BindForDrawing();
+    material.Bind();
 
     material.GetShaderProgram()->SetUniform("projection", projection);
     material.GetShaderProgram()->SetUniform("view", view);
@@ -79,7 +84,7 @@ void Mesh::Draw(const Material &material, glm::mat4 &projection, glm::mat4 &view
 
     glDrawArrays(drawingMode, 0, numVertices);
 
-    material.UnBindForDrawing();
+    material.UnBind();
     vao->UnBind();
 
     StateManager::Pop();

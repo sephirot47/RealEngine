@@ -2,17 +2,15 @@
 
 using namespace RE;
 
-
 Image::Image()
 {
     components = width = height = 0;
-    data = 0;
+    data = nullptr;
 }
 
 Image::~Image()
 {
-    if(data)
-        delete [] data;
+    if(data) delete [] data;
 }
 
 void Image::LoadFromFile(const std::string& filepath)

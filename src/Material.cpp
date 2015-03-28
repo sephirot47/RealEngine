@@ -28,24 +28,22 @@ Material::~Material()
     if(program and not programChanged) delete program;
 }
 
-void Material::BindForDrawing() const
+void Material::Bind() const
 {
     if(not program) return;
     program->Use();
     program->SetUniform("material.diffuse", diffuseColor);
     program->SetUniform("material.specular", specularColor);
     program->SetUniform("material.shininess", shininess);
-program->AttachTexture("tex", *texture);
+
     if(texture) program->AttachTexture("material.texture", *texture);
 }
 
-void Material::UnBindForDrawing() const
+void Material::UnBind() const
 {
     if(not program) return;
     program->UnUse();
 }
-
-
 
 void Material::SetAmbientColor(glm::vec3 color)
 {

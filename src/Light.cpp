@@ -68,7 +68,7 @@ void Light::BufferMeshShadow(Mesh &m, float screenWidth, float screenHeight)
 {
     StateManager::Push();
 
-    shadowBuffer->Bind();
+    shadowBuffer->BindRenderTarget();
         shadowProgram->Use();
 
             glCullFace(GL_FRONT);
@@ -85,7 +85,7 @@ void Light::BufferMeshShadow(Mesh &m, float screenWidth, float screenHeight)
             delete shadowVao;
 
         shadowProgram->UnUse();
-    shadowBuffer->UnBind();
+    shadowBuffer->UnBindRenderTarget();
 
     StateManager::Pop();
 }
@@ -94,10 +94,9 @@ void Light::ClearBufferMeshShadow()
 {
     StateManager::Push();
 
-    shadowBuffer->Bind();
-        glClearDepth(1.0);
+    shadowBuffer->BindRenderTarget();
         shadowBuffer->ClearColorDepth();
-    shadowBuffer->UnBind();
+    shadowBuffer->UnBindRenderTarget();
 
     StateManager::Pop();
 }
@@ -112,7 +111,7 @@ void Light::ApplyLight(GBuffer &gbuffer, const glm::mat4 &camView, const glm::ma
     glDisable(GL_DEPTH_TEST);
     if(type == DirectionalLight || type == PointLight)
     {
-        gbuffer.Bind();
+        gbuffer.BindRenderTarget();
         lightVao->Bind();
         lightProgram->Use();
         lightProgram->AttachTexture("finalColors", *gbuffer.GetFinalColorTexture());
@@ -144,7 +143,7 @@ void Light::ApplyLight(GBuffer &gbuffer, const glm::mat4 &camView, const glm::ma
 
         lightProgram->UnUse();
         lightVao->UnBind();
-        gbuffer.UnBind();
+        gbuffer.UnBindRenderTarget();
     }
     StateManager::Pop();
 }

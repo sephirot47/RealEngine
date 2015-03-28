@@ -31,6 +31,7 @@ void Init()
     mesh1->LoadFromFile("Assets/Models/luigi.obj");
     Texture *texture1 = new Texture();
     texture1->LoadFromFile("Assets/Textures/luigiD.jpg");
+    texture1->LoadFromFile("Assets/Textures/luigiD.jpg");
     material1 = new Material();
     material1->SetTexture(*texture1);
 
@@ -93,7 +94,7 @@ void RenderScene()
     mat4 R = glm::rotate_slow(model, rot, axis);
     mat4 S = glm::scale(model, scale);
 
-    gbuffer->Bind();
+    gbuffer->BindRenderTarget();
         gbuffer->ClearColorDepth();
 
         mat4 projection = perspective(45.0f * 3.1415f/180.0f, width/height, 1.0f, 20.0f);
@@ -152,7 +153,7 @@ void RenderScene()
 
         gbuffer->DrawToScreen();
 
-    gbuffer->UnBind();
+    gbuffer->UnBindRenderTarget();
 }
 
 bool IsPressed(int keyCode)

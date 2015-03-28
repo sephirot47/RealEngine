@@ -8,13 +8,14 @@
 #include <GL/glext.h>
 
 #include "StateManager.h"
+#include "RenderTarget.h"
 #include "Texture.h"
 #include "Debug.h"
 
 namespace RE
 {
 
-class FrameBuffer
+class FrameBuffer : public RenderTarget
 {
 private:
 
@@ -32,8 +33,8 @@ public:
     FrameBuffer(int width, int height);
     virtual ~FrameBuffer();
 
-    void Bind() const;
-    void UnBind() const;
+    void BindRenderTarget() const;
+    void UnBindRenderTarget() const;
 
     void AddDrawingBuffer(GLenum attachment,
                           GLenum format,
@@ -41,8 +42,8 @@ public:
                           GLint internalFormat,
                           GLenum wrapMode = GL_CLAMP_TO_EDGE,
                           GLenum scaleMode = GL_LINEAR);
-
-    bool ExistsDrawingBuffer(GLenum attachment);
+    void SetDrawingBuffers(int n, GLenum* attachments) const;
+    bool ExistsDrawingBuffer(GLenum attachment) const;
     void DeleteDrawingBuffer(GLenum attachment);
 
     void ClearColor() const;

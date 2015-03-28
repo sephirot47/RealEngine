@@ -35,8 +35,8 @@ public:
     Material();
     ~Material();
 
-    void BindForDrawing() const;
-    void UnBindForDrawing() const;
+    void Bind() const;
+    void UnBind() const;
 
     void SetAmbientColor(glm::vec3 color);
     void SetDiffuseColor(glm::vec3 color);

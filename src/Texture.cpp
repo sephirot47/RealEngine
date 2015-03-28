@@ -2,12 +2,12 @@
 
 using namespace RE;
 
-
 Texture::Texture()
 {
     glGenTextures(1, &object);
     SetWrapMode(GL_REPEAT);
     SetScaleMode(GL_LINEAR);
+    framebuffer = 0;
 }
 
 Texture::~Texture()
@@ -37,6 +37,25 @@ void Texture::SetScaleMode(GLenum mode) const
     UnBind();
 
     StateManager::Pop();
+}
+
+void Texture::BindRenderTarget() const
+{
+    if(framebuffer == 0)
+    {
+        glGenFramebuffers(1, &framebuffer);
+        glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, object, 0);
+    }
+
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    GLenum drawbuffer = GL_COLOR_ATTACHMENT0; glDrawBuffers(1, &drawbuffer);
+}
+
+void Texture::UnBindRenderTarget() const
+{
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 void Texture::SetData(const void *data, int width, int height, GLint format, GLenum type, GLint internalFormat) const
