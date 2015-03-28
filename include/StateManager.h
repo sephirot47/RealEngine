@@ -10,6 +10,9 @@
 #include <stack>
 #include "Debug.h"
 
+namespace RE
+{
+
 struct GLState
 {
     GLint vbo, vao, framebuffer, depthFunc, cullFaceMode, program, texture2d;
@@ -29,5 +32,7 @@ public:
     static void Push();
     static void Pop();
 };
+
+}
 
 #endif // STATEMANAGER_H

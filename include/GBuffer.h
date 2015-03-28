@@ -19,6 +19,9 @@
 #include "VBO.h"
 #include "glm/glm.hpp"
 
+namespace RE
+{
+
 enum GBufferAttachment
 {
     FinalColorAttachment = GL_COLOR_ATTACHMENT0,
@@ -75,5 +78,7 @@ public:
     float GetWidth() const;
     float GetHeight() const;
 };
+
+}
 
 #endif // GBUFFER_H

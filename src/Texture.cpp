@@ -1,5 +1,8 @@
 #include "../include/Texture.h"
 
+using namespace RE;
+
+
 Texture::Texture()
 {
     glGenTextures(1, &object);

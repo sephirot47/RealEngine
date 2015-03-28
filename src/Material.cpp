@@ -1,11 +1,13 @@
 #include "../include/Material.h"
 
+using namespace RE;
+
 
 Material::Material()
 {
-    ambientColor = vec3(0.1, 1.0, 1.0);
-    diffuseColor = vec3(0.5, 0.5, 0.5);
-    specularColor = vec3(0.5, 0.5, 0.5);
+    ambientColor = glm::vec3(0.1, 1.0, 1.0);
+    diffuseColor = glm::vec3(0.5, 0.5, 0.5);
+    specularColor = glm::vec3(0.5, 0.5, 0.5);
     shininess = 60.0f;
     texture = nullptr;
 
@@ -45,17 +47,17 @@ void Material::UnBindForDrawing() const
 
 
 
-void Material::SetAmbientColor(vec3 color)
+void Material::SetAmbientColor(glm::vec3 color)
 {
     ambientColor = color;
 }
 
-void Material::SetDiffuseColor(vec3 color)
+void Material::SetDiffuseColor(glm::vec3 color)
 {
     diffuseColor = color;
 }
 
-void Material::SetSpecularColor(vec3 color)
+void Material::SetSpecularColor(glm::vec3 color)
 {
     specularColor = color;
 }
@@ -79,17 +81,17 @@ void Material::SetShaderProgram(ShaderProgram &program)
 
 
 
-vec3 Material::GetAmbientColor() const
+glm::vec3 Material::GetAmbientColor() const
 {
     return ambientColor;
 }
 
-vec3 Material::GetDiffuseColor() const
+glm::vec3 Material::GetDiffuseColor() const
 {
     return diffuseColor;
 }
 
-vec3 Material::GetSpecularColor() const
+glm::vec3 Material::GetSpecularColor() const
 {
     return specularColor;
 }

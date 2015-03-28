@@ -1,5 +1,8 @@
 #include "../include/Light.h"
 
+using namespace RE;
+
+
 const float Light::screenMesh[12] = {1.0f, -1.0f, 0.0f,
                                      1.0f,  1.0f, 0.0f,
                                     -1.0f,  1.0f, 0.0f,
@@ -43,9 +46,9 @@ Light::Light(LightType type, float screenWidth, float screenHeight)
     shadowBuffer->AddDrawingBuffer(GL_DEPTH_ATTACHMENT, GL_DEPTH_COMPONENT, GL_FLOAT, GL_DEPTH_COMPONENT16,
                                    GL_CLAMP_TO_EDGE, GL_LINEAR);
 
-    pos = vec3(0, 0, 10);
-    dir = vec3(0, 0, -1);
-    color = vec3(1, 1, 1);
+    pos = glm::vec3(0, 0, 10);
+    dir = glm::vec3(0, 0, -1);
+    color = glm::vec3(1, 1, 1);
     intensity = 1.0f;
     range = 2.0f;
     shadow = 0.3f;
@@ -120,14 +123,14 @@ void Light::ApplyLight(GBuffer &gbuffer, const glm::mat4 &camView, const glm::ma
         lightProgram->AttachTexture("depth", *gbuffer.GetDepthTexture());
         lightProgram->AttachTexture("shadowDepthBuffer", *(shadowBuffer->GetTexture(GL_DEPTH_ATTACHMENT)));
 
-        mat4 camProjectionInverse = inverse(camProjection);
+        glm::mat4 camProjectionInverse = inverse(camProjection);
         lightProgram->SetUniform("camProjectionInverse", camProjectionInverse);
-        mat4 camViewInverse = inverse(camView);
+        glm::mat4 camViewInverse = inverse(camView);
         lightProgram->SetUniform("camViewInverse", camViewInverse);
 
-        mat4 lightView = GetView();
+        glm::mat4 lightView = GetView();
         lightProgram->SetUniform("lightView", lightView);
-        mat4 lightProjection = GetProjection(gbuffer.GetWidth(), gbuffer.GetHeight());
+        glm::mat4 lightProjection = GetProjection(gbuffer.GetWidth(), gbuffer.GetHeight());
         lightProgram->SetUniform("lightProjection", lightProjection);
 
         lightProgram->SetUniform("lightPosition", pos);
@@ -224,27 +227,29 @@ bool Light::GetEnabled() const
 }
 
 
-quat LookAt(const vec3 eye, const vec3 lookTo, const vec3 up)
+glm::quat LookAt(const glm::vec3 eye, const glm::vec3 lookTo, const glm::vec3 up)
 {
-    if(eye == lookTo) return quat();
+    if(eye == lookTo) return glm::quat();
 
-    mat4 m = lookAt(eye, lookTo, up);
-    return quat_cast(transpose(m));
-}
-mat4 Light::GetView() const
-{
-    mat4 lightView = mat4(1.0f);
-    mat4 T = translate(lightView, pos);
-    vec3 lookTo = pos +  dir * 99.0f, up = vec3(0, 1, 0);
-    quat rot = LookAt(pos, lookTo, up);
-    mat4 R = mat4_cast(rot);
-    return inverse(T * R);
+    glm::mat4 m = lookAt(eye, lookTo, up);
+    return glm::quat_cast( glm::transpose(m) );
 }
 
-mat4 Light::GetProjection(float screenWidth, float screenHeight) const
+glm::mat4 Light::GetView() const
+{
+    glm::mat4 lightView = glm::mat4(1.0f);
+    glm::mat4 T = glm::translate(lightView, pos);
+    glm::vec3 lookTo = pos +  dir * 99.0f;
+    glm::vec3 up = glm::vec3(0, 1, 0);
+    glm::quat rot = LookAt(pos, lookTo, up);
+    glm::mat4 R = glm::mat4_cast(rot);
+    return glm::inverse(T * R);
+}
+
+glm::mat4 Light::GetProjection(float screenWidth, float screenHeight) const
 {
     float width = 10.0f;
     float height = width * screenHeight/screenWidth;
-    return ortho(-width, width, -height, height, 0.0f, 40.0f);
+    return glm::ortho(-width, width, -height, height, 0.0f, 40.0f);
 }
 

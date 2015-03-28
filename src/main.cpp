@@ -7,6 +7,8 @@
 #include "../include/RealEngine.h"
 
 using namespace std;
+using namespace glm;
+using namespace RE;
 
 const float width = 1500, height = 800;
 

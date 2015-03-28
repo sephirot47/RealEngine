@@ -14,6 +14,8 @@
 #include "StateManager.h"
 #include "Debug.h"
 
+namespace RE
+{
 
 class Shader
 {
@@ -32,5 +34,7 @@ public:
     bool CreateFromSourceCode(const std::string code, GLuint type);
     GLuint GetObject() const { return object; }
 };
+
+}
 
 #endif // SHADER_H

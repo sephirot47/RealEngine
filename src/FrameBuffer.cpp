@@ -1,10 +1,12 @@
 #include "../include/FrameBuffer.h"
 
+using namespace RE;
+
+
 FrameBuffer::FrameBuffer(int width, int height)
 {
     glGenFramebuffers(1, &object);
     numBuffers = 0;
-
     this->width = width;
     this->height = height;
 }
@@ -81,33 +83,27 @@ void FrameBuffer::DeleteDrawingBuffer(GLenum attachment)
 void FrameBuffer::ClearColor() const
 {
     StateManager::Push();
-
     Bind();
     glClear(GL_COLOR_BUFFER_BIT);
     UnBind();
-
     StateManager::Pop();
 }
 
 void FrameBuffer::ClearDepth() const
 {
     StateManager::Push();
-
     Bind();
     glClear(GL_DEPTH_BUFFER_BIT);
     UnBind();
-
     StateManager::Pop();
 }
 
 void FrameBuffer::ClearColorDepth() const
 {
     StateManager::Push();
-
     Bind();
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     UnBind();
-
     StateManager::Pop();
 }
 
@@ -116,5 +112,5 @@ Texture *FrameBuffer::GetTexture(GLenum attachment) const
 {
     for(int i = 0; i < numBuffers; ++i)
         if(drawBuffers[i] == attachment) return textures[i];
-    return 0;
+    return nullptr;
 }

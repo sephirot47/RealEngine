@@ -1,9 +1,12 @@
 #include "../include/Mesh.h"
 
+using namespace RE;
+
+
 Mesh::Mesh()
 {
     numVertices = 0;
-    model = mat4(1.0f);
+    model = glm::mat4(1.0f);
     vao = nullptr;
     vboPos = vboUv = vboNormals = nullptr;
 }
@@ -39,28 +42,28 @@ void Mesh::LoadFromFile(const char *filepath)
     if(pos.size() > 0)
     {
         vboPos = new VBO();
-        vboPos->SetData(&pos[0], pos.size() * sizeof(vec3));
+        vboPos->SetData(&pos[0], pos.size() * sizeof(glm::vec3));
         vao->AddAttribute(*vboPos, index++, 3, GL_FLOAT, GL_FALSE, 0, 0);
     }
 
     if(uv.size() > 0)
     {
         vboUv = new VBO();
-        vboUv->SetData(&uv[0], uv.size() * sizeof(vec2));
+        vboUv->SetData(&uv[0], uv.size() * sizeof(glm::vec2));
         vao->AddAttribute(*vboUv, index++, 2, GL_FLOAT, GL_FALSE, 0, 0);
     }
 
     if(normals.size() > 0)
     {
         vboNormals = new VBO();
-        vboNormals->SetData(&normals[0], normals.size() * sizeof(vec3));
+        vboNormals->SetData(&normals[0], normals.size() * sizeof(glm::vec3));
         vao->AddAttribute(*vboNormals, index++, 3, GL_FLOAT, GL_FALSE, 0, 0);
     }
 
     StateManager::Pop();
 }
 
-void Mesh::Draw(const Material &material, mat4 &projection, mat4 &view)
+void Mesh::Draw(const Material &material, glm::mat4 &projection, glm::mat4 &view)
 {
     if(not vao) return;
 
@@ -87,12 +90,12 @@ void Mesh::SetDrawingMode(GLenum drawingMode)
     this->drawingMode = drawingMode;
 }
 
-void Mesh::SetModelMatrix(mat4 modelMatrix)
+void Mesh::SetModelMatrix(glm::mat4 modelMatrix)
 {
     this->model = modelMatrix;
 }
 
-void Mesh::SetNormalMatrix(mat4 normalMatrix)
+void Mesh::SetNormalMatrix(glm::mat4 normalMatrix)
 {
     this->normalMatrix = normalMatrix;
 }
@@ -129,12 +132,12 @@ GLenum Mesh::GetDrawingMode() const
     return drawingMode;
 }
 
-mat4 Mesh::GetModelMatrix() const
+glm::mat4 Mesh::GetModelMatrix() const
 {
     return model;
 }
 
-mat4 Mesh::GetNormalMatrix() const
+glm::mat4 Mesh::GetNormalMatrix() const
 {
     return normalMatrix;
 }

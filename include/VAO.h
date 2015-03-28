@@ -8,11 +8,16 @@
 #include "VBO.h"
 #include "StateManager.h"
 
+namespace RE
+{
+
 class VAO
 {
 private:
-    VAO(VAO &VAO) {}
+
+    VAO(VAO &vao) {}
     VAO& operator=(const VAO &rhs) { return *this; }
+
     GLuint object;
 
 public:
@@ -26,5 +31,7 @@ public:
 
     GLuint GetObject() const { return object; }
 };
+
+}
 
 #endif // VAO_H

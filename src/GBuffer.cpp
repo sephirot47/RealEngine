@@ -1,5 +1,8 @@
 #include "../include/GBuffer.h"
 
+using namespace RE;
+
+
 const float GBuffer::screenMesh[12] = {1.0f, -1.0f, 0.0f,
                                        1.0f,  1.0f, 0.0f,
                                       -1.0f,  1.0f, 0.0f,

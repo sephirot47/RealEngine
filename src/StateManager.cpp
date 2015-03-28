@@ -1,5 +1,8 @@
 #include "../include/StateManager.h"
 
+using namespace RE;
+
+
 std::stack<GLState> StateManager::states;
 
 void StateManager::Push()

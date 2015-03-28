@@ -11,6 +11,18 @@
 #include "glm/glm.hpp"
 #include "Time.h"
 
+
+//OSTREAM OPERATORS //////////////////////////////////
+std::ostream& operator<<(std::ostream &log, const glm::vec3 &v);
+std::ostream& operator<<(std::ostream &log, const glm::quat &q);
+std::ostream& operator<<(std::ostream &log, const glm::vec2 &v);
+std::ostream& operator<<(std::ostream &log, const glm::vec4 &v);
+std::ostream& operator<<(std::ostream &log, const std::string &str);
+std::ostream& operator<<(std::ostream &log, const glm::mat4 &v);
+
+namespace RE
+{
+
 enum DbgMode
 {
     DbgModeLog = 1,
@@ -23,31 +35,28 @@ enum DbgMode
 #define CZ_AUTO_LOG_FILE "cz_auto_log_file"
 #define CZ_LOG_DIR "log"
 
-using namespace std;
-using namespace glm;
-
 #define DbgWarning(x) do{\
-    ostringstream log;\
-    ostringstream wrn;\
+    std::ostringstream log;\
+    std::ostringstream wrn;\
     log << x;\
-    wrn << "Warning(" << __FILE__ << ": " << __FUNCTION__ << ": " << __LINE__ << "): " << log.str() << endl;\
+    wrn << "Warning(" << __FILE__ << ": " << __FUNCTION__ << ": " << __LINE__ << "): " << log.str() << std::endl;\
     Debug::Warning(wrn);\
     log.flush();\
     wrn.flush();\
 } while(0)
 
 #define DbgError(x) do{\
-    ostringstream log;\
-    ostringstream err;\
+    std::ostringstream log;\
+    std::ostringstream err;\
     log << x;\
-    err << "Error(" << __FILE__ << ": " << __FUNCTION__ << ": " << __LINE__ << "): " << log.str() << endl;\
+    err << "Error(" << __FILE__ << ": " << __FUNCTION__ << ": " << __LINE__ << "): " << log.str() << std::endl;\
     Debug::Error(err);\
     log.flush();\
     err.flush();\
 } while(0)
 
 #define DbgLog(x) do{\
-    ostringstream log;\
+    std::ostringstream log;\
     log << x << endl;\
     Debug::Log(log);\
     log.flush();\
@@ -101,28 +110,21 @@ using namespace glm;
     if(error > 0){ DbgError("GL Error('" << gluErrorString(error)  << "')" << ": " << msg); return;} \
 } while(0)
 
-//OSTREAM OPERATORS //////////////////////////////////
-ostream& operator<<(ostream &log, const vec3 &v);
-ostream& operator<<(ostream &log, const quat &q);
-ostream& operator<<(ostream &log, const vec2 &v);
-ostream& operator<<(ostream &log, const vec4 &v);
-ostream& operator<<(ostream &log, const string &str);
-ostream& operator<<(ostream &log, const mat4 &v);
-
-
 class Debug
 {
 private:
-    static string logFile;
-    static ofstream fileStream;
+    static std::string logFile;
+    static std::ofstream fileStream;
 
 public:
     static unsigned int fileMode;
     static unsigned int outputMode;
-    static void SetFile(string filepath);
-    static void Log(ostringstream &log);
-    static void Warning(ostringstream &log);
-    static void Error(ostringstream &log);
+    static void SetFile(std::string filepath);
+    static void Log(std::ostringstream &log);
+    static void Warning(std::ostringstream &log);
+    static void Error(std::ostringstream &log);
 };
+
+}
 
 #endif //DEBUG_H

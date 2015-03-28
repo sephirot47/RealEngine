@@ -14,13 +14,14 @@
 #include "Texture.h"
 #include "glm/glm.hpp"
 
-using namespace glm;
+namespace RE
+{
 
 class Material
 {
 private:
 
-    vec3 ambientColor, diffuseColor, specularColor;
+    glm::vec3 ambientColor, diffuseColor, specularColor;
     float shininess;
 
     Texture *texture;
@@ -37,21 +38,23 @@ public:
     void BindForDrawing() const;
     void UnBindForDrawing() const;
 
-    void SetAmbientColor(vec3 color);
-    void SetDiffuseColor(vec3 color);
-    void SetSpecularColor(vec3 color);
+    void SetAmbientColor(glm::vec3 color);
+    void SetDiffuseColor(glm::vec3 color);
+    void SetSpecularColor(glm::vec3 color);
     void SetTexture(Texture &t);
     void SetShininess(float shininess);
     void SetShaderProgram(ShaderProgram &program);
 
-    vec3 GetAmbientColor() const;
-    vec3 GetDiffuseColor() const;
-    vec3 GetSpecularColor() const;
+    glm::vec3 GetAmbientColor() const;
+    glm::vec3 GetDiffuseColor() const;
+    glm::vec3 GetSpecularColor() const;
     float GetShininess() const;
     Texture* GetTexture() const;
     Shader* GetVertexShader() const;
     Shader* GetFragmentShader() const;
     ShaderProgram *GetShaderProgram() const;
 };
+
+}
 
 #endif // MATERIAL_H

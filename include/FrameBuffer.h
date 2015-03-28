@@ -11,6 +11,9 @@
 #include "Texture.h"
 #include "Debug.h"
 
+namespace RE
+{
+
 class FrameBuffer
 {
 private:
@@ -49,5 +52,7 @@ public:
     Texture *GetTexture(GLenum attachment) const;
     GLuint GetObject() const { return object; }
 };
+
+}
 
 #endif // FRAMEBUFFER_H

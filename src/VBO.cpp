@@ -1,5 +1,8 @@
 #include "../include/VBO.h"
 
+using namespace RE;
+
+
 VBO::VBO()
 {
     glGenBuffers(1, &object);

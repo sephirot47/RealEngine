@@ -8,6 +8,9 @@
 #include "Debug.h"
 #include "FileLoader.h"
 
+namespace RE
+{
+
 class Image
 {
 private:
@@ -26,5 +29,7 @@ public:
     GLenum GetFormat() const;
     const void* GetData() const;
 };
+
+}
 
 #endif // IMAGE_H

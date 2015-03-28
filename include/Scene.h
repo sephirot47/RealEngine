@@ -7,6 +7,9 @@
 
 using namespace std;
 
+namespace RE
+{
+
 class Scene
 {
 private:
@@ -15,5 +18,7 @@ public:
     Scene();
     ~Scene();
 };
+
+}
 
 #endif // SCENE_H

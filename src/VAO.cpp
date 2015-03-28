@@ -1,5 +1,8 @@
 #include "../include/VAO.h"
 
+using namespace RE;
+
+
 VAO::VAO()
 {
     StateManager::Push();

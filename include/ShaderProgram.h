@@ -18,6 +18,9 @@
 #include "Debug.h"
 #include "StateManager.h"
 
+namespace RE
+{
+
 class ShaderProgram
 {
 private:
@@ -51,5 +54,7 @@ public:
 
     GLuint GetObject() const { return object; }
 };
+
+}
 
 #endif // SHADERPROGRAM_H

@@ -1,5 +1,8 @@
 #include "../include/ShaderProgram.h"
 
+using namespace RE;
+
+
 ShaderProgram::ShaderProgram()
 {
     object = glCreateProgram();
@@ -72,7 +75,7 @@ void ShaderProgram::DetachTexture(const std::string name)
 }
 
 
-GLint ShaderProgram::GetUniformLocation(const string name) const
+GLint ShaderProgram::GetUniformLocation(const std::string name) const
 {
     return glGetUniformLocation(object, name.c_str());
 }
@@ -85,7 +88,7 @@ void ShaderProgram::SetUniform(const std::string name, float value) const
     StateManager::Pop();
 }
 
-void ShaderProgram::SetUniform(const string name, int value) const
+void ShaderProgram::SetUniform(const std::string name, int value) const
 {
     StateManager::Push();
     Use();

@@ -6,7 +6,9 @@
 #include <ctime>
 #include <sstream>
 
-using namespace std;
+namespace RE
+{
+
 class Time
 {
 public:
@@ -17,6 +19,9 @@ public:
     ///\brief Returns the time in milisecs since the engine started
     static long GetMiliseconds(); //Retorna Milisegons des de que s'inicia SDL
 
-	static string GetDateStr();
+    static std::string GetDateStr();
 };
+
+}
+
 #endif // TIME_H

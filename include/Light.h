@@ -13,6 +13,9 @@
 #include "StateManager.h"
 #include "glm/glm.hpp"
 
+namespace RE
+{
+
 enum LightType
 {
     DirectionalLight,
@@ -68,8 +71,10 @@ public:
     float GetShadow() const;
     bool GetEnabled() const;
 
-    mat4 GetView() const;
-    mat4 GetProjection(float screenWidth, float screenHeight) const;
+    glm::mat4 GetView() const;
+    glm::mat4 GetProjection(float screenWidth, float screenHeight) const;
 };
+
+}
 
 #endif // LIGHT_H

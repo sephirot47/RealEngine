@@ -1,5 +1,8 @@
 #include "../include/FileLoader.h"
 
+using namespace RE;
+
+
 unsigned char* FileLoader::ReadImage(const char *filepath, int &components, int &width, int &height)
 {
     unsigned char* data = stbi_load(filepath, &width, &height, &components, 0);
@@ -69,8 +72,10 @@ void FileLoader::GetOBJFormat(const char *filepath, bool &uvs, bool &normals, bo
     fclose(f);
 }
 
-bool FileLoader::ReadOBJ(const char *filepath, vector<vec3> &vertexPos, vector<vec2> &vertexUvs, vector<vec3> &vertexNormals,
-             bool &triangles)
+bool FileLoader::ReadOBJ(const char *filepath, std::vector<glm::vec3> &vertexPos,
+                         std::vector<glm::vec2> &vertexUvs,
+                         std::vector<glm::vec3> &vertexNormals,
+                         bool &triangles)
 {
     std::vector<glm::vec3> disorderedVertexPos, disorderedVertexNormals;
     std::vector<glm::vec2> disorderedVertexUvs;
@@ -80,7 +85,7 @@ bool FileLoader::ReadOBJ(const char *filepath, vector<vec3> &vertexPos, vector<v
     GetOBJFormat(filepath, hasUvs, hasNormals, triangles);
 
     std::ifstream f(filepath, std::ios::in);
-    if(!f.is_open()) cout << "Error opening the mesh file" << endl;
+    if(!f.is_open()) DbgError("Error opening the mesh file");
     std::string line;
 
     while(getline(f, line))

@@ -9,6 +9,9 @@
 #include "VBO.h"
 #include "Material.h"
 
+namespace RE
+{
+
 class Mesh
 {
 private:
@@ -18,7 +21,7 @@ private:
     VAO *vao;
     VBO *vboPos, *vboUv, *vboNormals;
     GLenum drawingMode;
-    mat4 model, normalMatrix;
+    glm::mat4 model, normalMatrix;
 
     int numVertices;
 
@@ -28,11 +31,11 @@ public:
 
     void LoadFromFile(const char *filepath);
 
-    void Draw(const Material &material, mat4 &projection, mat4 &view);
+    void Draw(const Material &material, glm::mat4 &projection, glm::mat4 &view);
 
     void SetDrawingMode(GLenum drawingMode);
-    void SetNormalMatrix(mat4 normalMatrix);
-    void SetModelMatrix(mat4 modelMatrix);
+    void SetNormalMatrix(glm::mat4 normalMatrix);
+    void SetModelMatrix(glm::mat4 modelMatrix);
 
     int GetNumVertices() const;
     VAO* GetVAO() const;
@@ -40,8 +43,10 @@ public:
     VBO* GetVBOUv() const;
     VBO* GetVBONormals() const;
     GLenum GetDrawingMode() const;
-    mat4 GetModelMatrix() const;
-    mat4 GetNormalMatrix() const;
+    glm::mat4 GetModelMatrix() const;
+    glm::mat4 GetNormalMatrix() const;
 };
+
+}
 
 #endif // MESH_H

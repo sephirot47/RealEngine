@@ -9,6 +9,9 @@
 
 #include "StateManager.h"
 
+namespace RE
+{
+
 class VBO
 {
 private:
@@ -26,5 +29,7 @@ public:
 
     GLuint GetObject() const { return object; }
 };
+
+}
 
 #endif // VBO_H

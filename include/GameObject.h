@@ -6,7 +6,8 @@
 #include "Mesh.h"
 #include "glm/glm.hpp"
 
-using namespace glm;
+namespace RE
+{
 
 class GameObject
 {
@@ -17,18 +18,14 @@ private:
 
     int id;
 
-    Mesh *mesh;
-    Material *material;
-    vec3 position, rotation, scale;
-
 public:
 
     GameObject();
     virtual ~GameObject();
 
-    Mesh *GetMesh() const;
-    Material *GetMaterial() const;
     int GetId() const;
 };
+
+}
 
 #endif // GAMEOBJECT_H

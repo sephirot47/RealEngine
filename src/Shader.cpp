@@ -1,5 +1,8 @@
 #include "../include/Shader.h"
 
+using namespace RE;
+
+
 Shader::Shader()
 {
     object = 0;

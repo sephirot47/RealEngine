@@ -10,6 +10,9 @@
 #include "Image.h"
 #include "StateManager.h"
 
+namespace RE
+{
+
 class Texture
 {
 private:
@@ -34,5 +37,7 @@ public:
 
     GLuint GetObject() const { return object; }
 };
+
+}
 
 #endif // TEXTURE_H

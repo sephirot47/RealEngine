@@ -1,5 +1,8 @@
 #include "../include/Image.h"
 
+using namespace RE;
+
+
 Image::Image()
 {
     components = width = height = 0;
