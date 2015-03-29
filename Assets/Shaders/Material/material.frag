@@ -23,7 +23,7 @@ void main()
     outGColor = vec4(texture(material.texture, vec2(fuv.x, 1.0 - fuv.y)).rgb * 0.05, 1);
     outGPosition = fpos;
     outGUv = fuv;
-    outGNormal = fnormal;
+    outGNormal = normalize(fnormal);
     outGMaterialTexture = vec4(texture(material.texture, vec2(fuv.x, 1.0 - fuv.y)).rgb, 1);
 }
 

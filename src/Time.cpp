@@ -10,7 +10,7 @@ long Time::GetMiliseconds()
 
 float Time::GetSeconds()
 {
-	return SDL_GetTicks()/1000;
+    return float(SDL_GetTicks())/1000.0f;
 }
 
 std::string Time::GetDateStr()

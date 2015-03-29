@@ -46,8 +46,8 @@ Light::Light(LightType type, float screenWidth, float screenHeight)
     shadowBuffer->AddDrawingBuffer(GL_DEPTH_ATTACHMENT, GL_DEPTH_COMPONENT, GL_FLOAT, GL_DEPTH_COMPONENT16,
                                    GL_CLAMP_TO_EDGE, GL_LINEAR);
 
-    pos = glm::vec3(0, 0, 10);
-    dir = glm::vec3(0, 0, -1);
+    pos = glm::vec3(-1, 1, 1);
+    dir = glm::vec3(1, -1, -1);
     color = glm::vec3(1, 1, 1);
     intensity = 1.0f;
     range = 2.0f;
@@ -73,9 +73,7 @@ void Light::ShadowMapMesh(Mesh &m, float screenWidth, float screenHeight)
             glEnable(GL_CULL_FACE);
             glCullFace(GL_FRONT);
 
-            shadowProgram->SetUniform("modelMatrix", m.GetModelMatrix());
-            shadowProgram->SetUniform("lightView", GetView());
-            shadowProgram->SetUniform("lightProjection", GetProjection(screenWidth, screenHeight));
+            shadowProgram->SetUniform("PVM", GetProjection(screenWidth, screenHeight) * GetView() * m.GetModelMatrix());
 
             VAO *shadowVao = new VAO();
             shadowVao->AddAttribute(*m.GetVBOPos(), 0, 3, GL_FLOAT, GL_FALSE, 0, 0);
@@ -118,16 +116,23 @@ void Light::ApplyLight(GBuffer &gbuffer, const glm::mat4 &camView, const glm::ma
         gbuffer.BindBuffersToProgram(*lightProgram);
         lightProgram->AttachTexture("shadowDepthBuffer", *(shadowBuffer->GetTexture(GL_DEPTH_ATTACHMENT)));
 
-        lightProgram->SetUniform("light.projection", GetProjection(gbuffer.GetWidth(), gbuffer.GetHeight()));
-        lightProgram->SetUniform("light.view", GetView());
 
-        if(type != DirectionalLight) lightProgram->SetUniform("light.position", pos);
-        if(type != PointLight) lightProgram->SetUniform("light.direction", dir);
+        glm::mat4 bias = glm::mat4(0.5, 0.0, 0.0, 0.0,
+                                   0.0, 0.5, 0.0, 0.0,
+                                   0.0, 0.0, 0.5, 0.0,
+                                   0.5, 0.5, 0.5, 1.0);
+
+        glm::mat4 proj = GetProjection(gbuffer.GetWidth(), gbuffer.GetHeight()), view = GetView();
+        lightProgram->SetUniform("light.projection", proj);
+        lightProgram->SetUniform("light.view", view);
+        lightProgram->SetUniform("light.projectionView", proj * view);
+        lightProgram->SetUniform("light.biasedProjectionView", bias * proj * view);
+        lightProgram->SetUniform("light.position", pos);
+        lightProgram->SetUniform("light.direction", dir);
         lightProgram->SetUniform("light.color", color);
-
         lightProgram->SetUniform("light.intensity", intensity);
         lightProgram->SetUniform("light.shadow", shadow);
-        if(type != DirectionalLight) lightProgram->SetUniform("light.range", range);
+        lightProgram->SetUniform("light.range", range);
 
         GLenum drawBuffers[] = {GBuffer::GBufferAttachment::GColorAttachment,
                                 GBuffer::GBufferAttachment::GDepthAttachment};
@@ -149,7 +154,7 @@ void Light::SetPosition(glm::vec3 position)
 
 void Light::SetDirection(glm::vec3 direction)
 {
-    dir = direction;
+    dir = glm::normalize(direction);
 }
 
 void Light::SetColor(glm::vec3 color)

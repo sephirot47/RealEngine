@@ -144,6 +144,7 @@ void RenderScene()
     light2->ShadowMapMesh(*mesh3, width, height);
 
     light->ApplyLight(*gbuffer, view, projection);
+    light2->SetColor(vec3(0,1,1));
     light2->ApplyLight(*gbuffer, view, projection);
 
     gbuffer->RenderToScreen();
@@ -170,6 +171,9 @@ int main()
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
     context = SDL_GL_CreateContext(win);
 
+    float totalTime = 0.0f;
+    int frames = 0;
+
     Init();
     bool running = true;
     while(running)
@@ -190,9 +194,16 @@ int main()
             if (event.type == SDL_KEYDOWN && IsPressed(SDLK_2)) light2->SetEnabled(!light2->GetEnabled());
         }
 
+        float t = Time::GetMiliseconds();
+
         RenderScene();
         SDL_GL_SwapWindow(win);
-        SDL_Delay(25);
+
+        totalTime += Time::GetMiliseconds() - t;
+        float fps = float(++frames)/totalTime;
+        if(frames % 3 == 0) DbgLog(int(fps * 1000.0f) << " fps" );
+        if(frames > 100) frames = totalTime = 0;
+        //SDL_Delay(10);
     }
 
     SDL_GL_DeleteContext(context);

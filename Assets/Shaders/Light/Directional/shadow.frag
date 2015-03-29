@@ -1,4 +1,3 @@
-#version 130
-out float depth; 
+#version 130 
 void main() {}
 

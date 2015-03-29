@@ -86,7 +86,9 @@ void Mesh::Render(const Material &material, glm::mat4 &projection, glm::mat4 &vi
     material.GetShaderProgram()->SetUniform("projection", projection);
     material.GetShaderProgram()->SetUniform("view", view);
     material.GetShaderProgram()->SetUniform("model", model);
-    material.GetShaderProgram()->SetUniform("normalMatrix", normalMatrix);
+    material.GetShaderProgram()->SetUniform("normalMatrix", glm::transpose(glm::inverse(view * model)));
+    material.GetShaderProgram()->SetUniform("PVM", projection * view * model);
+
 
     glDrawArrays(renderMode, 0, numVertices);
 

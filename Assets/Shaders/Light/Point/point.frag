@@ -1,13 +1,8 @@
 #version 130	
 
-mat4 biasMatrix = mat4(0.5, 0.0, 0.0, 0.0,
-		       0.0, 0.5, 0.0, 0.0,
-		       0.0, 0.0, 0.5, 0.0,
-		       0.5, 0.5, 0.5, 1.0);
-
 struct PointLight
 {
-	mat4 projection, view;
+	mat4 projection, view, projectionView, biasedProjectionView;
 	vec3 position, color;
 	float intensity, shadow, range;
 };
@@ -24,16 +19,15 @@ void main()
     if(texture(GDepth, screenuv).x > 0.9999) { outGColor = vec4(texture(GColor, screenuv).rgb, 1); return; }
 
     vec4 worldPosition = vec4(texture(GPosition, screenuv).xyz, 1); 
-    vec4 projectionCoord = light.projection * light.view * worldPosition;
-    projectionCoord /= projectionCoord.w;
-    vec4 shadowCoord = biasMatrix * projectionCoord;
+    vec4 shadowCoord = light.biasedProjectionView * worldPosition;
+    shadowCoord /= shadowCoord.w;
 
     float shadow = 1.0;
     if(texture(shadowDepthBuffer, shadowCoord.xy).z < shadowCoord.z - 0.005 ) shadow = light.shadow;
 
-    vec3 dir = vec3(worldPosition.xyz) - light.position;
-    vec3 normal = normalize(texture(GNormal, screenuv).xyz);
-    float brightness = max(0.0, dot(-normalize(dir), normal));
+    vec3 dir = normalize(vec3(worldPosition.xyz) - light.position);
+    vec3 normal = texture(GNormal, screenuv).xyz;
+    float brightness = max(0.0, dot(-dir, normal));
 
     float distance = distance(worldPosition.xyz, light.position);
     float attenuation = clamp(light.range/distance, 0.0, 1.0);
