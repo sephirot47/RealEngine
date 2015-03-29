@@ -13,6 +13,7 @@
 #include <GL/glext.h>
 
 #include "glm/glm.hpp"
+#include "Bindable.h"
 #include "Texture.h"
 #include "Shader.h"
 #include "Debug.h"
@@ -21,7 +22,7 @@
 namespace RE
 {
 
-class ShaderProgram
+class ShaderProgram : public Bindable
 {
 private:
 

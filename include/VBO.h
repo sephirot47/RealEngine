@@ -12,7 +12,7 @@
 namespace RE
 {
 
-class VBO
+class VBO : public Bindable
 {
 private:
     VBO(VBO &vbo) {}

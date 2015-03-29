@@ -7,6 +7,7 @@
 #include <GL/glu.h>
 #include <GL/glext.h>
 
+#include "Bindable.h"
 #include "StateManager.h"
 #include "FileLoader.h"
 #include "Shader.h"
@@ -17,7 +18,7 @@
 namespace RE
 {
 
-class Material
+class Material : public Bindable
 {
 private:
 

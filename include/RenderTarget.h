@@ -1,12 +1,6 @@
 #ifndef RENDERTARGET_H
 #define RENDERTARGET_H
 
-#define GL_GLEXT_PROTOTYPES
-
-#include <GL/gl.h>
-#include <GL/glu.h>
-#include <GL/glext.h>
-
 namespace RE
 {
 

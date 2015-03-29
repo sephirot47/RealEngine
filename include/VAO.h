@@ -11,7 +11,7 @@
 namespace RE
 {
 
-class VAO
+class VAO : public Bindable
 {
 private:
 
