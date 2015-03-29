@@ -7,6 +7,7 @@
 #include <GL/glu.h>
 #include <GL/glext.h>
 
+#include "Bindable.h"
 #include "StateManager.h"
 
 namespace RE

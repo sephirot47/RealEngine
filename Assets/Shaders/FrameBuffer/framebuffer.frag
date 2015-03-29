@@ -1,10 +1,10 @@
 #version 130	
 
-uniform sampler2D finalColors, pos, uvs, normals, textureColors, depth;
+uniform sampler2D GColor;
 in vec2 screenuv;
 
 void main()
 { 
-    gl_FragColor = vec4(texture(finalColors, screenuv).rgb, 1);
+    gl_FragColor = vec4(texture(GColor, screenuv).rgb, 1);
 }
 

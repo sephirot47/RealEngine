@@ -42,6 +42,7 @@ public:
                           GLint internalFormat,
                           GLenum wrapMode = GL_CLAMP_TO_EDGE,
                           GLenum scaleMode = GL_LINEAR);
+
     void SetDrawingBuffers(int n, GLenum* attachments) const;
     bool ExistsDrawingBuffer(GLenum attachment) const;
     void DeleteDrawingBuffer(GLenum attachment);

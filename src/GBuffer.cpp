@@ -2,6 +2,12 @@
 
 using namespace RE;
 
+const std::string GBuffer::GColorInputName = "GColor";
+const std::string GBuffer::GPositionInputName = "GPosition";
+const std::string GBuffer::GUvInputName = "GUv";
+const std::string GBuffer::GNormalInputName = "GNormal";
+const std::string GBuffer::GMaterialTextureInputName = "GMaterialTexture";
+const std::string GBuffer::GDepthInputName = "GDepth";
 
 const float GBuffer::screenMesh[12] = {1.0f, -1.0f, 0.0f,
                                        1.0f,  1.0f, 0.0f,
@@ -13,35 +19,41 @@ GBuffer::GBuffer(float width, float height) : FrameBuffer(width, height)
     this->width = width;
     this->height = height;
 
-    // Create the vertex shader
-    vshader = new Shader(); vshader->Create("Assets/Shaders/FrameBuffer/framebuffer.vert", GL_VERTEX_SHADER);
-    fshader = new Shader(); fshader->Create("Assets/Shaders/FrameBuffer/framebuffer.frag", GL_FRAGMENT_SHADER);
-    program = new ShaderProgram();
-    program->AttachShader(*vshader);
-    program->AttachShader(*fshader);
-    program->Link();
-
+    //To render to the screen
     screenMeshVbo = new VBO();
     screenMeshVbo->SetData(GBuffer::screenMesh, sizeof(GBuffer::screenMesh));
 
     screenMeshVao = new VAO();
     screenMeshVao->AddAttribute(*screenMeshVbo, 0, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
-    //Add buffers
-    AddDrawingBuffer(FinalColorAttachment, GL_RGBA, GL_FLOAT, GL_RGBA, GL_REPEAT, GL_LINEAR);
-    AddDrawingBuffer(PositionAttachment, GL_RGBA, GL_FLOAT, GL_RGBA32F, GL_REPEAT, GL_LINEAR);
-    AddDrawingBuffer(UvAttachment, GL_RG, GL_FLOAT, GL_RG, GL_REPEAT, GL_LINEAR);
-    AddDrawingBuffer(NormalsAttachment, GL_RGB, GL_FLOAT, GL_RGBA32F, GL_REPEAT, GL_LINEAR);
-    AddDrawingBuffer(MaterialTextureAttachment, GL_RGBA, GL_FLOAT, GL_RGBA, GL_REPEAT, GL_LINEAR);
-    AddDrawingBuffer(DepthAttachment, GL_DEPTH_COMPONENT, GL_FLOAT, GL_DEPTH_COMPONENT24, GL_CLAMP_TO_EDGE, GL_NEAREST);
+    vshader = new Shader(); vshader->Create("Assets/Shaders/FrameBuffer/framebuffer.vert", GL_VERTEX_SHADER);
+    fshader = new Shader(); fshader->Create("Assets/Shaders/FrameBuffer/framebuffer.frag", GL_FRAGMENT_SHADER);
+    program = new ShaderProgram();
+    program->AttachShader(*vshader);
+    program->AttachShader(*fshader);
+    program->Link();
     //
 
+    //Add buffers
+    AddDrawingBuffer(GColorAttachment, GL_RGBA, GL_FLOAT, GL_RGBA, GL_REPEAT, GL_LINEAR);
+    AddDrawingBuffer(GPositionAttachment, GL_RGBA, GL_FLOAT, GL_RGBA32F, GL_REPEAT, GL_LINEAR);
+    AddDrawingBuffer(GUvAttachment, GL_RG, GL_FLOAT, GL_RG, GL_REPEAT, GL_LINEAR);
+    AddDrawingBuffer(GNormalAttachment, GL_RGB, GL_FLOAT, GL_RGBA32F, GL_REPEAT, GL_LINEAR);
+    AddDrawingBuffer(GMaterialTextureAttachment, GL_RGBA, GL_FLOAT, GL_RGBA, GL_REPEAT, GL_LINEAR);
     /*
-    AddDrawingBuffer(MaterialAmbientAttachment, GL_RGB, GL_RGB, GL_FLOAT, GL_REPEAT, GL_LINEAR);
-    AddDrawingBuffer(MaterialDiffuseAttachment, GL_RGB, GL_RGB, GL_FLOAT, GL_REPEAT, GL_LINEAR);
+    AddDrawingBuffer(GMaterialDiffuseAttachment, GL_RGB, GL_RGB, GL_FLOAT, GL_REPEAT, GL_LINEAR);
     AddDrawingBuffer(MaterialSpecularAttachment, GL_RGB, GL_RGB, GL_FLOAT, GL_REPEAT, GL_LINEAR);
-    AddDrawingBuffer(MaterialShininessAttachment, GL_R32F, GL_R32F, GL_FLOAT, GL_REPEAT, GL_LINEAR);
+    AddDrawingBuffer(GMaterialShininessAttachment, GL_R32F, GL_R32F, GL_FLOAT, GL_REPEAT, GL_LINEAR);
     */
+    AddDrawingBuffer(GDepthAttachment, GL_DEPTH_COMPONENT, GL_FLOAT, GL_DEPTH_COMPONENT24, GL_CLAMP_TO_EDGE, GL_NEAREST);
+    //
+
+    program->AttachTexture(GColorInputName, *GetGColor());
+    program->AttachTexture(GPositionInputName, *GetGPosition());
+    program->AttachTexture(GUvInputName, *GetGUv());
+    program->AttachTexture(GNormalInputName, *GetGNormal());
+    program->AttachTexture(GMaterialTextureInputName, *GetGMaterialTexture());
+    program->AttachTexture(GDepthInputName, *GetGDepth());
 }
 
 GBuffer::~GBuffer()
@@ -51,11 +63,11 @@ GBuffer::~GBuffer()
 void GBuffer::Render() const
 {
     StateManager::Push();
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     screenMeshVao->Bind();
     program->Bind();
 
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glDrawArrays(GL_QUADS, 0, 4);
 
     program->UnBind();
@@ -75,36 +87,14 @@ void GBuffer::RenderToScreen() const
     StateManager::Pop();
 }
 
-
-void GBuffer::SetFragmentFinalColorTextureName(std::string name)
+void GBuffer::BindBuffersToProgram(ShaderProgram &program) const
 {
-    program->AttachTexture(name, *GetFinalColorTexture());
-}
-
-void GBuffer::SetFragmentMaterialTextureTextureName(std::string name)
-{
-    program->AttachTexture(name, *GetMaterialTextureTexture());
-}
-
-void GBuffer::SetFragmentPositionTextureName(std::string name)
-{
-    program->AttachTexture(name, *GetPositionTexture());
-}
-
-void GBuffer::SetFragmentUvTextureName(std::string name)
-{
-    program->AttachTexture(name, *GetUvTexture());
-}
-
-void GBuffer::SetFragmentNormalsTextureName(std::string name)
-{
-    program->AttachTexture(name, *GetNormalsTexture());
-}
-
-
-void GBuffer::SetFragmentDepthTextureName(std::string name)
-{
-    program->AttachTexture(name, *GetDepthTexture());
+    program.AttachTexture(GColorInputName, *GetGColor());
+    program.AttachTexture(GPositionInputName, *GetGPosition());
+    program.AttachTexture(GUvInputName, *GetGUv());
+    program.AttachTexture(GNormalInputName, *GetGNormal());
+    program.AttachTexture(GMaterialTextureInputName, *GetGMaterialTexture());
+    program.AttachTexture(GDepthInputName, *GetGDepth());
 }
 
 ShaderProgram *GBuffer::GetShaderProgram() const
@@ -112,34 +102,34 @@ ShaderProgram *GBuffer::GetShaderProgram() const
     return program;
 }
 
-Texture *GBuffer::GetFinalColorTexture() const
+Texture *GBuffer::GetGColor() const
 {
-    return GetTexture(FinalColorAttachment);
+    return GetTexture(GColorAttachment);
 }
 
-Texture *GBuffer::GetMaterialTextureTexture() const
+Texture *GBuffer::GetGMaterialTexture() const
 {
-    return GetTexture(MaterialTextureAttachment);
+    return GetTexture(GMaterialTextureAttachment);
 }
 
-Texture *GBuffer::GetPositionTexture() const
+Texture *GBuffer::GetGPosition() const
 {
-    return GetTexture(PositionAttachment);
+    return GetTexture(GPositionAttachment);
 }
 
-Texture *GBuffer::GetNormalsTexture() const
+Texture *GBuffer::GetGNormal() const
 {
-    return GetTexture(NormalsAttachment);
+    return GetTexture(GNormalAttachment);
 }
 
-Texture *GBuffer::GetUvTexture() const
+Texture *GBuffer::GetGUv() const
 {
-    return GetTexture(UvAttachment);
+    return GetTexture(GUvAttachment);
 }
 
-Texture *GBuffer::GetDepthTexture() const
+Texture *GBuffer::GetGDepth() const
 {
-    return GetTexture(DepthAttachment);
+    return GetTexture(GDepthAttachment);
 }
 
 

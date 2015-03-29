@@ -49,12 +49,6 @@ void Init()
     material3->SetTexture(*texture3);
 
     gbuffer = new GBuffer(width, height);
-    gbuffer->SetFragmentFinalColorTextureName("finalColors");
-    gbuffer->SetFragmentMaterialTextureTextureName("textureColors");
-    gbuffer->SetFragmentPositionTextureName("pos");
-    gbuffer->SetFragmentUvTextureName("uvs");
-    gbuffer->SetFragmentNormalsTextureName("normals");
-    gbuffer->SetFragmentDepthTextureName("depth");
 
     light = new Light(DirectionalLight, width, height);
     light->SetPosition(vec3(10.0f, 0.5f, 10.0f));
@@ -74,6 +68,7 @@ void Init()
 }
 
 float rot = 0.0f, sphereRot = 0.0f, appTime = 0.0f;
+
 bool lightMode = false;
 
 void RenderScene()

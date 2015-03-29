@@ -24,20 +24,27 @@ namespace RE
 
 enum GBufferAttachment
 {
-    FinalColorAttachment = GL_COLOR_ATTACHMENT0,
-    PositionAttachment = GL_COLOR_ATTACHMENT1,
-    UvAttachment = GL_COLOR_ATTACHMENT2,
-    NormalsAttachment = GL_COLOR_ATTACHMENT3,
-    MaterialTextureAttachment = GL_COLOR_ATTACHMENT4,
-    MaterialDiffuseAttachment = GL_COLOR_ATTACHMENT5,
-    MaterialSpecularAttachment = GL_COLOR_ATTACHMENT6,
-    MaterialShininessAttachment = GL_COLOR_ATTACHMENT7,
-    DepthAttachment = GL_DEPTH_ATTACHMENT
+    GColorAttachment = GL_COLOR_ATTACHMENT0,
+    GPositionAttachment = GL_COLOR_ATTACHMENT1,
+    GUvAttachment = GL_COLOR_ATTACHMENT2,
+    GNormalAttachment = GL_COLOR_ATTACHMENT3,
+    GMaterialTextureAttachment = GL_COLOR_ATTACHMENT4,
+    GMaterialDiffuseAttachment = GL_COLOR_ATTACHMENT5,
+    GMaterialSpecularAttachment = GL_COLOR_ATTACHMENT6,
+    GMaterialShininessAttachment = GL_COLOR_ATTACHMENT7,
+    GDepthAttachment = GL_DEPTH_ATTACHMENT
 };
 
 class GBuffer : public FrameBuffer
 {
 private:
+
+    static const std::string GColorInputName;
+    static const std::string GPositionInputName;
+    static const std::string GUvInputName;
+    static const std::string GNormalInputName;
+    static const std::string GMaterialTextureInputName;
+    static const std::string GDepthInputName;
 
     static const float screenMesh[12];
 
@@ -55,21 +62,16 @@ public:
     void Render() const;
     void RenderToScreen() const;
 
-    void SetFragmentFinalColorTextureName(std::string name);
-    void SetFragmentMaterialTextureTextureName(std::string name);
-    void SetFragmentPositionTextureName(std::string name);
-    void SetFragmentUvTextureName(std::string name);
-    void SetFragmentNormalsTextureName(std::string name);
-    void SetFragmentDepthTextureName(std::string name);
+    void BindBuffersToProgram(ShaderProgram &program) const;
 
     VAO *GetVAO() const;
     ShaderProgram *GetShaderProgram() const;
-    Texture *GetFinalColorTexture() const;
-    Texture *GetMaterialTextureTexture() const;
-    Texture *GetPositionTexture() const;
-    Texture *GetNormalsTexture() const;
-    Texture *GetUvTexture() const;
-    Texture *GetDepthTexture() const;
+    Texture *GetGColor() const;
+    Texture *GetGMaterialTexture() const;
+    Texture *GetGPosition() const;
+    Texture *GetGNormal() const;
+    Texture *GetGUv() const;
+    Texture *GetGDepth() const;
 
     float GetWidth() const;
     float GetHeight() const;

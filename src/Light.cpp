@@ -104,7 +104,7 @@ void Light::ClearBufferMeshShadow()
 
 void Light::ApplyLight(GBuffer &gbuffer, const glm::mat4 &camView, const glm::mat4 &camProjection) const
 {
-    if(!enabled) return;
+    if(not enabled) return;
 
     StateManager::Push();
 
@@ -114,24 +114,12 @@ void Light::ApplyLight(GBuffer &gbuffer, const glm::mat4 &camView, const glm::ma
         gbuffer.BindRenderTarget();
         lightVao->Bind();
         lightProgram->Bind();
-        lightProgram->AttachTexture("finalColors", *gbuffer.GetFinalColorTexture());
-        lightProgram->AttachTexture("pos", *gbuffer.GetPositionTexture());
-        lightProgram->AttachTexture("uvs", *gbuffer.GetUvTexture());
-        lightProgram->AttachTexture("normals", *gbuffer.GetNormalsTexture());
-        lightProgram->AttachTexture("textureColors", *gbuffer.GetMaterialTextureTexture());
-        lightProgram->AttachTexture("depth", *gbuffer.GetDepthTexture());
+
+        gbuffer.BindBuffersToProgram(*lightProgram);
         lightProgram->AttachTexture("shadowDepthBuffer", *(shadowBuffer->GetTexture(GL_DEPTH_ATTACHMENT)));
 
-        glm::mat4 camProjectionInverse = inverse(camProjection);
-        lightProgram->SetUniform("camProjectionInverse", camProjectionInverse);
-        glm::mat4 camViewInverse = inverse(camView);
-        lightProgram->SetUniform("camViewInverse", camViewInverse);
-
-        glm::mat4 lightView = GetView();
-        lightProgram->SetUniform("lightView", lightView);
-        glm::mat4 lightProjection = GetProjection(gbuffer.GetWidth(), gbuffer.GetHeight());
-        lightProgram->SetUniform("lightProjection", lightProjection);
-
+        lightProgram->SetUniform("lightView", GetView());
+        lightProgram->SetUniform("lightProjection", GetProjection(gbuffer.GetWidth(), gbuffer.GetHeight()));
         lightProgram->SetUniform("lightPosition", pos);
         lightProgram->SetUniform("lightRange", range);
         lightProgram->SetUniform("lightShadow", shadow);
