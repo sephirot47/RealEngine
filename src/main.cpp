@@ -26,7 +26,7 @@ void Init()
     glEnable(GL_TEXTURE_2D);
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
-    //glDepthFunc(GL_LEQUAL);
+    glDepthFunc(GL_LEQUAL);
 
     tex = new Texture(width, height);
 
@@ -126,26 +126,49 @@ void RenderScene()
     view = glm::inverse(T * R);
     if(lightMode) view = light2->GetView();
 
+    material1->SetShininess(50.0f);
+    material1->SetSpecularColor(vec3(1.0, 1.0, 1.0));
+    material2->SetSpecularColor(vec3(0.0, 0.0, 0.0));
+    material3->SetSpecularColor(vec3(0.0, 0.0, 0.0));
+
     mesh1->Render(*gbuffer, *material1, projection, view);
     mesh2->Render(*gbuffer, *material2, projection, view);
     mesh3->Render(*gbuffer, *material3, projection, view);
 
-    //mesh1->Render(*tex, *material1, projection, view);
-    //material3->SetTexture(*tex);
-
     light->ClearBufferMeshShadow();
+    light2->ClearBufferMeshShadow();
+
     light->ShadowMapMesh(*mesh1, width, height);
     light->ShadowMapMesh(*mesh2, width, height);
     light->ShadowMapMesh(*mesh3, width, height);
 
-    light2->ClearBufferMeshShadow();
     light2->ShadowMapMesh(*mesh1, width, height);
     light2->ShadowMapMesh(*mesh2, width, height);
     light2->ShadowMapMesh(*mesh3, width, height);
 
     light->ApplyLight(*gbuffer, view, projection);
-    light2->SetColor(vec3(0,1,1));
+    //vec3 pos = light2->GetPosition();
+    //light2->SetColor(vec3(1,0,0));
+    //light2->SetPosition(pos + vec3(2, 0, 0));
     light2->ApplyLight(*gbuffer, view, projection);
+    /*
+    light2->SetColor(vec3(0,0,1));
+    light2->SetPosition(pos - vec3(2, 0, 0));
+    light2->ApplyLight(*gbuffer, view, projection);
+    light2->SetPosition(pos);
+    light2->ApplyLight(*gbuffer, view, projection);  //20 ~ 25 fps
+    light2->ApplyLight(*gbuffer, view, projection);
+    light2->ApplyLight(*gbuffer, view, projection);
+    light2->ApplyLight(*gbuffer, view, projection);
+    light2->ApplyLight(*gbuffer, view, projection);
+    light2->ApplyLight(*gbuffer, view, projection);
+    light2->ApplyLight(*gbuffer, view, projection);
+    light2->ApplyLight(*gbuffer, view, projection);
+    light2->ApplyLight(*gbuffer, view, projection);
+    light2->ApplyLight(*gbuffer, view, projection);
+    light2->ApplyLight(*gbuffer, view, projection);
+    light2->ApplyLight(*gbuffer, view, projection);  //9 fps
+    */
 
     gbuffer->RenderToScreen();
 }

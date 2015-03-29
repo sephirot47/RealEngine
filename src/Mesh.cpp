@@ -59,7 +59,7 @@ void Mesh::LoadFromFile(const char *filepath)
         vboNormals->SetData(&normals[0], normals.size() * sizeof(glm::vec3));
         vao->AddAttribute(*vboNormals, index++, 3, GL_FLOAT, GL_FALSE, 0, 0);
     }
-
+DbgLog(numVertices);
     StateManager::Pop();
 }
 
@@ -88,7 +88,6 @@ void Mesh::Render(const Material &material, glm::mat4 &projection, glm::mat4 &vi
     material.GetShaderProgram()->SetUniform("model", model);
     material.GetShaderProgram()->SetUniform("normalMatrix", glm::transpose(glm::inverse(view * model)));
     material.GetShaderProgram()->SetUniform("PVM", projection * view * model);
-
 
     glDrawArrays(renderMode, 0, numVertices);
 

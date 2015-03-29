@@ -1,5 +1,11 @@
 #version 130	
 
+struct Camera
+{
+	vec3 position;
+};
+uniform Camera camera;
+
 struct PointLight
 {
 	mat4 projection, view, projectionView, biasedProjectionView;
@@ -7,7 +13,8 @@ struct PointLight
 	float intensity, shadow, range;
 };
 uniform PointLight light;
-uniform sampler2D GColor, GPosition, GNormal, GMaterialTexture, GDepth;
+
+uniform sampler2D GColor, GPosition, GNormal, GMaterialTexture, GMaterialDiffuse, GMaterialSpecular, GMaterialShininess, GDepth;
 uniform sampler2D shadowDepthBuffer;
 
 in vec2 screenuv;
@@ -28,12 +35,18 @@ void main()
     vec3 dir = normalize(vec3(worldPosition.xyz) - light.position);
     vec3 normal = texture(GNormal, screenuv).xyz;
     float brightness = max(0.0, dot(-dir, normal));
-
     float distance = distance(worldPosition.xyz, light.position);
     float attenuation = clamp(light.range/distance, 0.0, 1.0);
+    float specLight = dot( normalize( reflect(dir, normal) ), normalize(worldPosition.xyz - camera.position) );
+    specLight = pow( max(0.0, specLight) , texture(GMaterialShininess, screenuv).x);
 
-    vec3 colorAddition = texture(GMaterialTexture, screenuv).rgb * light.color * light.intensity * brightness * shadow;
-    outGColor = vec4( texture(GColor, screenuv).rgb + colorAddition * attenuation ,1.0);
+    vec3 textureColor  = texture(GMaterialTexture, screenuv).rgb;
+    vec3 diffuseColor  = texture(GMaterialDiffuse, screenuv).rgb;
+    vec3 specularColor = texture(GMaterialSpecular, screenuv).rgb;
+
+    vec3 diffuseLight  = diffuseColor  * textureColor * light.color * light.intensity * brightness * attenuation * shadow;
+    vec3 specularLight = max(vec3(0), specularColor * light.color * specLight * shadow) * attenuation;
+    outGColor = vec4( texture(GColor, screenuv).rgb + diffuseLight + specularLight, 1.0);
 }
 
 

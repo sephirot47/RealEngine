@@ -31,6 +31,9 @@ private:
     static const std::string GUvInputName;
     static const std::string GNormalInputName;
     static const std::string GMaterialTextureInputName;
+    static const std::string GMaterialDiffuseInputName;
+    static const std::string GMaterialSpecularInputName;
+    static const std::string GMaterialShininessInputName;
     static const std::string GDepthInputName;
 
     static const float screenMesh[12];
@@ -42,26 +45,6 @@ private:
     float width, height;
 
 public:
-
-    GBuffer(float width, float height);
-    ~GBuffer();
-
-    void Render() const;
-    void RenderToScreen() const;
-
-    void BindBuffersToProgram(ShaderProgram &program) const;
-
-    VAO *GetVAO() const;
-    ShaderProgram *GetShaderProgram() const;
-    Texture *GetGColor() const;
-    Texture *GetGMaterialTexture() const;
-    Texture *GetGPosition() const;
-    Texture *GetGNormal() const;
-    Texture *GetGUv() const;
-    Texture *GetGDepth() const;
-
-    float GetWidth() const;
-    float GetHeight() const;
 
     enum GBufferAttachment
     {
@@ -75,8 +58,21 @@ public:
         GMaterialShininessAttachment = GL_COLOR_ATTACHMENT7,
         GDepthAttachment = GL_DEPTH_ATTACHMENT
     };
-    static GBufferAttachment GBufferAttachments;
 
+    GBuffer(float width, float height);
+    ~GBuffer();
+
+    void Render() const;
+    void RenderToScreen() const;
+
+    void BindBuffersToProgram(ShaderProgram &program) const;
+
+    VAO *GetVAO() const;
+    ShaderProgram *GetShaderProgram() const;
+    Texture *GetGBuffer(GBufferAttachment attachment) const;
+
+    float GetWidth() const;
+    float GetHeight() const;
 };
 
 }

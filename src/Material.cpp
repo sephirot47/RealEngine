@@ -8,7 +8,7 @@ Material::Material()
     ambientColor = glm::vec3(0.1, 1.0, 1.0);
     diffuseColor = glm::vec3(0.5, 0.5, 0.5);
     specularColor = glm::vec3(0.5, 0.5, 0.5);
-    shininess = 60.0f;
+    shininess = 32.0f;
     texture = nullptr;
 
     vshader = new Shader(); vshader->Create("Assets/Shaders/Material/material.vert", GL_VERTEX_SHADER);
@@ -75,7 +75,6 @@ void Material::SetShaderProgram(ShaderProgram &program)
     this->program = &program;
     programChanged = true;
 }
-
 
 
 

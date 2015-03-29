@@ -7,6 +7,9 @@ const std::string GBuffer::GPositionInputName = "GPosition";
 const std::string GBuffer::GUvInputName = "GUv";
 const std::string GBuffer::GNormalInputName = "GNormal";
 const std::string GBuffer::GMaterialTextureInputName = "GMaterialTexture";
+const std::string GBuffer::GMaterialDiffuseInputName = "GMaterialDiffuse";
+const std::string GBuffer::GMaterialSpecularInputName = "GMaterialSpecular";
+const std::string GBuffer::GMaterialShininessInputName = "GMaterialShininess";
 const std::string GBuffer::GDepthInputName = "GDepth";
 
 const float GBuffer::screenMesh[12] = {1.0f, -1.0f, 0.0f,
@@ -35,25 +38,18 @@ GBuffer::GBuffer(float width, float height) : FrameBuffer(width, height)
     //
 
     //Add buffers
-    AddDrawingBuffer(GColorAttachment, GL_RGBA, GL_FLOAT, GL_RGBA, GL_REPEAT, GL_LINEAR);
-    AddDrawingBuffer(GPositionAttachment, GL_RGBA, GL_FLOAT, GL_RGBA32F, GL_REPEAT, GL_LINEAR);
-    AddDrawingBuffer(GUvAttachment, GL_RG, GL_FLOAT, GL_RG, GL_REPEAT, GL_LINEAR);
-    AddDrawingBuffer(GNormalAttachment, GL_RGB, GL_FLOAT, GL_RGBA32F, GL_REPEAT, GL_LINEAR);
-    AddDrawingBuffer(GMaterialTextureAttachment, GL_RGBA, GL_FLOAT, GL_RGBA, GL_REPEAT, GL_LINEAR);
-    /*
-    AddDrawingBuffer(GMaterialDiffuseAttachment, GL_RGB, GL_RGB, GL_FLOAT, GL_REPEAT, GL_LINEAR);
-    AddDrawingBuffer(MaterialSpecularAttachment, GL_RGB, GL_RGB, GL_FLOAT, GL_REPEAT, GL_LINEAR);
-    AddDrawingBuffer(GMaterialShininessAttachment, GL_R32F, GL_R32F, GL_FLOAT, GL_REPEAT, GL_LINEAR);
-    */
+    AddDrawingBuffer(GColorAttachment, GL_RGBA, GL_FLOAT, GL_RGBA, GL_REPEAT, GL_NEAREST);
+    AddDrawingBuffer(GPositionAttachment, GL_RGBA, GL_FLOAT, GL_RGBA32F, GL_REPEAT, GL_NEAREST);
+    AddDrawingBuffer(GUvAttachment, GL_RG, GL_FLOAT, GL_RG, GL_REPEAT, GL_NEAREST);
+    AddDrawingBuffer(GNormalAttachment, GL_RGB, GL_FLOAT, GL_RGBA32F, GL_REPEAT, GL_NEAREST);
+    AddDrawingBuffer(GMaterialTextureAttachment, GL_RGBA, GL_FLOAT, GL_RGBA, GL_REPEAT, GL_NEAREST);
+    AddDrawingBuffer(GMaterialDiffuseAttachment, GL_RGB, GL_FLOAT, GL_RGB, GL_REPEAT, GL_NEAREST);
+    AddDrawingBuffer(GMaterialSpecularAttachment, GL_RGB, GL_FLOAT, GL_RGB, GL_REPEAT, GL_NEAREST);
+    AddDrawingBuffer(GMaterialShininessAttachment, GL_RGBA, GL_FLOAT, GL_RGBA32F, GL_REPEAT, GL_NEAREST);
     AddDrawingBuffer(GDepthAttachment, GL_DEPTH_COMPONENT, GL_FLOAT, GL_DEPTH_COMPONENT24, GL_CLAMP_TO_EDGE, GL_NEAREST);
     //
 
-    program->AttachTexture(GColorInputName, *GetGColor());
-    program->AttachTexture(GPositionInputName, *GetGPosition());
-    program->AttachTexture(GUvInputName, *GetGUv());
-    program->AttachTexture(GNormalInputName, *GetGNormal());
-    program->AttachTexture(GMaterialTextureInputName, *GetGMaterialTexture());
-    program->AttachTexture(GDepthInputName, *GetGDepth());
+    BindBuffersToProgram(*program);
 }
 
 GBuffer::~GBuffer()
@@ -89,12 +85,15 @@ void GBuffer::RenderToScreen() const
 
 void GBuffer::BindBuffersToProgram(ShaderProgram &program) const
 {
-    program.AttachTexture(GColorInputName, *GetGColor());
-    program.AttachTexture(GPositionInputName, *GetGPosition());
-    program.AttachTexture(GUvInputName, *GetGUv());
-    program.AttachTexture(GNormalInputName, *GetGNormal());
-    program.AttachTexture(GMaterialTextureInputName, *GetGMaterialTexture());
-    program.AttachTexture(GDepthInputName, *GetGDepth());
+    program.AttachTexture(GColorInputName,              *GetGBuffer(GColorAttachment));
+    program.AttachTexture(GPositionInputName,           *GetGBuffer(GPositionAttachment));
+    program.AttachTexture(GUvInputName,                 *GetGBuffer(GUvAttachment));
+    program.AttachTexture(GNormalInputName,             *GetGBuffer(GNormalAttachment));
+    program.AttachTexture(GMaterialTextureInputName,    *GetGBuffer(GMaterialTextureAttachment));
+    program.AttachTexture(GMaterialDiffuseInputName,    *GetGBuffer(GMaterialDiffuseAttachment));
+    program.AttachTexture(GMaterialSpecularInputName,   *GetGBuffer(GMaterialSpecularAttachment));
+    program.AttachTexture(GMaterialShininessInputName,  *GetGBuffer(GMaterialShininessAttachment));
+    program.AttachTexture(GDepthInputName,              *GetGBuffer(GDepthAttachment));
 }
 
 ShaderProgram *GBuffer::GetShaderProgram() const
@@ -102,36 +101,10 @@ ShaderProgram *GBuffer::GetShaderProgram() const
     return program;
 }
 
-Texture *GBuffer::GetGColor() const
+Texture *GBuffer::GetGBuffer(GBufferAttachment attachment) const
 {
-    return GetTexture(GColorAttachment);
+    return GetTexture(attachment);
 }
-
-Texture *GBuffer::GetGMaterialTexture() const
-{
-    return GetTexture(GMaterialTextureAttachment);
-}
-
-Texture *GBuffer::GetGPosition() const
-{
-    return GetTexture(GPositionAttachment);
-}
-
-Texture *GBuffer::GetGNormal() const
-{
-    return GetTexture(GNormalAttachment);
-}
-
-Texture *GBuffer::GetGUv() const
-{
-    return GetTexture(GUvAttachment);
-}
-
-Texture *GBuffer::GetGDepth() const
-{
-    return GetTexture(GDepthAttachment);
-}
-
 
 float GBuffer::GetWidth() const
 {

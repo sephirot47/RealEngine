@@ -5,6 +5,7 @@
 #include "RenderTarget.h"
 #include "FileLoader.h"
 #include "Shader.h"
+#include "Debug.h"
 #include "ShaderProgram.h"
 #include "VAO.h"
 #include "VBO.h"

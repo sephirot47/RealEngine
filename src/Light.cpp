@@ -51,7 +51,7 @@ Light::Light(LightType type, float screenWidth, float screenHeight)
     color = glm::vec3(1, 1, 1);
     intensity = 1.0f;
     range = 2.0f;
-    shadow = 0.3f;
+    shadow = 0.5f;
 
     enabled = true;
 
@@ -134,6 +134,9 @@ void Light::ApplyLight(GBuffer &gbuffer, const glm::mat4 &camView, const glm::ma
         lightProgram->SetUniform("light.shadow", shadow);
         lightProgram->SetUniform("light.range", range);
 
+        glm::vec3 camPosition(camView[3][0], camView[3][1], camView[3][2]);
+        lightProgram->SetUniform("camera.position", camPosition);
+
         GLenum drawBuffers[] = {GBuffer::GBufferAttachment::GColorAttachment,
                                 GBuffer::GBufferAttachment::GDepthAttachment};
         gbuffer.SetDrawingBuffers(2, &drawBuffers[0]);
@@ -144,6 +147,7 @@ void Light::ApplyLight(GBuffer &gbuffer, const glm::mat4 &camView, const glm::ma
         lightVao->UnBind();
         gbuffer.UnBindRenderTarget();
     }
+
     StateManager::Pop();
 }
 

@@ -24,6 +24,8 @@ private:
     GLuint object;
     mutable GLuint framebuffer;
 
+    int width, height;
+
     void Bind() const;
     void UnBind() const;
     void Bind(GLuint slot) const;
@@ -35,13 +37,13 @@ public:
     Texture(int width, int height);
     ~Texture();
 
-    void LoadFromFile(const std::string filepath) const;
-    void CreateEmpty(int width, int height) const;
-    void CreateEmpty(int width, int height, GLint format, GLenum type, GLint internalFormat) const;
-    void SetData(const void *data, int width, int height, GLint format, GLenum type, GLint internalFormat) const;
+    void LoadFromFile(const std::string filepath);
+    void CreateEmpty(int width, int height);
+    void CreateEmpty(int width, int height, GLint format, GLenum type, GLint internalFormat);
+    void SetData(const void *data, int width, int height, GLint format, GLenum type, GLint internalFormat);
 
-    void SetWrapMode(GLenum mode) const;
-    void SetScaleMode(GLenum mode) const;
+    void SetWrapMode(GLenum mode);
+    void SetScaleMode(GLenum mode);
 
     void BindRenderTarget() const;
     void UnBindRenderTarget() const;

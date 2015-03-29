@@ -23,7 +23,7 @@ class Material : public Bindable
 private:
 
     glm::vec3 ambientColor, diffuseColor, specularColor;
-    float shininess;
+    float shininess, shineStrength;
 
     Texture *texture;
     Shader *vshader, *fshader;

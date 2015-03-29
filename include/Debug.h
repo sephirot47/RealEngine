@@ -57,7 +57,7 @@ enum DbgMode
 
 #define DbgLog(x) do{\
     std::ostringstream log;\
-    log << x << endl;\
+    log << x << std::endl;\
     Debug::Log(log);\
     log.flush();\
 } while(0)
