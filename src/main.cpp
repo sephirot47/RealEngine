@@ -17,6 +17,7 @@ Mesh *mesh1, *mesh2, *mesh3;
 Light *light, *light2;
 Material *material1, *material2, *material3;
 vec3 cameraRot, cameraPos;
+Texture *tex;
 
 void Init()
 {
@@ -27,24 +28,23 @@ void Init()
     glCullFace(GL_BACK);
     glDepthFunc(GL_LEQUAL);
 
+    tex = new Texture(width, height);
+
     mesh1 = new Mesh();
     mesh1->LoadFromFile("Assets/Models/luigi.obj");
-    Texture *texture1 = new Texture();
-    texture1->LoadFromFile("Assets/Textures/luigiD.jpg");
+    Texture *texture1 = new Texture("Assets/Textures/luigiD.jpg");
     material1 = new Material();
     material1->SetTexture(*texture1);
 
     mesh2 = new Mesh();
     mesh2->LoadFromFile("Assets/Models/gordaco.obj");
-    Texture *texture2 = new Texture();
-    texture2->LoadFromFile("Assets/Textures/gordaco.bmp");
+    Texture *texture2 = new Texture("Assets/Textures/gordaco.bmp");
     material2 = new Material();
     material2->SetTexture(*texture2);
 
     mesh3 = new Mesh();
     mesh3->LoadFromFile("Assets/Models/quad.obj");
-    Texture *texture3 = new Texture();
-    texture3->LoadFromFile("Assets/Textures/wall.jpg");
+    Texture *texture3 = new Texture("Assets/Textures/wall.jpg");
     material3 = new Material();
     material3->SetTexture(*texture3);
 
@@ -134,6 +134,9 @@ void RenderScene()
     mesh1->Render(*gbuffer, *material1, projection, view);
     mesh2->Render(*gbuffer, *material2, projection, view);
     mesh3->Render(*gbuffer, *material3, projection, view);
+
+    //mesh1->Render(*tex, *material1, projection, view);
+    //material3->SetTexture(*tex);
 
     light->ClearBufferMeshShadow();
     light->ShadowMapMesh(*mesh1, width, height);

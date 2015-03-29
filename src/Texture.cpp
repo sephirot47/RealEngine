@@ -10,6 +10,16 @@ Texture::Texture()
     framebuffer = 0;
 }
 
+Texture::Texture(const std::string filepath) : Texture()
+{
+    LoadFromFile(filepath);
+}
+
+Texture::Texture(int width, int height) : Texture()
+{
+    CreateEmpty(width, height);
+}
+
 Texture::~Texture()
 {
     glDeleteTextures(1, &object);
@@ -74,6 +84,16 @@ void Texture::LoadFromFile(const std::string filepath) const
     Image *img = new Image(); img->LoadFromFile(filepath);
     SetData(img->GetData(), img->GetWidth(), img->GetHeight(), img->GetFormat(), GL_UNSIGNED_BYTE, img->GetFormat());
     delete img;
+}
+
+void Texture::CreateEmpty(int width, int height) const
+{
+    SetData(nullptr, width, height, GL_RGBA, GL_UNSIGNED_BYTE, GL_RGBA);
+}
+
+void Texture::CreateEmpty(int width, int height, GLint format, GLenum type, GLint internalFormat) const
+{
+    SetData(nullptr, width, height, format, type, internalFormat);
 }
 
 void Texture::Bind() const

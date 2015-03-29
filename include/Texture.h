@@ -14,7 +14,7 @@
 namespace RE
 {
 
-class Texture
+class Texture : public RenderTarget
 {
 
 friend class ShaderProgram;
@@ -31,9 +31,13 @@ private:
 
 public:
     Texture();
+    Texture(const std::string filepath);
+    Texture(int width, int height);
     ~Texture();
 
     void LoadFromFile(const std::string filepath) const;
+    void CreateEmpty(int width, int height) const;
+    void CreateEmpty(int width, int height, GLint format, GLenum type, GLint internalFormat) const;
     void SetData(const void *data, int width, int height, GLint format, GLenum type, GLint internalFormat) const;
 
     void SetWrapMode(GLenum mode) const;
