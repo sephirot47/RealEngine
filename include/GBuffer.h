@@ -22,19 +22,6 @@
 namespace RE
 {
 
-enum GBufferAttachment
-{
-    GColorAttachment = GL_COLOR_ATTACHMENT0,
-    GPositionAttachment = GL_COLOR_ATTACHMENT1,
-    GUvAttachment = GL_COLOR_ATTACHMENT2,
-    GNormalAttachment = GL_COLOR_ATTACHMENT3,
-    GMaterialTextureAttachment = GL_COLOR_ATTACHMENT4,
-    GMaterialDiffuseAttachment = GL_COLOR_ATTACHMENT5,
-    GMaterialSpecularAttachment = GL_COLOR_ATTACHMENT6,
-    GMaterialShininessAttachment = GL_COLOR_ATTACHMENT7,
-    GDepthAttachment = GL_DEPTH_ATTACHMENT
-};
-
 class GBuffer : public FrameBuffer
 {
 private:
@@ -75,6 +62,21 @@ public:
 
     float GetWidth() const;
     float GetHeight() const;
+
+    enum GBufferAttachment
+    {
+        GColorAttachment = GL_COLOR_ATTACHMENT0,
+        GPositionAttachment = GL_COLOR_ATTACHMENT1,
+        GUvAttachment = GL_COLOR_ATTACHMENT2,
+        GNormalAttachment = GL_COLOR_ATTACHMENT3,
+        GMaterialTextureAttachment = GL_COLOR_ATTACHMENT4,
+        GMaterialDiffuseAttachment = GL_COLOR_ATTACHMENT5,
+        GMaterialSpecularAttachment = GL_COLOR_ATTACHMENT6,
+        GMaterialShininessAttachment = GL_COLOR_ATTACHMENT7,
+        GDepthAttachment = GL_DEPTH_ATTACHMENT
+    };
+    static GBufferAttachment GBufferAttachments;
+
 };
 
 }

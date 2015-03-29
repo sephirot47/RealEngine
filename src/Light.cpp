@@ -118,14 +118,20 @@ void Light::ApplyLight(GBuffer &gbuffer, const glm::mat4 &camView, const glm::ma
         gbuffer.BindBuffersToProgram(*lightProgram);
         lightProgram->AttachTexture("shadowDepthBuffer", *(shadowBuffer->GetTexture(GL_DEPTH_ATTACHMENT)));
 
-        lightProgram->SetUniform("lightView", GetView());
-        lightProgram->SetUniform("lightProjection", GetProjection(gbuffer.GetWidth(), gbuffer.GetHeight()));
-        lightProgram->SetUniform("lightPosition", pos);
-        lightProgram->SetUniform("lightRange", range);
-        lightProgram->SetUniform("lightShadow", shadow);
-        lightProgram->SetUniform("lightDir", dir);
-        lightProgram->SetUniform("lightColor", color);
-        lightProgram->SetUniform("lightIntensity", intensity);
+        lightProgram->SetUniform("light.projection", GetProjection(gbuffer.GetWidth(), gbuffer.GetHeight()));
+        lightProgram->SetUniform("light.view", GetView());
+
+        if(type != DirectionalLight) lightProgram->SetUniform("light.position", pos);
+        if(type != PointLight) lightProgram->SetUniform("light.direction", dir);
+        lightProgram->SetUniform("light.color", color);
+
+        lightProgram->SetUniform("light.intensity", intensity);
+        lightProgram->SetUniform("light.shadow", shadow);
+        if(type != DirectionalLight) lightProgram->SetUniform("light.range", range);
+
+        GLenum drawBuffers[] = {GBuffer::GBufferAttachment::GColorAttachment,
+                                GBuffer::GBufferAttachment::GDepthAttachment};
+        gbuffer.SetDrawingBuffers(2, &drawBuffers[0]);
 
         glDrawArrays(GL_QUADS, 0, 4);
 
