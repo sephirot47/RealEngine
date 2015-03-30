@@ -17,6 +17,7 @@ Mesh *mesh1, *mesh2, *mesh3;
 Light *light, *light2;
 Material *material1, *material2, *material3;
 vec3 cameraRot, cameraPos;
+SkyBox *skybox;
 CubeTexture *skyCubeTexture;
 Texture *tex;
 
@@ -49,14 +50,14 @@ void Init()
     material3 = new Material();
     material3->SetTexture(*texture3);
 
-    //Cargamos cubeTexture
+    //Creamos el cielo
     Texture *cm1, *cm2, *cm3, *cm4, *cm5, *cm6;
-    cm1 = new Texture("Assets/Textures/sky1/posX.jpg");
-    cm2 = new Texture("Assets/Textures/sky1/negX.jpg");
-    cm3 = new Texture("Assets/Textures/sky1/posY.jpg");
-    cm4 = new Texture("Assets/Textures/sky1/negY.jpg");
-    cm5 = new Texture("Assets/Textures/sky1/posZ.jpg");
-    cm6 = new Texture("Assets/Textures/sky1/negZ.jpg");
+    cm1 = new Texture("Assets/Textures/sky1/posx.jpg");
+    cm2 = new Texture("Assets/Textures/sky1/negx.jpg");
+    cm3 = new Texture("Assets/Textures/sky1/posy.jpg");
+    cm4 = new Texture("Assets/Textures/sky1/negy.jpg");
+    cm5 = new Texture("Assets/Textures/sky1/posz.jpg");
+    cm6 = new Texture("Assets/Textures/sky1/negz.jpg");
 
     skyCubeTexture = new CubeTexture();
     skyCubeTexture->SetFaceTexture(CubeTexture::CubeTextureFace::PositiveX, *cm1);
@@ -65,6 +66,9 @@ void Init()
     skyCubeTexture->SetFaceTexture(CubeTexture::CubeTextureFace::NegativeY, *cm4);
     skyCubeTexture->SetFaceTexture(CubeTexture::CubeTextureFace::PositiveZ, *cm5);
     skyCubeTexture->SetFaceTexture(CubeTexture::CubeTextureFace::NegativeZ, *cm6);
+
+    skybox = new SkyBox();
+    skybox->SetCubeTexture(*skyCubeTexture);
     //
 
     gbuffer = new GBuffer(width, height);
@@ -118,7 +122,6 @@ void RenderScene()
     R = glm::rotate_slow(model, sphereRot, axis);
     S = glm::scale(model, scale);
     mesh1->SetModelMatrix(T * R * S);
-    mesh1->SetNormalMatrix(R * S);
 
     model = mat4(1.0f);
     translate = vec3(-0.0f, -0.3f, 0.0f);
@@ -127,7 +130,6 @@ void RenderScene()
     R = glm::rotate_slow(model, 0.0f, axis);
     S = glm::scale(model, scale);
     mesh2->SetModelMatrix(T * R * S);
-    mesh2->SetNormalMatrix(R * S);
 
     model = mat4(1.0f);
     translate = vec3(0.0f, 0.5f, -4.0f);
@@ -137,7 +139,14 @@ void RenderScene()
     scale = vec3(6.0f);
     S = glm::scale(model, scale);
     mesh3->SetModelMatrix(T * R * S);
-    mesh3->SetNormalMatrix(R * S);
+
+    model = mat4(1.0f);
+    translate = vec3(sin(appTime) * 0.8f, -0.5f, 3.0f);
+    scale = vec3(1.0f);
+    T = glm::translate(model, translate);
+    R = glm::rotate_slow(model, 0.0f, axis);
+    S = glm::scale(model, scale);
+    skybox->GetMesh()->SetModelMatrix(T * R * S);
 
     mat4 view = mat4(1.0f);
     T = glm::translate(view, cameraPos);
@@ -150,9 +159,10 @@ void RenderScene()
     material2->SetSpecularColor(vec3(0.0, 0.0, 0.0));
     material3->SetSpecularColor(vec3(0.0, 0.0, 0.0));
 
-    mesh1->Render(*gbuffer, *material1, projection, view);
-    mesh2->Render(*gbuffer, *material2, projection, view);
-    mesh3->Render(*gbuffer, *material3, projection, view);
+    /*
+    mesh1->Render(*gbuffer, *material1, view, projection);
+    mesh2->Render(*gbuffer, *material2, view, projection);
+    mesh3->Render(*gbuffer, *material3, view, projection);
 
     light->ClearBufferMeshShadow();
     light2->ClearBufferMeshShadow();
@@ -166,28 +176,12 @@ void RenderScene()
     light2->ShadowMapMesh(*mesh3, width, height);
 
     light->ApplyLight(*gbuffer, view, projection);
-    //vec3 pos = light2->GetPosition();
-    //light2->SetColor(vec3(1,0,0));
-    //light2->SetPosition(pos + vec3(2, 0, 0));
     light2->ApplyLight(*gbuffer, view, projection);
-    /*
-    light2->SetColor(vec3(0,0,1));
-    light2->SetPosition(pos - vec3(2, 0, 0));
-    light2->ApplyLight(*gbuffer, view, projection);
-    light2->SetPosition(pos);
-    light2->ApplyLight(*gbuffer, view, projection);  //20 ~ 25 fps
-    light2->ApplyLight(*gbuffer, view, projection);
-    light2->ApplyLight(*gbuffer, view, projection);
-    light2->ApplyLight(*gbuffer, view, projection);
-    light2->ApplyLight(*gbuffer, view, projection);
-    light2->ApplyLight(*gbuffer, view, projection);
-    light2->ApplyLight(*gbuffer, view, projection);
-    light2->ApplyLight(*gbuffer, view, projection);
-    light2->ApplyLight(*gbuffer, view, projection);
-    light2->ApplyLight(*gbuffer, view, projection);
-    light2->ApplyLight(*gbuffer, view, projection);
-    light2->ApplyLight(*gbuffer, view, projection);  //9 fps
     */
+
+    glDisable(GL_CULL_FACE);
+    skybox->Render(*gbuffer, view, projection);
+    glEnable(GL_CULL_FACE);
 
     gbuffer->RenderToScreen();
 }

@@ -49,7 +49,7 @@ public:
     CubeTexture();
     ~CubeTexture();
 
-    void SetFaceTexture(CubeTextureFace face, Texture &tex);
+    void SetFaceTexture(CubeTextureFace face, Image &image);
 
     void SetWrapMode(GLenum mode);
     void SetScaleMode(GLenum mode);

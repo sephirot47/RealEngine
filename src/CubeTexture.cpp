@@ -42,12 +42,16 @@ void CubeTexture::SetScaleMode(GLenum mode)
 }
 
 
-void CubeTexture::SetFaceTexture(CubeTexture::CubeTextureFace face, Texture &tex)
+void CubeTexture::SetFaceTexture(CubeTexture::CubeTextureFace face, Image &image)
 {
     StateManager::Push();
 
     Bind();
     faceTextures[face] = &tex;
+    //ESTO NO VA NO VA NO VAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+    //HOLAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+    //(Ha de recibir una image por parametro, en vez de una textura, y de aqui hacer el
+    // glTexImage2D...) Por lo que, en principio, la línea de abajo sobra y es inútil
     glBindTexture(GL_TEXTURE_CUBE_MAP_POSITIVE_X + face, tex.GetObject()); // FUNCIONARA? :S
     UnBind();
 

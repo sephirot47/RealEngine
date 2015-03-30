@@ -30,5 +30,6 @@
 #include "Mesh.h"
 #include "Light.h"
 #include "StateManager.h"
+#include "SkyBox.h"
 
 #endif // REALENGINE_H

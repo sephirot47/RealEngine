@@ -59,39 +59,90 @@ void Mesh::LoadFromFile(const char *filepath)
         vboNormals->SetData(&normals[0], normals.size() * sizeof(glm::vec3));
         vao->AddAttribute(*vboNormals, index++, 3, GL_FLOAT, GL_FALSE, 0, 0);
     }
-DbgLog(numVertices);
+
+    DbgLog(numVertices);
+
     StateManager::Pop();
 }
 
-void Mesh::Render(RenderTarget &renderTarget, const Material &material, glm::mat4 &projection, glm::mat4 &view)
+void Mesh::LoadPositionsFromArray(const std::vector<glm::vec3> &positions, GLenum renderMode)
+{
+    StateManager::Push();
+
+    if(vboPos) delete vboPos;
+
+    numVertices = positions.size();
+
+    if(not vao) vao = new VAO();
+    int index = 0;
+    if(vboUv) ++index;
+    if(vboNormals) ++index;
+
+    vboPos = new VBO();
+    vboPos->SetData(&positions[0], positions.size() * sizeof(glm::vec3));
+    vao->AddAttribute(*vboPos, index, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+    this->renderMode = renderMode;
+    DbgLog(numVertices);
+
+    StateManager::Pop();
+}
+
+void Mesh::Render(RenderTarget &renderTarget, const Material &material, glm::mat4 &camView, glm::mat4 &camProjection)
 {
     StateManager::Push();
 
     renderTarget.BindRenderTarget();
-    Render(material, projection, view);
+        Render(material, camView, camProjection);
     renderTarget.UnBindRenderTarget();
 
     StateManager::Pop();
 }
 
-void Mesh::Render(const Material &material, glm::mat4 &projection, glm::mat4 &view)
+void Mesh::Render(RenderTarget &renderTarget, const ShaderProgram &program, glm::mat4 &camView, glm::mat4 &camProjection)
+{
+    StateManager::Push();
+
+    renderTarget.BindRenderTarget();
+        Render(program, camView, camProjection);
+    renderTarget.UnBindRenderTarget();
+
+    StateManager::Pop();
+}
+
+void Mesh::Render(const Material &material, glm::mat4 &camView, glm::mat4 &camProjection)
+{
+    if(not vao) return;
+
+    StateManager::Push();
+
+    material.Bind();
+        Render(*material.GetShaderProgram(), camView, camProjection);
+    material.UnBind();
+
+    StateManager::Pop();
+}
+
+void Mesh::Render(const ShaderProgram &program, glm::mat4 &camView, glm::mat4 &camProjection)
 {
     if(not vao) return;
 
     StateManager::Push();
 
     vao->Bind();
-    material.Bind();
 
-    material.GetShaderProgram()->SetUniform("projection", projection);
-    material.GetShaderProgram()->SetUniform("view", view);
-    material.GetShaderProgram()->SetUniform("model", model);
-    material.GetShaderProgram()->SetUniform("normalMatrix", glm::transpose(glm::inverse(view * model)));
-    material.GetShaderProgram()->SetUniform("PVM", projection * view * model);
+        program.Bind();
 
-    glDrawArrays(renderMode, 0, numVertices);
+            program.SetUniform("projection", camProjection);
+            program.SetUniform("view", camView);
+            program.SetUniform("model", model);
+            program.SetUniform("normalMatrix", glm::transpose(glm::inverse(camView * model)));
+            program.SetUniform("PVM", camProjection * camView * model);
 
-    material.UnBind();
+            glDrawArrays(renderMode, 0, numVertices);
+
+        program.UnBind();
+
     vao->UnBind();
 
     StateManager::Pop();
@@ -106,12 +157,6 @@ void Mesh::SetModelMatrix(glm::mat4 modelMatrix)
 {
     this->model = modelMatrix;
 }
-
-void Mesh::SetNormalMatrix(glm::mat4 normalMatrix)
-{
-    this->normalMatrix = normalMatrix;
-}
-
 
 
 int Mesh::GetNumVertices() const
@@ -147,9 +192,4 @@ GLenum Mesh::GetRenderMode() const
 glm::mat4 Mesh::GetModelMatrix() const
 {
     return model;
-}
-
-glm::mat4 Mesh::GetNormalMatrix() const
-{
-    return normalMatrix;
 }

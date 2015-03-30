@@ -31,6 +31,7 @@ Material::~Material()
 void Material::Bind() const
 {
     if(not program) return;
+
     program->Bind();
     program->SetUniform("material.diffuse", diffuseColor);
     program->SetUniform("material.specular", specularColor);

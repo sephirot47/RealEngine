@@ -10,6 +10,7 @@
 #include "VAO.h"
 #include "VBO.h"
 #include "Material.h"
+#include "glm/glm.hpp"
 
 namespace RE
 {
@@ -23,7 +24,7 @@ private:
     VAO *vao;
     VBO *vboPos, *vboUv, *vboNormals;
     GLenum renderMode;
-    glm::mat4 model, normalMatrix;
+    glm::mat4 model;
 
     int numVertices;
 
@@ -32,12 +33,14 @@ public:
     ~Mesh();
 
     void LoadFromFile(const char *filepath);
+    void LoadPositionsFromArray(const std::vector<glm::vec3> &positions, GLenum renderMode = GL_TRIANGLES);
 
-    void Render(const Material &material, glm::mat4 &projection, glm::mat4 &view);
-    void Render(RenderTarget &renderTarget, const Material &material, glm::mat4 &projection, glm::mat4 &view);
+    void Render(const Material &material, glm::mat4 &camView, glm::mat4 &camProjection);
+    void Render(const ShaderProgram &program, glm::mat4 &camView, glm::mat4 &camProjection);
+    void Render(RenderTarget &renderTarget, const Material &material, glm::mat4 &camView, glm::mat4 &camProjection);
+    void Render(RenderTarget &renderTarget, const ShaderProgram &program, glm::mat4 &camView, glm::mat4 &camProjection);
 
     void SetRenderMode(GLenum renderMode);
-    void SetNormalMatrix(glm::mat4 normalMatrix);
     void SetModelMatrix(glm::mat4 modelMatrix);
 
     int GetNumVertices() const;
@@ -47,7 +50,6 @@ public:
     VBO* GetVBONormals() const;
     GLenum GetRenderMode() const;
     glm::mat4 GetModelMatrix() const;
-    glm::mat4 GetNormalMatrix() const;
 };
 
 }
