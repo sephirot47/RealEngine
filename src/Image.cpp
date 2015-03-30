@@ -8,6 +8,11 @@ Image::Image()
     data = nullptr;
 }
 
+Image::Image(const std::string &filepath) : Image()
+{
+    LoadFromFile(filepath);
+}
+
 Image::~Image()
 {
     if(data) delete [] data;

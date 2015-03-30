@@ -19,6 +19,7 @@ private:
 
 public:
     Image();
+    Image(const std::string& filepath);
     ~Image();
 
     void LoadFromFile(const std::string& filepath);

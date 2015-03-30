@@ -51,13 +51,13 @@ void Init()
     material3->SetTexture(*texture3);
 
     //Creamos el cielo
-    Texture *cm1, *cm2, *cm3, *cm4, *cm5, *cm6;
-    cm1 = new Texture("Assets/Textures/sky1/posx.jpg");
-    cm2 = new Texture("Assets/Textures/sky1/negx.jpg");
-    cm3 = new Texture("Assets/Textures/sky1/posy.jpg");
-    cm4 = new Texture("Assets/Textures/sky1/negy.jpg");
-    cm5 = new Texture("Assets/Textures/sky1/posz.jpg");
-    cm6 = new Texture("Assets/Textures/sky1/negz.jpg");
+    Image *cm1, *cm2, *cm3, *cm4, *cm5, *cm6;
+    cm1 = new Image("Assets/Textures/sky1/posx.jpg");
+    cm2 = new Image("Assets/Textures/sky1/negx.jpg");
+    cm3 = new Image("Assets/Textures/sky1/posy.jpg");
+    cm4 = new Image("Assets/Textures/sky1/negy.jpg");
+    cm5 = new Image("Assets/Textures/sky1/posz.jpg");
+    cm6 = new Image("Assets/Textures/sky1/negz.jpg");
 
     skyCubeTexture = new CubeTexture();
     skyCubeTexture->SetFaceTexture(CubeTexture::CubeTextureFace::PositiveX, *cm1);
