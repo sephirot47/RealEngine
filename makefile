@@ -1,6 +1,6 @@
 all: main.exe
 
-main.exe: main.o Shader.o ShaderProgram.o stb_image.o Debug.o Time.o VBO.o VAO.o Image.o Texture.o FileLoader.o FrameBuffer.o Mesh.o GBuffer.o Light.o StateManager.o Material.o GameObject.o Scene.o RenderTarget.o
+main.exe: main.o Shader.o ShaderProgram.o stb_image.o Debug.o Time.o VBO.o VAO.o Image.o Texture.o FileLoader.o FrameBuffer.o Mesh.o GBuffer.o Light.o StateManager.o Material.o GameObject.o Scene.o RenderTarget.o CubeTexture.o
 	g++ -std=c++11 *.o -o main.exe -Iinclude -lGL -lGLU -lSDL2
 
 main.o: src/main.cpp
@@ -62,6 +62,9 @@ Scene.o: src/Scene.cpp
 
 RenderTarget.o: src/RenderTarget.cpp
 	g++ -std=c++11 -c src/RenderTarget.cpp -Iinclude -lGL -lGLU -lSDL2
+
+CubeTexture.o: src/CubeTexture.cpp
+	g++ -std=c++11 -c src/CubeTexture.cpp -Iinclude -lGL -lGLU -lSDL2
 
 clean:
 	rm -rf *.exe *.o *~

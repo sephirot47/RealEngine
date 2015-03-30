@@ -22,6 +22,7 @@
 #include "ShaderProgram.h"
 #include "VBO.h"
 #include "Texture.h"
+#include "CubeTexture.h"
 #include "Image.h"
 #include "FrameBuffer.h"
 #include "VAO.h"

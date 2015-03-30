@@ -17,6 +17,7 @@ Mesh *mesh1, *mesh2, *mesh3;
 Light *light, *light2;
 Material *material1, *material2, *material3;
 vec3 cameraRot, cameraPos;
+CubeTexture *skyCubeTexture;
 Texture *tex;
 
 void Init()
@@ -48,19 +49,37 @@ void Init()
     material3 = new Material();
     material3->SetTexture(*texture3);
 
+    //Cargamos cubeTexture
+    Texture *cm1, *cm2, *cm3, *cm4, *cm5, *cm6;
+    cm1 = new Texture("Assets/Textures/sky1/posX.jpg");
+    cm2 = new Texture("Assets/Textures/sky1/negX.jpg");
+    cm3 = new Texture("Assets/Textures/sky1/posY.jpg");
+    cm4 = new Texture("Assets/Textures/sky1/negY.jpg");
+    cm5 = new Texture("Assets/Textures/sky1/posZ.jpg");
+    cm6 = new Texture("Assets/Textures/sky1/negZ.jpg");
+
+    skyCubeTexture = new CubeTexture();
+    skyCubeTexture->SetFaceTexture(CubeTexture::CubeTextureFace::PositiveX, *cm1);
+    skyCubeTexture->SetFaceTexture(CubeTexture::CubeTextureFace::NegativeX, *cm2);
+    skyCubeTexture->SetFaceTexture(CubeTexture::CubeTextureFace::PositiveY, *cm3);
+    skyCubeTexture->SetFaceTexture(CubeTexture::CubeTextureFace::NegativeY, *cm4);
+    skyCubeTexture->SetFaceTexture(CubeTexture::CubeTextureFace::PositiveZ, *cm5);
+    skyCubeTexture->SetFaceTexture(CubeTexture::CubeTextureFace::NegativeZ, *cm6);
+    //
+
     gbuffer = new GBuffer(width, height);
 
     light = new Light(DirectionalLight, width, height);
     light->SetPosition(vec3(10.0f, 0.5f, 10.0f));
     light->SetDirection(-light->GetPosition());
     light->SetColor(vec3(1.0f, 1.0f, 1.0f));
-    light->SetIntensity(1.0f);
+    light->SetIntensity(2.0f);
 
     light2 = new Light(PointLight, width, height);
     light2->SetPosition(vec3(0.0f, 0.0f, 2.0f));
     light2->SetDirection(-light2->GetPosition());
     light2->SetColor(vec3(1.0f, 0.0f, 0.0f));
-    light2->SetIntensity(1.0f);
+    light2->SetIntensity(2.0f);
     light2->SetRange(2.0f);
 
     cameraPos = vec3(0, 0, 7.0f);

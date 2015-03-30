@@ -48,6 +48,13 @@ void ShaderProgram::Bind() const
         glUniform1i(GetUniformLocation(it.first), slot);
         ++slot;
     }
+
+    for(auto it : cubeTextureMap)
+    {
+        it.second->Bind(slot);
+        glUniform1i(GetUniformLocation(it.first), slot);
+        ++slot;
+    }
 }
 
 void ShaderProgram::UnBind() const
@@ -60,6 +67,12 @@ void ShaderProgram::UnBind() const
         Texture::UnBind(slot);
         ++slot;
     }
+
+    for(auto it : cubeTextureMap)
+    {
+        CubeTexture::UnBind(slot);
+        ++slot;
+    }
 }
 
 void ShaderProgram::AttachTexture(const std::string name, Texture &texture)
@@ -69,10 +82,22 @@ void ShaderProgram::AttachTexture(const std::string name, Texture &texture)
     textureMap.insert( textureMap.end(), TextureMapPair(name, &texture) );
 }
 
+void ShaderProgram::AttachTexture(const std::string name, CubeTexture &texture)
+{
+    auto it = cubeTextureMap.find(name);
+    if(it != cubeTextureMap.end()) cubeTextureMap.erase(it);
+    cubeTextureMap.insert( cubeTextureMap.end(), CubeTextureMapPair(name, &texture) );
+}
+
 void ShaderProgram::DetachTexture(const std::string name)
 {
     auto it = textureMap.find(name);
     if(it != textureMap.end()) textureMap.erase(it);
+    else
+    {
+        auto it = cubeTextureMap.find(name);
+        if(it != cubeTextureMap.end()) cubeTextureMap.erase(it);
+    }
 }
 
 

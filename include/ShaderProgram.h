@@ -15,6 +15,7 @@
 #include "glm/glm.hpp"
 #include "Bindable.h"
 #include "Texture.h"
+#include "CubeTexture.h"
 #include "Shader.h"
 #include "Debug.h"
 #include "StateManager.h"
@@ -28,8 +29,11 @@ private:
 
     typedef std::pair<std::string, Texture*> TextureMapPair;
     typedef  std::map<std::string, Texture*> TextureMap;
+    typedef std::pair<std::string, CubeTexture*> CubeTextureMapPair;
+    typedef  std::map<std::string, CubeTexture*> CubeTextureMap;
 
     TextureMap textureMap;
+    CubeTextureMap cubeTextureMap;
     GLuint object;
 
 public:
@@ -43,6 +47,7 @@ public:
     void UnBind() const;
 
     void AttachTexture(const std::string name, Texture &texture);
+    void AttachTexture(const std::string name, CubeTexture &texture);
     void DetachTexture(const std::string name);
 
     GLint GetUniformLocation(const std::string name) const;

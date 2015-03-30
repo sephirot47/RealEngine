@@ -32,6 +32,7 @@ private:
     static void UnBind(GLuint slot);
 
 public:
+
     Texture();
     Texture(const std::string filepath);
     Texture(int width, int height);
