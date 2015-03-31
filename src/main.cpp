@@ -52,12 +52,12 @@ void Init()
 
     //Creamos el cielo
     Image *cm1, *cm2, *cm3, *cm4, *cm5, *cm6;
-    cm1 = new Image("Assets/Textures/sky1/posx.jpg");
-    cm2 = new Image("Assets/Textures/sky1/negx.jpg");
-    cm3 = new Image("Assets/Textures/sky1/posy.jpg");
-    cm4 = new Image("Assets/Textures/sky1/negy.jpg");
-    cm5 = new Image("Assets/Textures/sky1/posz.jpg");
-    cm6 = new Image("Assets/Textures/sky1/negz.jpg");
+    cm1 = new Image("Assets/Textures/sky4/posx.tga");
+    cm2 = new Image("Assets/Textures/sky4/negx.tga");
+    cm3 = new Image("Assets/Textures/sky4/posy.tga");
+    cm4 = new Image("Assets/Textures/sky4/negy.tga");
+    cm5 = new Image("Assets/Textures/sky4/posz.tga");
+    cm6 = new Image("Assets/Textures/sky4/negz.tga");
 
     skyCubeTexture = new CubeTexture();
     skyCubeTexture->SetFaceTexture(CubeTexture::CubeTextureFace::PositiveX, *cm1);
@@ -155,12 +155,13 @@ void RenderScene()
     if(lightMode) view = light2->GetView();
 
     glDisable(GL_CULL_FACE);
-    skybox->Render(*gbuffer, view, projection);
+    //skybox->Render(*gbuffer, view, projection);
     glEnable(GL_CULL_FACE);
+    gbuffer->ClearDepth();
 
     material1->SetShininess(50.0f);
     material1->SetSpecularColor(vec3(1.0, 1.0, 1.0));
-    material2->SetSpecularColor(vec3(0.0, 0.0, 0.0));
+    material2->SetSpecularColor(vec3(1.0, 1.0, 1.0));
     material3->SetSpecularColor(vec3(0.0, 0.0, 0.0));
 
     mesh1->Render(*gbuffer, *material1, view, projection);
