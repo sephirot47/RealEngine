@@ -2,7 +2,7 @@
 
 uniform mat4 PVM;
 
-in vec3 pos;	
+in vec3 pos;
 
 void main()
 {  

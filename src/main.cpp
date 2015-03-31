@@ -105,14 +105,14 @@ void RenderScene()
     light2->SetDirection(-light2->GetPosition());
 
     mat4 model(1.0f);
-    vec3 axis(.0, 1.0, 0.0), translate, scale;
+    vec3 axis(0.0, 1.0, 0.0), translate, scale;
     mat4 T = glm::translate(model,  translate);
     mat4 R = glm::rotate_slow(model, rot, axis);
     mat4 S = glm::scale(model, scale);
 
     gbuffer->ClearColorDepth();
 
-    mat4 projection = perspective(45.0f * 3.1415f/180.0f, width/height, 1.0f, 50.0f);
+    mat4 projection = perspective(45.0f * 3.1415f/180.0f, width/height, 1.0f, 150.0f);
     if(lightMode) projection = light2->GetProjection(width, height);
 
     model = mat4(1.0f);
@@ -141,10 +141,12 @@ void RenderScene()
     mesh3->SetModelMatrix(T * R * S);
 
     model = mat4(1.0f);
-    translate = vec3(-25.0f, -25.0f, -10.0f);
+    translate = vec3(0.0f, 0.0f, 0.0f);
     scale = vec3(50.0f);
     T = glm::translate(model, translate);
-    R = glm::rotate_slow(model, 0.0f, axis);
+    R = glm::rotate_slow(model, sphereRot, axis);
+    axis = vec3(1.0, 0.0, 1.0);
+    R = glm::rotate_slow(R, sphereRot, axis);
     S = glm::scale(model, scale);
     skybox->GetMesh()->SetModelMatrix(T * R * S);
 

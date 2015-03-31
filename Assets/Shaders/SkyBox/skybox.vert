@@ -6,9 +6,9 @@ in vec3 inpos;
 
 out vec3 fpos;
 
-void main()  
+void main()
 {    
-    fpos = (view * model * vec4(inpos,1)).xyz;
+    fpos = (vec4(inpos,1)).xyz;
     gl_Position = PVM * vec4(inpos, 1);
 }
 
