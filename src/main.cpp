@@ -145,8 +145,6 @@ void RenderScene()
     scale = vec3(50.0f);
     T = glm::translate(model, translate);
     R = glm::rotate_slow(model, sphereRot, axis);
-    axis = vec3(1.0, 0.0, 1.0);
-    R = glm::rotate_slow(R, sphereRot, axis);
     S = glm::scale(model, scale);
     skybox->GetMesh()->SetModelMatrix(T * R * S);
 

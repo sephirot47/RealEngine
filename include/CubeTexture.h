@@ -39,10 +39,10 @@ public:
     enum CubeTextureFace
     {
         PositiveX = 0,
-        PositiveY,
-        PositiveZ,
         NegativeX,
+        PositiveY,
         NegativeY,
+        PositiveZ,
         NegativeZ
     };
 
