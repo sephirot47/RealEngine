@@ -75,8 +75,8 @@ void Mesh::LoadPositionsFromArray(const std::vector<glm::vec3> &positions, GLenu
 
     if(not vao) vao = new VAO();
     int index = 0;
-    if(vboUv) ++index;
-    if(vboNormals) ++index;
+  //  if(vboUv) ++index;
+  //  if(vboNormals) ++index;
 
     vboPos = new VBO();
     vboPos->SetData(&positions[0], positions.size() * sizeof(glm::vec3));

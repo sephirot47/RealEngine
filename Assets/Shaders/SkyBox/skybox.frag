@@ -8,7 +8,6 @@ out vec4 outGColor;
 
 void main()
 {  
-    outGColor = vec4(fpos, 1);
-    outGColor = texture(cubemap, fpos);
+    outGColor = vec4(texture(cubemap, fpos).rgb, 1);
 }
 

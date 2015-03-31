@@ -16,44 +16,44 @@ SkyBox::SkyBox()
     std::vector<glm::vec3> cubePositions = std::vector<glm::vec3>(24);
 
     //BACK
-    cubePositions[0] = glm::vec3( 1, -1,  1 );
+    cubePositions[0] = glm::vec3( 1, 0,  1 );
     cubePositions[1] = glm::vec3( 1,  1,  1 );
-    cubePositions[2] = glm::vec3(-1,  1,  1 );
-    cubePositions[3] = glm::vec3(-1, -1,  1 );
+    cubePositions[2] = glm::vec3(0,  1,  1 );
+    cubePositions[3] = glm::vec3(0, 0,  1 );
 
     //FRONT
-    cubePositions[4] = glm::vec3(-1, -1, -1 );
-    cubePositions[5] = glm::vec3(-1,  1, -1 );
-    cubePositions[6] = glm::vec3( 1,  1, -1 );
-    cubePositions[7] = glm::vec3( 1, -1, -1 );
+    cubePositions[4] = glm::vec3(0, 0, 0 );
+    cubePositions[5] = glm::vec3(0,  1, 0 );
+    cubePositions[6] = glm::vec3( 1,  1, 0 );
+    cubePositions[7] = glm::vec3( 1, 0, 0 );
 
     //RIGHT
-    cubePositions[8]  = glm::vec3( 1, -1, -1 );
-    cubePositions[9]  = glm::vec3( 1,  1, -1 );
+    cubePositions[8]  = glm::vec3( 1, 0, 0 );
+    cubePositions[9]  = glm::vec3( 1,  1, 0 );
     cubePositions[10] = glm::vec3( 1,  1,  1 );
-    cubePositions[11] = glm::vec3( 1, -1,  1 );
+    cubePositions[11] = glm::vec3( 1, 0,  1 );
 
     //LEFT
-    cubePositions[12] = glm::vec3(-1, -1,  1 );
-    cubePositions[13] = glm::vec3(-1,  1,  1 );
-    cubePositions[14] = glm::vec3(-1,  1, -1 );
-    cubePositions[15] = glm::vec3(-1, -1, -1 );
+    cubePositions[12] = glm::vec3(0, 0,  1 );
+    cubePositions[13] = glm::vec3(0,  1,  1 );
+    cubePositions[14] = glm::vec3(0,  1, 0 );
+    cubePositions[15] = glm::vec3(0, 0, 0 );
 
     //TOP
     cubePositions[16] = glm::vec3( 1,  1,  1 );
-    cubePositions[17] = glm::vec3( 1,  1, -1 );
-    cubePositions[18] = glm::vec3(-1,  1, -1 );
-    cubePositions[19] = glm::vec3(-1,  1,  1 );
+    cubePositions[17] = glm::vec3( 1,  1, 0 );
+    cubePositions[18] = glm::vec3(0,  1, 0 );
+    cubePositions[19] = glm::vec3(0,  1,  1 );
 
     //BOTTOM
-    cubePositions[20] = glm::vec3(-1, -1,  1 );
-    cubePositions[21] = glm::vec3(-1, -1, -1 );
-    cubePositions[22] = glm::vec3( 1, -1, -1 );
-    cubePositions[23] = glm::vec3( 1, -1,  1 );
+    cubePositions[20] = glm::vec3(0, 0,  1 );
+    cubePositions[21] = glm::vec3(0, 0, 0 );
+    cubePositions[22] = glm::vec3( 1, 0, 0 );
+    cubePositions[23] = glm::vec3( 1, 0,  1 );
 
     cubeMesh = new Mesh();
-    //cubeMesh->LoadPositionsFromArray(cubePositions, GL_QUADS);
-    cubeMesh->LoadFromFile("Assets/Models/cube.obj");
+    cubeMesh->LoadPositionsFromArray(cubePositions, GL_QUADS);
+    //cubeMesh->LoadFromFile("Assets/Models/cube.obj");
 }
 
 SkyBox::~SkyBox()

@@ -112,7 +112,7 @@ void RenderScene()
 
     gbuffer->ClearColorDepth();
 
-    mat4 projection = perspective(45.0f * 3.1415f/180.0f, width/height, 1.0f, 20.0f);
+    mat4 projection = perspective(45.0f * 3.1415f/180.0f, width/height, 1.0f, 50.0f);
     if(lightMode) projection = light2->GetProjection(width, height);
 
     model = mat4(1.0f);
@@ -141,8 +141,8 @@ void RenderScene()
     mesh3->SetModelMatrix(T * R * S);
 
     model = mat4(1.0f);
-    translate = vec3(sin(appTime) * 0.8f, -0.5f, 3.0f);
-    scale = vec3(1.0f);
+    translate = vec3(-25.0f, -25.0f, -10.0f);
+    scale = vec3(50.0f);
     T = glm::translate(model, translate);
     R = glm::rotate_slow(model, 0.0f, axis);
     S = glm::scale(model, scale);
@@ -154,12 +154,15 @@ void RenderScene()
     view = glm::inverse(T * R);
     if(lightMode) view = light2->GetView();
 
+    glDisable(GL_CULL_FACE);
+    skybox->Render(*gbuffer, view, projection);
+    glEnable(GL_CULL_FACE);
+
     material1->SetShininess(50.0f);
     material1->SetSpecularColor(vec3(1.0, 1.0, 1.0));
     material2->SetSpecularColor(vec3(0.0, 0.0, 0.0));
     material3->SetSpecularColor(vec3(0.0, 0.0, 0.0));
 
-    /*
     mesh1->Render(*gbuffer, *material1, view, projection);
     mesh2->Render(*gbuffer, *material2, view, projection);
     mesh3->Render(*gbuffer, *material3, view, projection);
@@ -177,11 +180,6 @@ void RenderScene()
 
     light->ApplyLight(*gbuffer, view, projection);
     light2->ApplyLight(*gbuffer, view, projection);
-    */
-
-    glDisable(GL_CULL_FACE);
-    skybox->Render(*gbuffer, view, projection);
-    glEnable(GL_CULL_FACE);
 
     gbuffer->RenderToScreen();
 }
