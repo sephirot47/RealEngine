@@ -153,7 +153,7 @@ void Mesh::SetRenderMode(GLenum renderMode)
     this->renderMode = renderMode;
 }
 
-void Mesh::SetModelMatrix(glm::mat4 modelMatrix)
+void Mesh::SetModelMatrix(glm::mat4 &modelMatrix)
 {
     this->model = modelMatrix;
 }

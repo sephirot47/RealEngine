@@ -21,6 +21,7 @@
 #include "Shader.h"
 #include "ShaderProgram.h"
 #include "VBO.h"
+#include "Component.h"
 #include "Texture.h"
 #include "CubeTexture.h"
 #include "Image.h"

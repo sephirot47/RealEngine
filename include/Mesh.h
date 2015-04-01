@@ -41,7 +41,7 @@ public:
     void Render(RenderTarget &renderTarget, const ShaderProgram &program, glm::mat4 &camView, glm::mat4 &camProjection);
 
     void SetRenderMode(GLenum renderMode);
-    void SetModelMatrix(glm::mat4 modelMatrix);
+    void SetModelMatrix(glm::mat4 &modelMatrix);
 
     int GetNumVertices() const;
     VAO* GetVAO() const;

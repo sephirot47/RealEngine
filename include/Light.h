@@ -3,6 +3,7 @@
 
 #include "stb_image.h"
 #include "Shader.h"
+#include "Component.h"
 #include "ShaderProgram.h"
 #include "GBuffer.h"
 #include "Texture.h"
@@ -22,7 +23,7 @@ enum LightType
     PointLight
 };
 
-class Light
+class Light : public Component
 {
 private:
 

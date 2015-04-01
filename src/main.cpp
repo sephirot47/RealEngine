@@ -23,7 +23,7 @@ Texture *tex;
 
 void Init()
 {
-    glClearColor(0.0, 0.0, 0.3, 1.0);
+    glClearColor(0.0, 0.0, 0.0, 1.0);
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_TEXTURE_2D);
     glEnable(GL_CULL_FACE);
@@ -95,7 +95,9 @@ float rot = 0.0f, sphereRot = 0.0f, appTime = 0.0f;
 bool lightMode = false;
 
 void RenderScene()
-{
+{    
+    gbuffer->ClearColorDepth();
+
     appTime += 0.03f;
     sphereRot += 0.03f;
     light->SetPosition(vec3(sin(appTime) * 7.0f, 0.5f, 10.0f));
@@ -110,8 +112,6 @@ void RenderScene()
     mat4 R = glm::rotate_slow(model, rot, axis);
     mat4 S = glm::scale(model, scale);
 
-    gbuffer->ClearColorDepth();
-
     mat4 projection = perspective(45.0f * 3.1415f/180.0f, width/height, 1.0f, 150.0f);
     if(lightMode) projection = light2->GetProjection(width, height);
 
@@ -121,7 +121,8 @@ void RenderScene()
     T = glm::translate(model, translate);
     R = glm::rotate_slow(model, sphereRot, axis);
     S = glm::scale(model, scale);
-    mesh1->SetModelMatrix(T * R * S);
+    model = T * R * S;
+    mesh1->SetModelMatrix(model);
 
     model = mat4(1.0f);
     translate = vec3(-0.0f, -0.3f, 0.0f);
@@ -129,7 +130,8 @@ void RenderScene()
     T = glm::translate(model, translate);
     R = glm::rotate_slow(model, 0.0f, axis);
     S = glm::scale(model, scale);
-    mesh2->SetModelMatrix(T * R * S);
+    model = T * R * S;
+    mesh2->SetModelMatrix(model);
 
     model = mat4(1.0f);
     translate = vec3(0.0f, 0.5f, -4.0f);
@@ -138,7 +140,8 @@ void RenderScene()
     R = glm::rotate_slow(model, 0.0f, axis);
     scale = vec3(6.0f);
     S = glm::scale(model, scale);
-    mesh3->SetModelMatrix(T * R * S);
+    model = T * R * S;
+    mesh3->SetModelMatrix(model);
 
     model = mat4(1.0f);
     translate = vec3(0.0f, 0.0f, 0.0f);
@@ -146,7 +149,8 @@ void RenderScene()
     T = glm::translate(model, translate);
     R = glm::rotate_slow(model, sphereRot, axis);
     S = glm::scale(model, scale);
-    skybox->GetMesh()->SetModelMatrix(T * R * S);
+    model = T * R * S;
+    skybox->GetMesh()->SetModelMatrix(model);
 
     mat4 view = mat4(1.0f);
     T = glm::translate(view, cameraPos);
