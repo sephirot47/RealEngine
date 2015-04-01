@@ -25,6 +25,21 @@ glm::mat4 Camera::GetView() const
     return glm::inverse(T * R);
 }
 
+glm::vec3 Camera::GetFront() const
+{
+    return rotation * glm::vec3(0, 0, -1);
+}
+
+glm::vec3 Camera::GetUp() const
+{
+    return rotation * glm::vec3(0, 1, 0);
+}
+
+glm::vec3 Camera::GetRight() const
+{
+    return rotation * glm::vec3(1, 0, 0);
+}
+
 glm::mat4 Camera::GetProjection() const
 {
     return mode == Mode::Ortho ? ortho : perspective;

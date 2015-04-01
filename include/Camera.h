@@ -47,6 +47,10 @@ public:
     glm::quat GetRotation() const;
     glm::mat4 GetView() const;
 
+    glm::vec3 GetFront() const;
+    glm::vec3 GetUp() const;
+    glm::vec3 GetRight() const;
+
     glm::mat4 GetProjection() const;
     glm::mat4 GetOrtho() const;
     glm::mat4 GetPerspective() const;

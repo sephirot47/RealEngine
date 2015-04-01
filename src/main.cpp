@@ -89,6 +89,7 @@ void Init()
     light2->SetRange(2.0f);
 
     camera->SetMode(Camera::Mode::Perspective);
+    camera->SetPosition(vec3(0,0,10));
     camera->SetPerspective(45.0f, width/height, 1.0f, 150.0f);
 }
 
@@ -102,6 +103,7 @@ void RenderScene()
 
     appTime += 0.03f;
     sphereRot += 0.03f;
+
     light->SetPosition(vec3(sin(appTime) * 7.0f, 0.5f, 10.0f));
     light->SetDirection(-light->GetPosition());
 
@@ -220,20 +222,20 @@ int main()
 
             if(event.type == SDL_QUIT) running = false;
 
-            if (event.type == SDL_KEYDOWN && IsPressed(SDLK_RIGHT))
-                camera->SetPosition(camera->GetPosition() + vec3(camSpeed, 0, 0));
-            if (event.type == SDL_KEYDOWN && IsPressed(SDLK_LEFT))
-                camera->SetPosition(camera->GetPosition() + vec3(-camSpeed, 0, 0));
+            if (event.type == SDL_KEYDOWN && (IsPressed(SDLK_RIGHT) || IsPressed(SDLK_d)) )
+                camera->SetPosition(camera->GetPosition() + camSpeed * camera->GetRight());
+            if (event.type == SDL_KEYDOWN && (IsPressed(SDLK_LEFT) || IsPressed(SDLK_a)) )
+                camera->SetPosition(camera->GetPosition() - camSpeed * camera->GetRight());
 
             if (event.type == SDL_KEYDOWN && IsPressed(SDLK_UP))
-                camera->SetPosition(camera->GetPosition() + vec3(0, 0, -camSpeed));
+                camera->SetPosition(camera->GetPosition() + camSpeed * camera->GetFront());
             if (event.type == SDL_KEYDOWN && IsPressed(SDLK_DOWN))
-                camera->SetPosition(camera->GetPosition() + vec3(0, 0, camSpeed));
+                camera->SetPosition(camera->GetPosition() - camSpeed * camera->GetFront());
 
             if (event.type == SDL_KEYDOWN && IsPressed(SDLK_s))
-                camera->SetPosition(camera->GetPosition() + vec3(0, -camSpeed, 0));
+                camera->SetPosition(camera->GetPosition() - camSpeed * camera->GetUp());
             if (event.type == SDL_KEYDOWN && IsPressed(SDLK_w))
-                camera->SetPosition(camera->GetPosition() + vec3(0, camSpeed, 0));
+                camera->SetPosition(camera->GetPosition() + camSpeed * camera->GetUp());
 
             if (event.type == SDL_KEYDOWN && IsPressed(SDLK_1)) light->SetEnabled(!light->GetEnabled());
             if (event.type == SDL_KEYDOWN && IsPressed(SDLK_2)) light2->SetEnabled(!light2->GetEnabled());
