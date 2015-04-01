@@ -3,6 +3,7 @@
 
 #include "Component.h"
 #include "ShaderProgram.h"
+#include "Quaternion.h"
 #include "StateManager.h"
 #include "glm/glm.hpp"
 
@@ -22,7 +23,7 @@ public:
 private:
 
     glm::vec3 position;
-    glm::quat rotation;
+    Quaternion rotation;
     glm::mat4 ortho, perspective;
     Mode mode;
 
@@ -35,7 +36,7 @@ public:
     void LookAt(const glm::vec3 lookTo, const glm::vec3 up);
 
     void SetPosition(const glm::vec3 position);
-    void SetRotation(const glm::quat rotation);
+    void SetRotation(const Quaternion rotation);
 
     void SetOrtho(float left, float right, float bottom, float top, float zNear, float zFar);
     void SetOrtho(const glm::mat4 &ortho);
@@ -44,7 +45,7 @@ public:
     void SetMode(Mode mode);
 
     glm::vec3 GetPosition() const;
-    glm::quat GetRotation() const;
+    Quaternion GetRotation() const;
     glm::mat4 GetView() const;
 
     glm::vec3 GetFront() const;

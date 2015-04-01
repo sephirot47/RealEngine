@@ -4,7 +4,7 @@ using namespace RE;
 
 
 Camera::Camera() : Component("Camera"),
-                   position(glm::vec3(0)), rotation(glm::quat()),
+                   position(glm::vec3(0)), rotation(Quaternion()),
                    ortho(glm::ortho(-1.0f, 1.0f, -1.0f, 1.0f, 0.1f, 100.0f)),
                    perspective(glm::perspective(45.0f * 3.1415f/180.0f, 1.0f, 0.1f, 150.0f)),
                    mode(Mode::Perspective)
@@ -48,17 +48,17 @@ glm::mat4 Camera::GetProjection() const
 void Camera::LookAt(const glm::vec3 position, const glm::vec3 lookTo, const glm::vec3 up)
 {
     this->position = position;
-    if(this->position == lookTo) { rotation = glm::quat(); return; }
+    if(this->position == lookTo) { rotation = Quaternion(); return; }
 
     glm::mat4 m = glm::lookAt(position, lookTo, up);
-    rotation = glm::quat_cast( glm::transpose(m) );
+    rotation = quat_cast( glm::transpose(m) );
 }
 
 void Camera::LookAt(const glm::vec3 lookTo, const glm::vec3 up)
 {
-    if(position == lookTo) { rotation = glm::quat(); return; }
+    if(position == lookTo) { rotation = Quaternion(); return; }
     glm::mat4 m = glm::lookAt(position, lookTo, up);
-    rotation = glm::quat_cast( glm::transpose(m) );
+    rotation = quat_cast( glm::transpose(m) );
 }
 
 void Camera::SetPosition(const glm::vec3 position)
@@ -66,7 +66,7 @@ void Camera::SetPosition(const glm::vec3 position)
     this->position = position;
 }
 
-void Camera::SetRotation(const glm::quat rotation)
+void Camera::SetRotation(const Quaternion rotation)
 {
     this->rotation = rotation;
 }
@@ -103,7 +103,7 @@ glm::vec3 Camera::GetPosition() const
     return position;
 }
 
-glm::quat Camera::GetRotation() const
+Quaternion Camera::GetRotation() const
 {
     return rotation;
 }

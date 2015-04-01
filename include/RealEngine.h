@@ -33,5 +33,6 @@
 #include "Camera.h"
 #include "StateManager.h"
 #include "SkyBox.h"
+#include "Quaternion.h"
 
 #endif // REALENGINE_H
