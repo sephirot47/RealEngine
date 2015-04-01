@@ -57,7 +57,6 @@ void Camera::LookAt(const glm::vec3 position, const glm::vec3 lookTo, const glm:
 void Camera::LookAt(const glm::vec3 lookTo, const glm::vec3 up)
 {
     if(position == lookTo) { rotation = glm::quat(); return; }
-
     glm::mat4 m = glm::lookAt(position, lookTo, up);
     rotation = glm::quat_cast( glm::transpose(m) );
 }

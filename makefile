@@ -1,6 +1,6 @@
 all: main.exe
 
-main.exe: main.o Shader.o ShaderProgram.o stb_image.o Debug.o Time.o VBO.o VAO.o Image.o Texture.o FileLoader.o FrameBuffer.o Mesh.o GBuffer.o Light.o StateManager.o Material.o GameObject.o Scene.o RenderTarget.o CubeTexture.o SkyBox.o Component.o Camera.o
+main.exe: main.o Shader.o ShaderProgram.o stb_image.o Debug.o Time.o VBO.o VAO.o Image.o Texture.o FileLoader.o FrameBuffer.o Mesh.o GBuffer.o Light.o StateManager.o Material.o GameObject.o Scene.o RenderTarget.o CubeTexture.o SkyBox.o Component.o Camera.o Quaternion.o
 	g++ -std=c++11 *.o -o main.exe -Iinclude -lGL -lGLU -lSDL2
 
 main.o: src/main.cpp
@@ -74,6 +74,9 @@ Component.o: src/Component.cpp
 
 Camera.o: src/Camera.cpp
 	g++ -std=c++11 -c src/Camera.cpp -Iinclude -lGL -lGLU -lSDL2
+
+Quaternion.o: src/Quaternion.cpp
+	g++ -std=c++11 -c src/Quaternion.cpp -Iinclude -lGL -lGLU -lSDL2
 
 clean:
 	rm -rf *.exe *.o *~
