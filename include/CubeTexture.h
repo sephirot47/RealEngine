@@ -23,6 +23,18 @@ class CubeTexture
 
 friend class ShaderProgram;
 
+public:
+
+    enum Face
+    {
+        PositiveX = 0,
+        NegativeX,
+        PositiveY,
+        NegativeY,
+        PositiveZ,
+        NegativeZ
+    };
+
 private:
 
     GLuint object;
@@ -36,25 +48,15 @@ private:
 
 public:
 
-    enum CubeTextureFace
-    {
-        PositiveX = 0,
-        NegativeX,
-        PositiveY,
-        NegativeY,
-        PositiveZ,
-        NegativeZ
-    };
-
     CubeTexture();
     ~CubeTexture();
 
-    void SetFaceTexture(CubeTextureFace face, Image &image);
+    void SetFaceTexture(Face face, Image &image);
 
     void SetWrapMode(GLenum mode);
     void SetScaleMode(GLenum mode);
 
-    Texture *GetFaceTexture(CubeTextureFace face);
+    Texture *GetFaceTexture(Face face);
     GLuint GetObject() const { return object; }
 };
 

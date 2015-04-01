@@ -42,7 +42,7 @@ void CubeTexture::SetScaleMode(GLenum mode)
 }
 
 
-void CubeTexture::SetFaceTexture(CubeTexture::CubeTextureFace face, Image &image)
+void CubeTexture::SetFaceTexture(Face face, Image &image)
 {
     StateManager::Push();
 
@@ -53,8 +53,6 @@ void CubeTexture::SetFaceTexture(CubeTexture::CubeTextureFace face, Image &image
     faceTextures[face] = tex;
     glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + face, 0, GL_RGB, image.GetWidth(), image.GetHeight(),
                  0, GL_RGB, GL_UNSIGNED_BYTE, image.GetData());
-    //glBindTexture(GL_TEXTURE_CUBE_MAP_POSITIVE_X + face, tex.GetObject()); // FUNCIONARA? :S
-
     UnBind();
 
     StateManager::Pop();
@@ -83,7 +81,7 @@ void CubeTexture::UnBind(GLuint slot)
 }
 
 
-Texture *CubeTexture::GetFaceTexture(CubeTexture::CubeTextureFace face)
+Texture *CubeTexture::GetFaceTexture(Face face)
 {
     return faceTextures[face];
 }

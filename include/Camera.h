@@ -13,7 +13,7 @@ class Camera : public Component
 {
 public:
 
-    enum CameraMode
+    enum Mode
     {
         Ortho,
         Perspective
@@ -24,14 +24,12 @@ private:
     glm::vec3 position;
     glm::quat rotation;
     glm::mat4 ortho, perspective;
-    CameraMode mode;
+    Mode mode;
 
 public:
 
     Camera();
     ~Camera();
-
-    void Bind(const ShaderProgram &program) const;
 
     void LookAt(const glm::vec3 position, const glm::vec3 lookTo, const glm::vec3 up);
     void LookAt(const glm::vec3 lookTo, const glm::vec3 up);
@@ -43,7 +41,7 @@ public:
     void SetOrtho(const glm::mat4 &ortho);
     void SetPerspective(float fovyDegrees, float aspect, float zNear, float zFar);
     void SetPerspective(const glm::mat4 &perspective);
-    void SetMode(CameraMode mode);
+    void SetMode(Mode mode);
 
     glm::vec3 GetPosition() const;
     glm::quat GetRotation() const;

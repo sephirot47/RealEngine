@@ -22,7 +22,7 @@ class Light : public Component
 
 public:
 
-    enum LightType
+    enum Type
     {
         DirectionalLight,
         PointLight
@@ -47,17 +47,17 @@ private:
 
     bool enabled;
 
-    LightType type;
+    Type type;
 
 public:
 
-    Light(LightType type, float screenWidth, float screenHeight);
+    Light(Type type, float screenWidth, float screenHeight);
     ~Light();
 
     void ClearBufferMeshShadow();
     void ShadowMapMesh(Mesh &m, float screenWidth, float screenHeight);
-    void ApplyLight(GBuffer &gbuffer, const Camera &camera) const;
-    void ApplyLight(GBuffer &gbuffer, const glm::mat4 &camView, const glm::mat4 &camProjection) const;
+    void Render(GBuffer &gbuffer, const Camera &camera) const;
+    void Render(GBuffer &gbuffer, const glm::mat4 &camView, const glm::mat4 &camProjection) const;
 
     void SetPosition(glm::vec3 position);
     void SetDirection(glm::vec3 direction);

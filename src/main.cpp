@@ -62,12 +62,12 @@ void Init()
     cm6 = new Image("Assets/Textures/sky4/negz.tga");
 
     CubeTexture *skyCubeTexture = new CubeTexture();
-    skyCubeTexture->SetFaceTexture(CubeTexture::CubeTextureFace::PositiveX, *cm1);
-    skyCubeTexture->SetFaceTexture(CubeTexture::CubeTextureFace::NegativeX, *cm2);
-    skyCubeTexture->SetFaceTexture(CubeTexture::CubeTextureFace::PositiveY, *cm3);
-    skyCubeTexture->SetFaceTexture(CubeTexture::CubeTextureFace::NegativeY, *cm4);
-    skyCubeTexture->SetFaceTexture(CubeTexture::CubeTextureFace::PositiveZ, *cm5);
-    skyCubeTexture->SetFaceTexture(CubeTexture::CubeTextureFace::NegativeZ, *cm6);
+    skyCubeTexture->SetFaceTexture(CubeTexture::Face::PositiveX, *cm1);
+    skyCubeTexture->SetFaceTexture(CubeTexture::Face::NegativeX, *cm2);
+    skyCubeTexture->SetFaceTexture(CubeTexture::Face::PositiveY, *cm3);
+    skyCubeTexture->SetFaceTexture(CubeTexture::Face::NegativeY, *cm4);
+    skyCubeTexture->SetFaceTexture(CubeTexture::Face::PositiveZ, *cm5);
+    skyCubeTexture->SetFaceTexture(CubeTexture::Face::NegativeZ, *cm6);
 
     skybox = new SkyBox();
     skybox->SetCubeTexture(*skyCubeTexture);
@@ -75,20 +75,20 @@ void Init()
 
     gbuffer = new GBuffer(width, height);
 
-    light = new Light(Light::LightType::DirectionalLight, width, height);
+    light = new Light(Light::Type::DirectionalLight, width, height);
     light->SetPosition(vec3(10.0f, 0.5f, 10.0f));
     light->SetDirection(-light->GetPosition());
     light->SetColor(vec3(1.0f, 1.0f, 1.0f));
     light->SetIntensity(2.0f);
 
-    light2 = new Light(Light::LightType::PointLight, width, height);
+    light2 = new Light(Light::Type::PointLight, width, height);
     light2->SetPosition(vec3(0.0f, 0.0f, 2.0f));
     light2->SetDirection(-light2->GetPosition());
     light2->SetColor(vec3(1.0f, 0.0f, 0.0f));
     light2->SetIntensity(2.0f);
     light2->SetRange(2.0f);
 
-    camera->SetMode(Camera::CameraMode::Perspective);
+    camera->SetMode(Camera::Mode::Perspective);
     camera->SetPerspective(45.0f, width/height, 1.0f, 150.0f);
 }
 
@@ -179,8 +179,8 @@ void RenderScene()
     light2->ShadowMapMesh(*mesh2, width, height);
     light2->ShadowMapMesh(*mesh3, width, height);
 
-    light->ApplyLight(*gbuffer, *camera);
-    light2->ApplyLight(*gbuffer, *camera);
+    light->Render(*gbuffer, *camera);
+    light2->Render(*gbuffer, *camera);
 
     gbuffer->RenderToScreen();
 }

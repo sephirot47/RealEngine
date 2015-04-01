@@ -8,7 +8,7 @@ const float Light::screenMesh[12] = {1.0f, -1.0f, 0.0f,
                                     -1.0f,  1.0f, 0.0f,
                                     -1.0f, -1.0f, 0.0f};
 
-Light::Light(LightType type, float screenWidth, float screenHeight) : Component("Light")
+Light::Light(Type type, float screenWidth, float screenHeight) : Component("Light")
 {
     StateManager::Push();
 
@@ -99,13 +99,13 @@ void Light::ClearBufferMeshShadow()
     StateManager::Pop();
 }
 
-void Light::ApplyLight(GBuffer &gbuffer, const Camera &camera) const
+void Light::Render(GBuffer &gbuffer, const Camera &camera) const
 {
     glm::mat4 view = camera.GetView(), projection = camera.GetProjection();
-    ApplyLight(gbuffer, view, projection);
+    Render(gbuffer, view, projection);
 }
 
-void Light::ApplyLight(GBuffer &gbuffer, const glm::mat4 &camView, const glm::mat4 &camProjection) const
+void Light::Render(GBuffer &gbuffer, const glm::mat4 &camView, const glm::mat4 &camProjection) const
 {
     if(not enabled) return;
 

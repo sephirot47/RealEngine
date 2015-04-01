@@ -7,7 +7,7 @@ Camera::Camera() : Component("Camera"),
                    position(glm::vec3(0)), rotation(glm::quat()),
                    ortho(glm::ortho(-1.0f, 1.0f, -1.0f, 1.0f, 0.1f, 100.0f)),
                    perspective(glm::perspective(45.0f * 3.1415f/180.0f, 1.0f, 0.1f, 150.0f)),
-                   mode(CameraMode::Perspective)
+                   mode(Mode::Perspective)
 {
 
 }
@@ -27,15 +27,7 @@ glm::mat4 Camera::GetView() const
 
 glm::mat4 Camera::GetProjection() const
 {
-    return mode == CameraMode::Ortho ? ortho : perspective;
-}
-
-void Camera::Bind(const ShaderProgram &program) const
-{
-    glm::mat4 view = GetView();
-    program.SetUniform("view", view);
-    if(mode == CameraMode::Ortho) program.SetUniform("projection", ortho);
-    else program.SetUniform("projection", perspective);
+    return mode == Mode::Ortho ? ortho : perspective;
 }
 
 void Camera::LookAt(const glm::vec3 position, const glm::vec3 lookTo, const glm::vec3 up)
@@ -85,7 +77,7 @@ void Camera::SetPerspective(const glm::mat4 &perspective)
     this->perspective = perspective;
 }
 
-void Camera::SetMode(CameraMode mode)
+void Camera::SetMode(Mode mode)
 {
     this->mode = mode;
 }
