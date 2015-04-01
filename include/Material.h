@@ -22,8 +22,7 @@ class Material : public Bindable
 {
 private:
 
-    glm::vec3 ambientColor, diffuseColor, specularColor;
-    float shininess, shineStrength;
+    float shininess;
 
     Texture *texture;
     Shader *vshader, *fshader;
@@ -39,16 +38,10 @@ public:
     void Bind() const;
     void UnBind() const;
 
-    void SetAmbientColor(glm::vec3 color);
-    void SetDiffuseColor(glm::vec3 color);
-    void SetSpecularColor(glm::vec3 color);
     void SetTexture(Texture &t);
     void SetShininess(float shininess);
     void SetShaderProgram(ShaderProgram &program);
 
-    glm::vec3 GetAmbientColor() const;
-    glm::vec3 GetDiffuseColor() const;
-    glm::vec3 GetSpecularColor() const;
     float GetShininess() const;
     Texture* GetTexture() const;
     Shader* GetVertexShader() const;

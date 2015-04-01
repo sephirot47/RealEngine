@@ -73,6 +73,8 @@ void SkyBox::Render(RenderTarget &renderTarget, glm::mat4 &camView, glm::mat4 &c
 
     //#1111 SetDrawingBuffers, solo al buffer del color
     program->AttachTexture("cubemap", *cubeTexture);
+    glDisable(GL_CULL_FACE);
+    glDisable(GL_DEPTH_TEST);
     cubeMesh->Render(renderTarget, *program, camView, camProjection);
 
     StateManager::Pop();

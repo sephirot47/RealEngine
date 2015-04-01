@@ -154,15 +154,11 @@ void RenderScene()
     view = glm::inverse(T * R);
     if(lightMode) view = light2->GetView();
 
-    glDisable(GL_CULL_FACE);
-    //skybox->Render(*gbuffer, view, projection);
-    glEnable(GL_CULL_FACE);
-    gbuffer->ClearDepth();
+    skybox->Render(*gbuffer, view, projection);
 
     material1->SetShininess(50.0f);
-    material1->SetSpecularColor(vec3(1.0, 1.0, 1.0));
-    material2->SetSpecularColor(vec3(1.0, 1.0, 1.0));
-    material3->SetSpecularColor(vec3(0.0, 0.0, 0.0));
+    material2->SetShininess(50.0f);
+    material3->SetShininess(50.0f);
 
     mesh1->Render(*gbuffer, *material1, view, projection);
     mesh2->Render(*gbuffer, *material2, view, projection);

@@ -5,9 +5,6 @@ using namespace RE;
 
 Material::Material()
 {
-    ambientColor = glm::vec3(0.1, 1.0, 1.0);
-    diffuseColor = glm::vec3(0.5, 0.5, 0.5);
-    specularColor = glm::vec3(0.5, 0.5, 0.5);
     shininess = 32.0f;
     texture = nullptr;
 
@@ -33,10 +30,7 @@ void Material::Bind() const
     if(not program) return;
 
     program->Bind();
-    program->SetUniform("material.diffuse", diffuseColor);
-    program->SetUniform("material.specular", specularColor);
     program->SetUniform("material.shininess", shininess);
-
     if(texture) program->AttachTexture("material.texture", *texture);
 }
 
@@ -44,21 +38,6 @@ void Material::UnBind() const
 {
     if(not program) return;
     program->UnBind();
-}
-
-void Material::SetAmbientColor(glm::vec3 color)
-{
-    ambientColor = color;
-}
-
-void Material::SetDiffuseColor(glm::vec3 color)
-{
-    diffuseColor = color;
-}
-
-void Material::SetSpecularColor(glm::vec3 color)
-{
-    specularColor = color;
 }
 
 void Material::SetTexture(Texture &t)
@@ -78,21 +57,6 @@ void Material::SetShaderProgram(ShaderProgram &program)
 }
 
 
-
-glm::vec3 Material::GetAmbientColor() const
-{
-    return ambientColor;
-}
-
-glm::vec3 Material::GetDiffuseColor() const
-{
-    return diffuseColor;
-}
-
-glm::vec3 Material::GetSpecularColor() const
-{
-    return specularColor;
-}
 
 Texture *Material::GetTexture() const
 {

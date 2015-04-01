@@ -31,8 +31,6 @@ private:
     static const std::string GUvInputName;
     static const std::string GNormalInputName;
     static const std::string GMaterialTextureInputName;
-    static const std::string GMaterialDiffuseInputName;
-    static const std::string GMaterialSpecularInputName;
     static const std::string GMaterialShininessInputName;
     static const std::string GDepthInputName;
 
@@ -53,9 +51,7 @@ public:
         GUvAttachment = GL_COLOR_ATTACHMENT2,
         GNormalAttachment = GL_COLOR_ATTACHMENT3,
         GMaterialTextureAttachment = GL_COLOR_ATTACHMENT4,
-        GMaterialDiffuseAttachment = GL_COLOR_ATTACHMENT5,
-        GMaterialSpecularAttachment = GL_COLOR_ATTACHMENT6,
-        GMaterialShininessAttachment = GL_COLOR_ATTACHMENT7,
+        GMaterialShininessAttachment = GL_COLOR_ATTACHMENT5,
         GDepthAttachment = GL_DEPTH_ATTACHMENT
     };
 

@@ -7,8 +7,6 @@ const std::string GBuffer::GPositionInputName = "GPosition";
 const std::string GBuffer::GUvInputName = "GUv";
 const std::string GBuffer::GNormalInputName = "GNormal";
 const std::string GBuffer::GMaterialTextureInputName = "GMaterialTexture";
-const std::string GBuffer::GMaterialDiffuseInputName = "GMaterialDiffuse";
-const std::string GBuffer::GMaterialSpecularInputName = "GMaterialSpecular";
 const std::string GBuffer::GMaterialShininessInputName = "GMaterialShininess";
 const std::string GBuffer::GDepthInputName = "GDepth";
 
@@ -43,8 +41,6 @@ GBuffer::GBuffer(float width, float height) : FrameBuffer(width, height)
     AddDrawingBuffer(GUvAttachment, GL_RG, GL_FLOAT, GL_RG, GL_REPEAT, GL_NEAREST);
     AddDrawingBuffer(GNormalAttachment, GL_RGB, GL_FLOAT, GL_RGBA32F, GL_REPEAT, GL_NEAREST);
     AddDrawingBuffer(GMaterialTextureAttachment, GL_RGBA, GL_FLOAT, GL_RGBA, GL_REPEAT, GL_NEAREST);
-    AddDrawingBuffer(GMaterialDiffuseAttachment, GL_RGB, GL_FLOAT, GL_RGB, GL_REPEAT, GL_NEAREST);
-    AddDrawingBuffer(GMaterialSpecularAttachment, GL_RGB, GL_FLOAT, GL_RGB, GL_REPEAT, GL_NEAREST);
     AddDrawingBuffer(GMaterialShininessAttachment, GL_RGBA, GL_FLOAT, GL_RGBA32F, GL_REPEAT, GL_NEAREST);
     AddDrawingBuffer(GDepthAttachment, GL_DEPTH_COMPONENT, GL_FLOAT, GL_DEPTH_COMPONENT24, GL_CLAMP_TO_EDGE, GL_NEAREST);
     //
@@ -90,8 +86,6 @@ void GBuffer::BindBuffersToProgram(ShaderProgram &program) const
     program.AttachTexture(GUvInputName,                 *GetGBuffer(GUvAttachment));
     program.AttachTexture(GNormalInputName,             *GetGBuffer(GNormalAttachment));
     program.AttachTexture(GMaterialTextureInputName,    *GetGBuffer(GMaterialTextureAttachment));
-    program.AttachTexture(GMaterialDiffuseInputName,    *GetGBuffer(GMaterialDiffuseAttachment));
-    program.AttachTexture(GMaterialSpecularInputName,   *GetGBuffer(GMaterialSpecularAttachment));
     program.AttachTexture(GMaterialShininessInputName,  *GetGBuffer(GMaterialShininessAttachment));
     program.AttachTexture(GDepthInputName,              *GetGBuffer(GDepthAttachment));
 }
