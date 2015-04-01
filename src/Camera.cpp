@@ -25,19 +25,19 @@ glm::mat4 Camera::GetView() const
     return glm::inverse(T * R);
 }
 
-glm::vec3 Camera::GetFront() const
+glm::vec3 Camera::GetForward() const
 {
-    return rotation * glm::vec3(0, 0, -1);
+    return rotation.GetForward();
 }
 
 glm::vec3 Camera::GetUp() const
 {
-    return rotation * glm::vec3(0, 1, 0);
+    return rotation.GetUp();
 }
 
 glm::vec3 Camera::GetRight() const
 {
-    return rotation * glm::vec3(1, 0, 0);
+    return rotation.GetRight();
 }
 
 glm::mat4 Camera::GetProjection() const

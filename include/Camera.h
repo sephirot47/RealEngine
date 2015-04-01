@@ -48,7 +48,7 @@ public:
     Quaternion GetRotation() const;
     glm::mat4 GetView() const;
 
-    glm::vec3 GetFront() const;
+    glm::vec3 GetForward() const;
     glm::vec3 GetUp() const;
     glm::vec3 GetRight() const;
 

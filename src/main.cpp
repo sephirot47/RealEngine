@@ -228,9 +228,9 @@ int main()
                 camera->SetPosition(camera->GetPosition() - camSpeed * camera->GetRight());
 
             if (event.type == SDL_KEYDOWN && IsPressed(SDLK_UP))
-                camera->SetPosition(camera->GetPosition() + camSpeed * camera->GetFront());
+                camera->SetPosition(camera->GetPosition() + camSpeed * camera->GetForward());
             if (event.type == SDL_KEYDOWN && IsPressed(SDLK_DOWN))
-                camera->SetPosition(camera->GetPosition() - camSpeed * camera->GetFront());
+                camera->SetPosition(camera->GetPosition() - camSpeed * camera->GetForward());
 
             if (event.type == SDL_KEYDOWN && IsPressed(SDLK_s))
                 camera->SetPosition(camera->GetPosition() - camSpeed * camera->GetUp());
