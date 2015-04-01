@@ -16,9 +16,9 @@ GBuffer *gbuffer;
 Mesh *mesh1, *mesh2, *mesh3;
 Light *light, *light2;
 Material *material1, *material2, *material3;
-vec3 cameraRot, cameraPos;
+
+Camera *camera;
 SkyBox *skybox;
-CubeTexture *skyCubeTexture;
 Texture *tex;
 
 void Init()
@@ -50,6 +50,8 @@ void Init()
     material3 = new Material();
     material3->SetTexture(*texture3);
 
+    camera = new Camera();
+
     //Creamos el cielo
     Image *cm1, *cm2, *cm3, *cm4, *cm5, *cm6;
     cm1 = new Image("Assets/Textures/sky4/posx.tga");
@@ -59,7 +61,7 @@ void Init()
     cm5 = new Image("Assets/Textures/sky4/posz.tga");
     cm6 = new Image("Assets/Textures/sky4/negz.tga");
 
-    skyCubeTexture = new CubeTexture();
+    CubeTexture *skyCubeTexture = new CubeTexture();
     skyCubeTexture->SetFaceTexture(CubeTexture::CubeTextureFace::PositiveX, *cm1);
     skyCubeTexture->SetFaceTexture(CubeTexture::CubeTextureFace::NegativeX, *cm2);
     skyCubeTexture->SetFaceTexture(CubeTexture::CubeTextureFace::PositiveY, *cm3);
@@ -73,30 +75,30 @@ void Init()
 
     gbuffer = new GBuffer(width, height);
 
-    light = new Light(DirectionalLight, width, height);
+    light = new Light(Light::LightType::DirectionalLight, width, height);
     light->SetPosition(vec3(10.0f, 0.5f, 10.0f));
     light->SetDirection(-light->GetPosition());
     light->SetColor(vec3(1.0f, 1.0f, 1.0f));
     light->SetIntensity(2.0f);
 
-    light2 = new Light(PointLight, width, height);
+    light2 = new Light(Light::LightType::PointLight, width, height);
     light2->SetPosition(vec3(0.0f, 0.0f, 2.0f));
     light2->SetDirection(-light2->GetPosition());
     light2->SetColor(vec3(1.0f, 0.0f, 0.0f));
     light2->SetIntensity(2.0f);
     light2->SetRange(2.0f);
 
-    cameraPos = vec3(0, 0, 7.0f);
-    cameraRot = vec3(0, 0, 0.0f);
+    camera->SetMode(Camera::CameraMode::Perspective);
+    camera->SetPerspective(45.0f, width/height, 1.0f, 150.0f);
 }
 
 float rot = 0.0f, sphereRot = 0.0f, appTime = 0.0f;
 
-bool lightMode = false;
-
 void RenderScene()
 {    
     gbuffer->ClearColorDepth();
+
+    camera->LookAt(vec3(0), vec3(0,1,0));
 
     appTime += 0.03f;
     sphereRot += 0.03f;
@@ -111,9 +113,6 @@ void RenderScene()
     mat4 T = glm::translate(model,  translate);
     mat4 R = glm::rotate_slow(model, rot, axis);
     mat4 S = glm::scale(model, scale);
-
-    mat4 projection = perspective(45.0f * 3.1415f/180.0f, width/height, 1.0f, 150.0f);
-    if(lightMode) projection = light2->GetProjection(width, height);
 
     model = mat4(1.0f);
     translate = vec3(sin(appTime) * 0.8f, 0.0f, 3.0f);
@@ -153,20 +152,21 @@ void RenderScene()
     skybox->GetMesh()->SetModelMatrix(model);
 
     mat4 view = mat4(1.0f);
+    /*
     T = glm::translate(view, cameraPos);
     R = glm::rotate_slow(view, rot, axis);
     view = glm::inverse(T * R);
-    if(lightMode) view = light2->GetView();
+    */
 
-    skybox->Render(*gbuffer, view, projection);
+    skybox->Render(*gbuffer, *camera);
 
     material1->SetShininess(50.0f);
     material2->SetShininess(50.0f);
     material3->SetShininess(50.0f);
 
-    mesh1->Render(*gbuffer, *material1, view, projection);
-    mesh2->Render(*gbuffer, *material2, view, projection);
-    mesh3->Render(*gbuffer, *material3, view, projection);
+    mesh1->Render(*gbuffer, *material1, *camera);
+    mesh2->Render(*gbuffer, *material2, *camera);
+    mesh3->Render(*gbuffer, *material3, *camera);
 
     light->ClearBufferMeshShadow();
     light2->ClearBufferMeshShadow();
@@ -179,8 +179,8 @@ void RenderScene()
     light2->ShadowMapMesh(*mesh2, width, height);
     light2->ShadowMapMesh(*mesh3, width, height);
 
-    light->ApplyLight(*gbuffer, view, projection);
-    light2->ApplyLight(*gbuffer, view, projection);
+    light->ApplyLight(*gbuffer, *camera);
+    light2->ApplyLight(*gbuffer, *camera);
 
     gbuffer->RenderToScreen();
 }
@@ -217,14 +217,24 @@ int main()
         while(SDL_PollEvent(&event))
         {
             float camSpeed = 0.3f;
+
             if(event.type == SDL_QUIT) running = false;
-            if (event.type == SDL_KEYDOWN && IsPressed(SDLK_RIGHT)) cameraPos.x += camSpeed;
-            if (event.type == SDL_KEYDOWN && IsPressed(SDLK_LEFT)) cameraPos.x -= camSpeed;
-            if (event.type == SDL_KEYDOWN && IsPressed(SDLK_UP)) cameraPos.z -= camSpeed;
-            if (event.type == SDL_KEYDOWN && IsPressed(SDLK_DOWN)) cameraPos.z += camSpeed;
-            if (event.type == SDL_KEYDOWN && IsPressed(SDLK_s)) cameraPos.y -= camSpeed;
-            if (event.type == SDL_KEYDOWN && IsPressed(SDLK_w)) cameraPos.y += camSpeed;
-            if (event.type == SDL_KEYDOWN && IsPressed(SDLK_0)) lightMode = !lightMode;
+
+            if (event.type == SDL_KEYDOWN && IsPressed(SDLK_RIGHT))
+                camera->SetPosition(camera->GetPosition() + vec3(camSpeed, 0, 0));
+            if (event.type == SDL_KEYDOWN && IsPressed(SDLK_LEFT))
+                camera->SetPosition(camera->GetPosition() + vec3(-camSpeed, 0, 0));
+
+            if (event.type == SDL_KEYDOWN && IsPressed(SDLK_UP))
+                camera->SetPosition(camera->GetPosition() + vec3(0, 0, -camSpeed));
+            if (event.type == SDL_KEYDOWN && IsPressed(SDLK_DOWN))
+                camera->SetPosition(camera->GetPosition() + vec3(0, 0, camSpeed));
+
+            if (event.type == SDL_KEYDOWN && IsPressed(SDLK_s))
+                camera->SetPosition(camera->GetPosition() + vec3(0, -camSpeed, 0));
+            if (event.type == SDL_KEYDOWN && IsPressed(SDLK_w))
+                camera->SetPosition(camera->GetPosition() + vec3(0, camSpeed, 0));
+
             if (event.type == SDL_KEYDOWN && IsPressed(SDLK_1)) light->SetEnabled(!light->GetEnabled());
             if (event.type == SDL_KEYDOWN && IsPressed(SDLK_2)) light2->SetEnabled(!light2->GetEnabled());
         }

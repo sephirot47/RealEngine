@@ -2,8 +2,7 @@
 
 using namespace RE;
 
-
-Mesh::Mesh()
+Mesh::Mesh() : Component("Mesh")
 {
     numVertices = 0;
     model = glm::mat4(1.0f);
@@ -60,8 +59,6 @@ void Mesh::LoadFromFile(const char *filepath)
         vao->AddAttribute(*vboNormals, index++, 3, GL_FLOAT, GL_FALSE, 0, 0);
     }
 
-    DbgLog(numVertices);
-
     StateManager::Pop();
 }
 
@@ -75,8 +72,8 @@ void Mesh::LoadPositionsFromArray(const std::vector<glm::vec3> &positions, GLenu
 
     if(not vao) vao = new VAO();
     int index = 0;
-  //  if(vboUv) ++index;
-  //  if(vboNormals) ++index;
+    if(vboUv) ++index;
+    if(vboNormals) ++index;
 
     vboPos = new VBO();
     vboPos->SetData(&positions[0], positions.size() * sizeof(glm::vec3));
@@ -88,6 +85,12 @@ void Mesh::LoadPositionsFromArray(const std::vector<glm::vec3> &positions, GLenu
     StateManager::Pop();
 }
 
+void Mesh::Render(const Material &material, Camera &camera)
+{
+    glm::mat4 view = camera.GetView(), projection = camera.GetProjection();
+    Render(material, view, projection);
+}
+
 void Mesh::Render(RenderTarget &renderTarget, const Material &material, glm::mat4 &camView, glm::mat4 &camProjection)
 {
     StateManager::Push();
@@ -97,6 +100,12 @@ void Mesh::Render(RenderTarget &renderTarget, const Material &material, glm::mat
     renderTarget.UnBindRenderTarget();
 
     StateManager::Pop();
+}
+
+void Mesh::Render(RenderTarget &renderTarget, const ShaderProgram &program, Camera &camera)
+{
+    glm::mat4 view = camera.GetView(), projection = camera.GetProjection();
+    Render(renderTarget, program, view, projection);
 }
 
 void Mesh::Render(RenderTarget &renderTarget, const ShaderProgram &program, glm::mat4 &camView, glm::mat4 &camProjection)
@@ -123,6 +132,12 @@ void Mesh::Render(const Material &material, glm::mat4 &camView, glm::mat4 &camPr
     StateManager::Pop();
 }
 
+void Mesh::Render(const ShaderProgram &program, Camera &camera)
+{
+    glm::mat4 view = camera.GetView(), projection = camera.GetProjection();
+    Render(program, view, projection);
+}
+
 void Mesh::Render(const ShaderProgram &program, glm::mat4 &camView, glm::mat4 &camProjection)
 {
     if(not vao) return;
@@ -146,6 +161,12 @@ void Mesh::Render(const ShaderProgram &program, glm::mat4 &camView, glm::mat4 &c
     vao->UnBind();
 
     StateManager::Pop();
+}
+
+void Mesh::Render(RenderTarget &renderTarget, const Material &material, Camera &camera)
+{
+    glm::mat4 view = camera.GetView(), projection = camera.GetProjection();
+    Render(renderTarget, material, view, projection);
 }
 
 void Mesh::SetRenderMode(GLenum renderMode)

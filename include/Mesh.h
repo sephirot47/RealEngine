@@ -4,9 +4,11 @@
 #include "StateManager.h"
 #include "RenderTarget.h"
 #include "FileLoader.h"
+#include "Component.h"
 #include "Shader.h"
 #include "Debug.h"
 #include "ShaderProgram.h"
+#include "Camera.h"
 #include "VAO.h"
 #include "VBO.h"
 #include "Material.h"
@@ -15,11 +17,11 @@
 namespace RE
 {
 
-class Mesh
+class Mesh : public Component
 {
 private:
 
-    Mesh(const Mesh& m){}
+    Mesh(const Mesh& m) : Component("Mesh") { }
 
     VAO *vao;
     VBO *vboPos, *vboUv, *vboNormals;
@@ -35,9 +37,13 @@ public:
     void LoadFromFile(const char *filepath);
     void LoadPositionsFromArray(const std::vector<glm::vec3> &positions, GLenum renderMode = GL_TRIANGLES);
 
+    void Render(const Material &material, Camera &camera);
     void Render(const Material &material, glm::mat4 &camView, glm::mat4 &camProjection);
+    void Render(const ShaderProgram &program, Camera &camera);
     void Render(const ShaderProgram &program, glm::mat4 &camView, glm::mat4 &camProjection);
+    void Render(RenderTarget &renderTarget, const Material &material, Camera &camera);
     void Render(RenderTarget &renderTarget, const Material &material, glm::mat4 &camView, glm::mat4 &camProjection);
+    void Render(RenderTarget &renderTarget, const ShaderProgram &program, Camera &camera);
     void Render(RenderTarget &renderTarget, const ShaderProgram &program, glm::mat4 &camView, glm::mat4 &camProjection);
 
     void SetRenderMode(GLenum renderMode);

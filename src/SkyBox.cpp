@@ -61,6 +61,12 @@ SkyBox::~SkyBox()
     delete program;
 }
 
+void SkyBox::Render(RenderTarget &renderTarget, Camera &camera)
+{
+    glm::mat4 view = camera.GetView(), projection = camera.GetProjection();
+    Render(renderTarget, view, projection);
+}
+
 void SkyBox::Render(RenderTarget &renderTarget, glm::mat4 &camView, glm::mat4 &camProjection)
 {
     if(not cubeTexture)

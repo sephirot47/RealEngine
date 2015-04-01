@@ -30,6 +30,7 @@
 #include "GBuffer.h"
 #include "Mesh.h"
 #include "Light.h"
+#include "Camera.h"
 #include "StateManager.h"
 #include "SkyBox.h"
 

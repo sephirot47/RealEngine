@@ -99,6 +99,11 @@ void Light::ClearBufferMeshShadow()
     StateManager::Pop();
 }
 
+void Light::ApplyLight(GBuffer &gbuffer, const Camera &camera) const
+{
+    glm::mat4 view = camera.GetView(), projection = camera.GetProjection();
+    ApplyLight(gbuffer, view, projection);
+}
 
 void Light::ApplyLight(GBuffer &gbuffer, const glm::mat4 &camView, const glm::mat4 &camProjection) const
 {
@@ -229,6 +234,7 @@ bool Light::GetEnabled() const
 }
 
 
+//QUITAR ESTO, NO ES NI UNA FUNCION DE LA CLASE
 glm::quat LookAt(const glm::vec3 eye, const glm::vec3 lookTo, const glm::vec3 up)
 {
     if(eye == lookTo) return glm::quat();

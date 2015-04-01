@@ -3,7 +3,7 @@
 using namespace RE;
 
 
-Material::Material()
+Material::Material() : Component("Material")
 {
     shininess = 32.0f;
     texture = nullptr;

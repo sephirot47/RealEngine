@@ -8,6 +8,7 @@
 #include <GL/glext.h>
 
 #include "StateManager.h"
+#include "Camera.h"
 #include "Debug.h"
 #include "ShaderProgram.h"
 #include "CubeTexture.h"
@@ -30,6 +31,7 @@ public:
     SkyBox();
     ~SkyBox();
 
+    void Render(RenderTarget &renderTarget, Camera &camera);
     void Render(RenderTarget &renderTarget, glm::mat4 &camView, glm::mat4 &camProjection);
     void SetCubeTexture(CubeTexture &cubeTexture);
 

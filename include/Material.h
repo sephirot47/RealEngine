@@ -8,6 +8,7 @@
 #include <GL/glext.h>
 
 #include "Bindable.h"
+#include "Component.h"
 #include "StateManager.h"
 #include "FileLoader.h"
 #include "Shader.h"
@@ -18,7 +19,7 @@
 namespace RE
 {
 
-class Material : public Bindable
+class Material : public Bindable, public Component
 {
 private:
 

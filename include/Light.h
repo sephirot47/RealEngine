@@ -17,14 +17,17 @@
 namespace RE
 {
 
-enum LightType
-{
-    DirectionalLight,
-    PointLight
-};
-
 class Light : public Component
 {
+
+public:
+
+    enum LightType
+    {
+        DirectionalLight,
+        PointLight
+    };
+
 private:
 
     static const float screenMesh[12];
@@ -53,6 +56,7 @@ public:
 
     void ClearBufferMeshShadow();
     void ShadowMapMesh(Mesh &m, float screenWidth, float screenHeight);
+    void ApplyLight(GBuffer &gbuffer, const Camera &camera) const;
     void ApplyLight(GBuffer &gbuffer, const glm::mat4 &camView, const glm::mat4 &camProjection) const;
 
     void SetPosition(glm::vec3 position);
