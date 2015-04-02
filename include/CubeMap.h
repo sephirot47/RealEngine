@@ -18,7 +18,7 @@
 namespace RE
 {
 
-class CubeTexture
+class CubeMap
 {
 
 friend class ShaderProgram;
@@ -42,14 +42,14 @@ private:
     void Bind() const;
     void UnBind() const;
     void Bind(GLuint slot) const;
-    static void UnBind(GLuint slot);
+    void UnBind(GLuint slot);
 
     std::vector<Texture*> faceTextures;
 
 public:
 
-    CubeTexture();
-    ~CubeTexture();
+    CubeMap();
+    ~CubeMap();
 
     void SetFaceTexture(Face face, Image &image);
 

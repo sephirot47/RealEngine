@@ -11,7 +11,7 @@
 #include "Camera.h"
 #include "Debug.h"
 #include "ShaderProgram.h"
-#include "CubeTexture.h"
+#include "CubeMap.h"
 #include "Mesh.h"
 #include "glm/glm.hpp"
 
@@ -24,7 +24,7 @@ private:
 
     Mesh *cubeMesh;
     ShaderProgram *program;
-    CubeTexture *cubeTexture;
+    CubeMap *cubeTexture;
 
 public:
 
@@ -33,11 +33,11 @@ public:
 
     void Render(RenderTarget &renderTarget, Camera &camera);
     void Render(RenderTarget &renderTarget, glm::mat4 &camView, glm::mat4 &camProjection);
-    void SetCubeTexture(CubeTexture &cubeTexture);
+    void SetCubeMap(CubeMap &cubeTexture);
 
     Mesh *GetMesh() const;
     ShaderProgram *GetShaderProgram() const;
-    CubeTexture *GetCubeTexture() const;
+    CubeMap *GetCubeMap() const;
 };
 
 }

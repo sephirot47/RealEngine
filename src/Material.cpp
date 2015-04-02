@@ -27,8 +27,6 @@ Material::~Material()
 
 void Material::Bind() const
 {
-    if(not program) return;
-
     program->Bind();
     program->SetUniform("material.shininess", shininess);
     if(texture) program->AttachTexture("material.texture", *texture);
@@ -36,7 +34,6 @@ void Material::Bind() const
 
 void Material::UnBind() const
 {
-    if(not program) return;
     program->UnBind();
 }
 

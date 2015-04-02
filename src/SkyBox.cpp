@@ -71,7 +71,7 @@ void SkyBox::Render(RenderTarget &renderTarget, glm::mat4 &camView, glm::mat4 &c
 {
     if(not cubeTexture)
     {
-        DbgError("You can't render a SkyBox without a CubeTexture. Try setting it using SetCubeTexture");
+        DbgError("You can't render a SkyBox without a CubeMap. Try setting it using SetCubeMap");
         return;
     }
 
@@ -86,7 +86,7 @@ void SkyBox::Render(RenderTarget &renderTarget, glm::mat4 &camView, glm::mat4 &c
     StateManager::Pop();
 }
 
-void SkyBox::SetCubeTexture(CubeTexture &cubeTexture)
+void SkyBox::SetCubeMap(CubeMap &cubeTexture)
 {
     this->cubeTexture = &cubeTexture;
 }
@@ -102,7 +102,7 @@ ShaderProgram *SkyBox::GetShaderProgram() const
     return program;
 }
 
-CubeTexture *SkyBox::GetCubeTexture() const
+CubeMap *SkyBox::GetCubeMap() const
 {
     return cubeTexture;
 }

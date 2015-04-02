@@ -61,16 +61,16 @@ void Init()
     cm5 = new Image("Assets/Textures/sky4/posz.tga");
     cm6 = new Image("Assets/Textures/sky4/negz.tga");
 
-    CubeTexture *skyCubeTexture = new CubeTexture();
-    skyCubeTexture->SetFaceTexture(CubeTexture::Face::PositiveX, *cm1);
-    skyCubeTexture->SetFaceTexture(CubeTexture::Face::NegativeX, *cm2);
-    skyCubeTexture->SetFaceTexture(CubeTexture::Face::PositiveY, *cm3);
-    skyCubeTexture->SetFaceTexture(CubeTexture::Face::NegativeY, *cm4);
-    skyCubeTexture->SetFaceTexture(CubeTexture::Face::PositiveZ, *cm5);
-    skyCubeTexture->SetFaceTexture(CubeTexture::Face::NegativeZ, *cm6);
+    CubeMap *skyCubeMap = new CubeMap();
+    skyCubeMap->SetFaceTexture(CubeMap::Face::PositiveX, *cm1);
+    skyCubeMap->SetFaceTexture(CubeMap::Face::NegativeX, *cm2);
+    skyCubeMap->SetFaceTexture(CubeMap::Face::PositiveY, *cm3);
+    skyCubeMap->SetFaceTexture(CubeMap::Face::NegativeY, *cm4);
+    skyCubeMap->SetFaceTexture(CubeMap::Face::PositiveZ, *cm5);
+    skyCubeMap->SetFaceTexture(CubeMap::Face::NegativeZ, *cm6);
 
     skybox = new SkyBox();
-    skybox->SetCubeTexture(*skyCubeTexture);
+    skybox->SetCubeMap(*skyCubeMap);
     //
 
     gbuffer = new GBuffer(width, height);
@@ -152,13 +152,6 @@ void RenderScene()
     S = glm::scale(model, scale);
     model = T * R * S;
     skybox->GetMesh()->SetModelMatrix(model);
-
-    mat4 view = mat4(1.0f);
-    /*
-    T = glm::translate(view, cameraPos);
-    R = glm::rotate_slow(view, rot, axis);
-    view = glm::inverse(T * R);
-    */
 
     skybox->Render(*gbuffer, *camera);
 
@@ -248,7 +241,7 @@ int main()
 
         totalTime += Time::GetMiliseconds() - t;
         float fps = float(++frames)/totalTime;
-        if(frames % 3 == 0) DbgLog(int(fps * 1000.0f) << " fps" );
+       // if(frames % 3 == 0) DbgLog(int(fps * 1000.0f) << " fps" );
         if(frames > 100) frames = totalTime = 0;
         //SDL_Delay(10);
     }

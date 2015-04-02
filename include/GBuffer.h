@@ -24,6 +24,19 @@ namespace RE
 
 class GBuffer : public FrameBuffer
 {
+public:
+
+    enum GBufferAttachment
+    {
+        GColorAttachment = GL_COLOR_ATTACHMENT0,
+        GPositionAttachment = GL_COLOR_ATTACHMENT1,
+        GUvAttachment = GL_COLOR_ATTACHMENT2,
+        GNormalAttachment = GL_COLOR_ATTACHMENT3,
+        GMaterialTextureAttachment = GL_COLOR_ATTACHMENT4,
+        GMaterialShininessAttachment = GL_COLOR_ATTACHMENT5,
+        GDepthAttachment = GL_DEPTH_ATTACHMENT
+    };
+
 private:
 
     static const std::string GColorInputName;
@@ -43,17 +56,6 @@ private:
     float width, height;
 
 public:
-
-    enum GBufferAttachment
-    {
-        GColorAttachment = GL_COLOR_ATTACHMENT0,
-        GPositionAttachment = GL_COLOR_ATTACHMENT1,
-        GUvAttachment = GL_COLOR_ATTACHMENT2,
-        GNormalAttachment = GL_COLOR_ATTACHMENT3,
-        GMaterialTextureAttachment = GL_COLOR_ATTACHMENT4,
-        GMaterialShininessAttachment = GL_COLOR_ATTACHMENT5,
-        GDepthAttachment = GL_DEPTH_ATTACHMENT
-    };
 
     GBuffer(float width, float height);
     ~GBuffer();

@@ -80,7 +80,6 @@ void Mesh::LoadPositionsFromArray(const std::vector<glm::vec3> &positions, GLenu
     vao->AddAttribute(*vboPos, index, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
     this->renderMode = renderMode;
-    DbgLog(numVertices);
 
     StateManager::Pop();
 }

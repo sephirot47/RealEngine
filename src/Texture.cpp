@@ -2,22 +2,44 @@
 
 using namespace RE;
 
-Texture::Texture()
+void Texture::Init()
 {
+    this->width = 0;
+    this->height = 0;
+
     glGenTextures(1, &object);
     SetWrapMode(GL_REPEAT);
     SetScaleMode(GL_LINEAR);
-    this->width = 0;
-    this->height = 0;
+
     framebuffer = 0;
 }
 
-Texture::Texture(const std::string filepath) : Texture()
+void Texture::SetDataForCubeMap(GLenum faceTarget, const void *data, int width, int height,
+                                GLint format, GLenum type, GLint internalFormat)
+{
+    StateManager::Push();
+
+    this->width = width;
+    this->height = height;
+    glTexImage2D(faceTarget, 0, internalFormat, width, height, 0, format, type, data);
+
+    StateManager::Pop();
+}
+
+Texture::Texture(Target target)
+{
+    this->target = target;
+    Init();
+}
+
+Texture::Texture() : Texture(Target::Texture2D) {}
+
+Texture::Texture(const std::string filepath, Target target) : Texture(target)
 {
     LoadFromFile(filepath);
 }
 
-Texture::Texture(int width, int height) : Texture()
+Texture::Texture(int width, int height, Target target) : Texture(target)
 {
     this->width = width;
     this->height = height;
@@ -34,8 +56,9 @@ void Texture::SetWrapMode(GLenum mode)
     StateManager::Push();
 
     Bind();
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, mode);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, mode);
+    glTexParameteri(target, GL_TEXTURE_WRAP_S, mode);
+    glTexParameteri(target, GL_TEXTURE_WRAP_T, mode);
+    if(target == Target::TextureCubeMap) glTexParameteri(target, GL_TEXTURE_WRAP_R, mode);
     UnBind();
 
     StateManager::Pop();
@@ -46,8 +69,8 @@ void Texture::SetScaleMode(GLenum mode)
     StateManager::Push();
 
     Bind();
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, mode);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, mode);
+    glTexParameteri(target, GL_TEXTURE_MIN_FILTER, mode);
+    glTexParameteri(target, GL_TEXTURE_MAG_FILTER, mode);
     UnBind();
 
     StateManager::Pop();
@@ -85,7 +108,7 @@ void Texture::SetData(const void *data, int width, int height, GLint format, GLe
     Bind();
     this->width = width;
     this->height = height;
-    glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, format, type, data);
+    glTexImage2D(target, 0, internalFormat, width, height, 0, format, type, data);
     UnBind();
 
     StateManager::Pop();
@@ -114,22 +137,22 @@ void Texture::CreateEmpty(int width, int height, GLint format, GLenum type, GLin
 
 void Texture::Bind() const
 {
-    glBindTexture(GL_TEXTURE_2D, object);
+    glBindTexture(target, object);
 }
 
 void Texture::UnBind() const
 {
-    glBindTexture(GL_TEXTURE_2D, object);
+    glBindTexture(target, 0);
 }
 
 void Texture::Bind(GLuint slot) const
 {
     glActiveTexture(GL_TEXTURE0 + slot);
-    glBindTexture(GL_TEXTURE_2D, object);
+    glBindTexture(target, object);
 }
 
-void Texture::UnBind(GLuint slot)
+void Texture::UnBind(GLuint slot) const
 {
     glActiveTexture(GL_TEXTURE0 + slot);
-    glBindTexture(GL_TEXTURE_2D, 0);
+    glBindTexture(target, 0);
 }

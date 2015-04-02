@@ -119,6 +119,7 @@ private:
 public:
     static unsigned int fileMode;
     static unsigned int outputMode;
+    static void CheckGLError();
     static void SetFile(std::string filepath);
     static void Log(std::ostringstream &log);
     static void Warning(std::ostringstream &log);

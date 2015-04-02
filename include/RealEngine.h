@@ -23,7 +23,7 @@
 #include "VBO.h"
 #include "Component.h"
 #include "Texture.h"
-#include "CubeTexture.h"
+#include "CubeMap.h"
 #include "Image.h"
 #include "FrameBuffer.h"
 #include "VAO.h"

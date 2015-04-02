@@ -10,7 +10,6 @@ ShaderProgram::ShaderProgram()
 
 ShaderProgram::~ShaderProgram()
 {
-    if(object == 0) return;
     glDeleteProgram(object);
 }
 
@@ -64,13 +63,13 @@ void ShaderProgram::UnBind() const
     int slot = 0;
     for(auto it : textureMap)
     {
-        Texture::UnBind(slot);
+        it.second->UnBind(slot);
         ++slot;
     }
 
     for(auto it : cubeTextureMap)
     {
-        CubeTexture::UnBind(slot);
+        it.second->UnBind(slot);
         ++slot;
     }
 }
@@ -82,11 +81,11 @@ void ShaderProgram::AttachTexture(const std::string name, Texture &texture)
     textureMap.insert( textureMap.end(), TextureMapPair(name, &texture) );
 }
 
-void ShaderProgram::AttachTexture(const std::string name, CubeTexture &texture)
+void ShaderProgram::AttachTexture(const std::string name, CubeMap &texture)
 {
     auto it = cubeTextureMap.find(name);
     if(it != cubeTextureMap.end()) cubeTextureMap.erase(it);
-    cubeTextureMap.insert( cubeTextureMap.end(), CubeTextureMapPair(name, &texture) );
+    cubeTextureMap.insert( cubeTextureMap.end(), CubeMapMapPair(name, &texture) );
 }
 
 void ShaderProgram::DetachTexture(const std::string name)

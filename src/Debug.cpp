@@ -49,6 +49,13 @@ void Debug::Error(std::ostringstream &log)
     }
 }
 
+void Debug::CheckGLError()
+{
+    int error = glGetError();
+    if(error > 0)
+        DbgError("GL Error('" << gluErrorString(error)  << "')");
+}
+
 void Debug::SetFile(std::string filepath)
 {
     using std::operator<<;
