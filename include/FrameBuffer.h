@@ -51,6 +51,8 @@ public:
     void ClearDepth() const;
     void ClearColorDepth() const;
 
+    float GetWidth() const { return width; }
+    float GetHeight() const { return height; }
     Texture *GetTexture(GLenum attachment) const;
     GLuint GetObject() const { return object; }
 };

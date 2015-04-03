@@ -43,7 +43,7 @@ Light::Light(Type type, float screenWidth, float screenHeight) : Component("Ligh
     shadowProgram->Link();
 
     shadowBuffer = new FrameBuffer(screenWidth, screenHeight);
-    shadowBuffer->AddDrawingBuffer(GL_DEPTH_ATTACHMENT, GL_DEPTH_COMPONENT, GL_FLOAT, GL_DEPTH_COMPONENT16,
+    shadowBuffer->AddDrawingBuffer(GL_DEPTH_ATTACHMENT, GL_DEPTH_COMPONENT, GL_FLOAT, GL_DEPTH_COMPONENT32,
                                    GL_CLAMP_TO_EDGE, GL_LINEAR);
 
     pos = glm::vec3(-1, 1, 1);
@@ -119,6 +119,8 @@ void Light::Render(GBuffer &gbuffer, const glm::mat4 &camView, const glm::mat4 &
         lightProgram->Bind();
 
         gbuffer.BindBuffersToProgram(*lightProgram);
+        lightProgram->SetUniform("shadowMapWidth",  shadowBuffer->GetWidth());
+        lightProgram->SetUniform("shadowMapHeight", shadowBuffer->GetHeight());
         lightProgram->AttachTexture("shadowDepthBuffer", *(shadowBuffer->GetTexture(GL_DEPTH_ATTACHMENT)));
 
 
@@ -141,6 +143,7 @@ void Light::Render(GBuffer &gbuffer, const glm::mat4 &camView, const glm::mat4 &
 
         glm::vec3 camPosition(camView[3][0], camView[3][1], camView[3][2]);
         lightProgram->SetUniform("camera.position", camPosition);
+        lightProgram->SetUniform("camera.view", camView);
 
         GLenum drawBuffers[] = {GBuffer::GBufferAttachment::GColorAttachment,
                                 GBuffer::GBufferAttachment::GDepthAttachment};
@@ -234,30 +237,21 @@ bool Light::GetEnabled() const
 }
 
 
-//QUITAR ESTO, NO ES NI UNA FUNCION DE LA CLASE
-glm::quat LookAt(const glm::vec3 eye, const glm::vec3 lookTo, const glm::vec3 up)
-{
-    if(eye == lookTo) return glm::quat();
-
-    glm::mat4 m = lookAt(eye, lookTo, up);
-    return glm::quat_cast( glm::transpose(m) );
-}
-
 glm::mat4 Light::GetView() const
 {
     glm::mat4 lightView = glm::mat4(1.0f);
     glm::mat4 T = glm::translate(lightView, pos);
     glm::vec3 lookTo = pos +  dir * 99.0f;
     glm::vec3 up = glm::vec3(0, 1, 0);
-    glm::quat rot = LookAt(pos, lookTo, up);
+    Quaternion rot = Quaternion::LookAt(pos, lookTo, up);
     glm::mat4 R = glm::mat4_cast(rot);
     return glm::inverse(T * R);
 }
 
 glm::mat4 Light::GetProjection(float screenWidth, float screenHeight) const
 {
-    float width = 10.0f;
+    float width = 800.0f;
     float height = width * screenHeight/screenWidth;
-    return glm::ortho(-width, width, -height, height, 0.0f, 40.0f);
+    return glm::ortho(-width, width, -height, height, 350.0f, 4000.0f);
 }
 

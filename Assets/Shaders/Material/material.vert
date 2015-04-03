@@ -14,7 +14,7 @@ void main()
 {    
     fpos = (model * vec4(inpos, 1)).xyz;
     fuv = inuv;
-    fnormal = (normalMatrix * vec4(innormal, 0)).xyz;
+    fnormal = (model * vec4(innormal, 0)).xyz;
 
     gl_Position = PVM * vec4(inpos, 1);
 }

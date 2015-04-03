@@ -36,13 +36,13 @@ GBuffer::GBuffer(float width, float height) : FrameBuffer(width, height)
     //
 
     //Add buffers
-    AddDrawingBuffer(GColorAttachment, GL_RGBA, GL_FLOAT, GL_RGBA, GL_REPEAT, GL_NEAREST);
-    AddDrawingBuffer(GPositionAttachment, GL_RGBA, GL_FLOAT, GL_RGBA32F, GL_REPEAT, GL_NEAREST);
-    AddDrawingBuffer(GUvAttachment, GL_RG, GL_FLOAT, GL_RG, GL_REPEAT, GL_NEAREST);
-    AddDrawingBuffer(GNormalAttachment, GL_RGB, GL_FLOAT, GL_RGBA32F, GL_REPEAT, GL_NEAREST);
-    AddDrawingBuffer(GMaterialTextureAttachment, GL_RGBA, GL_FLOAT, GL_RGBA, GL_REPEAT, GL_NEAREST);
-    AddDrawingBuffer(GMaterialShininessAttachment, GL_RGBA, GL_FLOAT, GL_RGBA32F, GL_REPEAT, GL_NEAREST);
-    AddDrawingBuffer(GDepthAttachment, GL_DEPTH_COMPONENT, GL_FLOAT, GL_DEPTH_COMPONENT24, GL_CLAMP_TO_EDGE, GL_NEAREST);
+    AddDrawingBuffer(GColorAttachment, GL_RGBA, GL_FLOAT, GL_RGBA, GL_REPEAT, GL_LINEAR);
+    AddDrawingBuffer(GPositionAttachment, GL_RGBA, GL_FLOAT, GL_RGBA32F, GL_REPEAT, GL_LINEAR);
+    AddDrawingBuffer(GUvAttachment, GL_RG, GL_FLOAT, GL_RG, GL_REPEAT, GL_LINEAR);
+    AddDrawingBuffer(GNormalAttachment, GL_RGB, GL_FLOAT, GL_RGBA32F, GL_REPEAT, GL_LINEAR);
+    AddDrawingBuffer(GMaterialTextureAttachment, GL_RGBA, GL_FLOAT, GL_RGBA, GL_REPEAT, GL_LINEAR);
+    AddDrawingBuffer(GMaterialShininessAttachment, GL_RGBA, GL_FLOAT, GL_RGBA32F, GL_REPEAT, GL_LINEAR);
+    AddDrawingBuffer(GDepthAttachment, GL_DEPTH_COMPONENT, GL_FLOAT, GL_DEPTH_COMPONENT24, GL_CLAMP_TO_EDGE, GL_LINEAR);
     //
 
     BindBuffersToProgram(*program);

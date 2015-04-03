@@ -13,6 +13,7 @@ CubeMap::CubeMap()
 
 CubeMap::~CubeMap()
 {
+    for(int i = 0; i < faceTextures.size(); ++i) delete faceTextures[i];
     glDeleteTextures(1, &object);
 }
 
@@ -52,9 +53,6 @@ void CubeMap::SetFaceTexture(Face face, Image &image)
                                           image.GetData(), image.GetWidth(), image.GetHeight(),
                                           image.GetFormat(), GL_UNSIGNED_BYTE, GL_RGB);
 
-    /*glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + face, 0, GL_RGB, image.GetWidth(), image.GetHeight(),
-                 0, GL_RGB, GL_UNSIGNED_BYTE, image.GetData());
-                 */
     UnBind();
 
     StateManager::Pop();

@@ -76,38 +76,37 @@ void Init()
     gbuffer = new GBuffer(width, height);
 
     light = new Light(Light::Type::DirectionalLight, width, height);
-    light->SetPosition(vec3(10.0f, 0.5f, 10.0f));
+    light->SetPosition(vec3(1000.0f, 50.0f, 1000.0f));
     light->SetDirection(-light->GetPosition());
     light->SetColor(vec3(1.0f, 1.0f, 1.0f));
     light->SetIntensity(2.0f);
 
     light2 = new Light(Light::Type::PointLight, width, height);
-    light2->SetPosition(vec3(0.0f, 0.0f, 2.0f));
+    light2->SetPosition(vec3(0.0f, 0.0f, 200.0f));
     light2->SetDirection(-light2->GetPosition());
     light2->SetColor(vec3(1.0f, 0.0f, 0.0f));
     light2->SetIntensity(2.0f);
-    light2->SetRange(2.0f);
+    light2->SetRange(200.0f);
+    light2->SetEnabled(false);
 
     camera->SetMode(Camera::Mode::Perspective);
-    camera->SetPosition(vec3(0,0,10));
-    camera->SetPerspective(45.0f, width/height, 1.0f, 150.0f);
+    camera->SetPosition(vec3(0,0,0));
+    camera->SetPerspective(45.0f, width/height, 300.0f, 10000.0f);
 }
 
-float rot = 0.0f, sphereRot = 0.0f, appTime = 0.0f;
+float rot = 0.0f, sphereRot = 0.0f, appTime = 0.0f, zFar = 10.0f, zNear = 0.1f;
 
 void RenderScene()
 {    
     gbuffer->ClearColorDepth();
 
-    camera->LookAt(vec3(0), vec3(0,1,0));
-
     appTime += 0.03f;
     sphereRot += 0.03f;
 
-    light->SetPosition(vec3(sin(appTime) * 7.0f, 0.5f, 10.0f));
+    light->SetPosition(vec3(0.0f, 0.0f, 10.0f));
     light->SetDirection(-light->GetPosition());
 
-    light2->SetRange((sin(appTime)*0.5+0.5) * 10.0f);
+    light2->SetRange((sin(appTime)*0.5+0.5) * 1000.0f);
     light2->SetDirection(-light2->GetPosition());
 
     mat4 model(1.0f);
@@ -117,17 +116,17 @@ void RenderScene()
     mat4 S = glm::scale(model, scale);
 
     model = mat4(1.0f);
-    translate = vec3(sin(appTime) * 0.8f, 0.0f, 3.0f);
-    scale = vec3(0.005f);
+    translate = vec3(0.0f, 0.0f, -500.0f);
+    scale = vec3(0.5f);
     T = glm::translate(model, translate);
-    R = glm::rotate_slow(model, sphereRot, axis);
+    R = glm::rotate_slow(model, 0.0f, axis);
     S = glm::scale(model, scale);
     model = T * R * S;
     mesh1->SetModelMatrix(model);
 
     model = mat4(1.0f);
-    translate = vec3(-0.0f, -0.3f, 0.0f);
-    scale = vec3(0.02f);
+    translate = vec3(-0.0f, -30.0f, -800.0f);
+    scale = vec3(2.0f);
     T = glm::translate(model, translate);
     R = glm::rotate_slow(model, 0.0f, axis);
     S = glm::scale(model, scale);
@@ -135,18 +134,17 @@ void RenderScene()
     mesh2->SetModelMatrix(model);
 
     model = mat4(1.0f);
-    translate = vec3(0.0f, 0.5f, -4.0f);
-    scale = vec3(0.005f);
+    translate = vec3(0.0f, 50.0f, -1600.0f);
     T = glm::translate(model, translate);
     R = glm::rotate_slow(model, 0.0f, axis);
-    scale = vec3(6.0f);
+    scale = vec3(600.0f);
     S = glm::scale(model, scale);
     model = T * R * S;
     mesh3->SetModelMatrix(model);
 
     model = mat4(1.0f);
     translate = vec3(0.0f, 0.0f, 0.0f);
-    scale = vec3(50.0f);
+    scale = vec3(5000.0f);
     T = glm::translate(model, translate);
     R = glm::rotate_slow(model, sphereRot, axis);
     S = glm::scale(model, scale);
@@ -157,7 +155,9 @@ void RenderScene()
 
     material1->SetShininess(50.0f);
     material2->SetShininess(50.0f);
-    material3->SetShininess(50.0f);
+    material3->SetShininess(1024);
+
+    //material3->SetTexture(*gbuffer->GetTexture(GBuffer::GBufferAttachment::GDepthAttachment));
 
     mesh1->Render(*gbuffer, *material1, *camera);
     mesh2->Render(*gbuffer, *material2, *camera);
@@ -198,7 +198,7 @@ int main()
 
     SDL_GLContext context;
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 32);
     context = SDL_GL_CreateContext(win);
 
     float totalTime = 0.0f;
@@ -211,7 +211,8 @@ int main()
         SDL_Event event;
         while(SDL_PollEvent(&event))
         {
-            float camSpeed = 0.3f;
+            float camRot   = 0.05f;
+            float camSpeed = 30.0f;
 
             if(event.type == SDL_QUIT) running = false;
 
@@ -225,10 +226,30 @@ int main()
             if (event.type == SDL_KEYDOWN && IsPressed(SDLK_DOWN))
                 camera->SetPosition(camera->GetPosition() - camSpeed * camera->GetForward());
 
-            if (event.type == SDL_KEYDOWN && IsPressed(SDLK_s))
-                camera->SetPosition(camera->GetPosition() - camSpeed * camera->GetUp());
             if (event.type == SDL_KEYDOWN && IsPressed(SDLK_w))
-                camera->SetPosition(camera->GetPosition() + camSpeed * camera->GetUp());
+                camera->SetRotation(camera->GetRotation() * Quaternion::AxisAngle(vec3(1,0,0), camRot));
+            if (event.type == SDL_KEYDOWN && IsPressed(SDLK_s))
+                camera->SetRotation(camera->GetRotation() * Quaternion::AxisAngle(vec3(1,0,0), -camRot));
+
+
+            if (event.type == SDL_KEYDOWN && IsPressed(SDLK_a))
+                camera->SetRotation(camera->GetRotation() * Quaternion::AxisAngle(vec3(0,1,0), camRot));
+            if (event.type == SDL_KEYDOWN && IsPressed(SDLK_d))
+                camera->SetRotation(camera->GetRotation() * Quaternion::AxisAngle(vec3(0,1,0), -camRot));
+
+
+            if (event.type == SDL_KEYDOWN && IsPressed(SDLK_y))
+                zNear *= 1.1f;
+            if (event.type == SDL_KEYDOWN && IsPressed(SDLK_h))
+                zNear /= 1.1f;
+            if (event.type == SDL_KEYDOWN && IsPressed(SDLK_u))
+                zFar *= 1.1f;
+            if (event.type == SDL_KEYDOWN && IsPressed(SDLK_j))
+                zFar /= 1.1f;
+
+
+
+
 
             if (event.type == SDL_KEYDOWN && IsPressed(SDLK_1)) light->SetEnabled(!light->GetEnabled());
             if (event.type == SDL_KEYDOWN && IsPressed(SDLK_2)) light2->SetEnabled(!light2->GetEnabled());

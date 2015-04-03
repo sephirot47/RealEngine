@@ -25,12 +25,20 @@ Quaternion Quaternion::Normalized() const
     return q;
 }
 
-Quaternion Quaternion::AxisAngle(const glm::vec3 &axis, float degrees)
+Quaternion Quaternion::LookAt(const glm::vec3 eye, const glm::vec3 lookTo, const glm::vec3 up)
+{
+    if(eye == lookTo) return Quaternion();
+
+    glm::mat4 m = lookAt(eye, lookTo, up);
+    return Quaternion(glm::quat_cast( glm::transpose(m) ));
+}
+
+Quaternion Quaternion::AxisAngle(const glm::vec3 axis, float degrees)
 {
     return angleAxis(degrees, axis);
 }
 
-Quaternion Quaternion::FromAxes(const glm::vec3& xAxis, const glm::vec3& yAxis, const glm::vec3& zAxis)
+Quaternion Quaternion::FromAxes(const glm::vec3 xAxis, const glm::vec3 yAxis, const glm::vec3 zAxis)
 {
     glm::mat3 kRot;
     kRot[0] = xAxis;
@@ -39,7 +47,7 @@ Quaternion Quaternion::FromAxes(const glm::vec3& xAxis, const glm::vec3& yAxis, 
     return Quaternion(glm::quat_cast(kRot));
 }
 
-Quaternion Quaternion::FromTo(const glm::vec3 &from, const glm::vec3 &to)
+Quaternion Quaternion::FromTo(const glm::vec3 from, const glm::vec3 to)
 {
     Quaternion q;
     glm::vec3 a = cross(from, to);

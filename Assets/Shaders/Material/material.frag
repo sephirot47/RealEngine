@@ -21,7 +21,7 @@ out vec3 outGMaterialShininess;
 
 void main()
 {  
-    outGColor = vec4(0, 0, 0, 1);
+    outGColor = vec4(vec3(texture(material.texture, vec2(fuv.x, 1.0 - fuv.y))) * 0.3, 1);
     outGPosition = fpos;
     outGUv = fuv;
     outGNormal = normalize(fnormal);
