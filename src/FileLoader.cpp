@@ -14,6 +14,40 @@ unsigned char* FileLoader::ReadImage(const char *filepath, int &components, int 
     return data;
 }
 
+bool FileLoader::ReadMesh(const char *filepath, std::vector<glm::vec3> &vertexPos, std::vector<glm::vec2> &vertexUvs, std::vector<glm::vec3> &vertexNormals, bool &triangles)
+{
+    return true;
+    /*
+    Assimp::Importer importer;
+    const aiScene *scene = importer.ReadFile(filepath, 0);
+    aiMesh *mesh = scene->mMeshes[0];
+
+    int numVerts = mesh->mNumFaces*3;
+
+    vertexPos     = std::vector<glm::vec3>(numVerts);
+    vertexUvs     = std::vector<glm::vec2>(numVerts);
+    vertexNormals = std::vector<glm::vec3>(numVerts);
+
+    for(unsigned int i = 0; i < mesh->mNumFaces; ++i)
+    {
+        const aiFace& face = mesh->mFaces[i];
+
+        for(int j = 0; j < 3; ++j)
+        {
+            int index = face.mIndices[j];
+            aiVector3D uv = mesh->mTextureCoords[0][index];
+            vertexUvs.push_back( glm::vec2(uv.x, uv.y) );
+
+            aiVector3D normal = mesh->mNormals[index];
+            vertexNormals.push_back( glm::vec3(normal.x, normal.y, normal.z) );
+
+            aiVector3D pos = mesh->mVertices[index];
+            vertexPos.push_back( glm::vec3(pos.x, pos.y, pos.z) );
+        }
+    }
+    */
+}
+
 void FileLoader::GetOBJFormat(const char *filepath, bool &uvs, bool &normals, bool &triangles)
 {
     std::FILE *f;

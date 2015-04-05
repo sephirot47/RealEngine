@@ -32,6 +32,7 @@ void Mesh::LoadFromFile(const char *filepath)
     bool triangles;
 
     FileLoader::ReadOBJ(filepath, pos, uv, normals, triangles);
+    //FileLoader::ReadMesh(filepath, pos, uv, normals, triangles);
 
     renderMode = triangles ? GL_TRIANGLES : GL_QUADS;
     numVertices = pos.size();
