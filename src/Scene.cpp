@@ -45,16 +45,31 @@ void Scene::Render()
         GameObject *go = it->second;
         if(go->HasComponent<Mesh>())
         {
+            Mesh *mesh = go->GetComponent<Mesh>();
             if(go->HasComponent<Material>())
             {
+                Material *material = go->GetComponent<Material>();
                 if(camera)
                 {
-                    go->GetComponent<Mesh>()->Render(*gbuffer, *go->GetComponent<Material>(), *camera);
+                    if(go->HasComponent<Transform>())
+                    {
+                        Transform *transform = go->GetComponent<Transform>();
+
+                        glm::mat4 model;
+                        glm::mat4 T = glm::translate(model, transform->position);
+                        glm::mat4 R = glm::mat4_cast(transform->rotation);
+                        glm::mat4 S = glm::scale(model, transform->scale);
+
+                        model = T * R * S;
+                        mesh->SetModelMatrix(model);
+                    }
+
+                    mesh->Render(*gbuffer, *material, *camera);
                 }
                 else
                 {
                     glm::mat4 view, projection;
-                    go->GetComponent<Mesh>()->Render(*gbuffer, *go->GetComponent<Material>(), view, projection);
+                    mesh->Render(*gbuffer, *material, view, projection);
                 }
             }
         }

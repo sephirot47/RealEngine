@@ -3,6 +3,12 @@
 
 #define GL_GLEXT_PROTOTYPES
 
+#include <iostream>
+#include <vector>
+#include <SDL2/SDL.h>
+#include <cstring>
+#include <stdio.h>
+
 #include "glm/glm.hpp"
 #include "stb_image.h"
 
@@ -34,6 +40,7 @@
 #include "Mesh.h"
 #include "Light.h"
 #include "Camera.h"
+#include "Transform.h"
 #include "StateManager.h"
 #include "SkyBox.h"
 #include "Quaternion.h"

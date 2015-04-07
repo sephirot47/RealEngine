@@ -2,7 +2,7 @@ options = -Iinclude -lGL -lGLU -lSDL2
 
 all: main.exe
 
-main.exe: main.o Shader.o ShaderProgram.o stb_image.o Debug.o Time.o VBO.o VAO.o Image.o Texture.o FileLoader.o FrameBuffer.o Mesh.o GBuffer.o Light.o StateManager.o Material.o GameObject.o Scene.o RenderTarget.o CubeMap.o SkyBox.o Component.o Camera.o Quaternion.o
+main.exe: main.o Shader.o ShaderProgram.o stb_image.o Debug.o Time.o VBO.o VAO.o Image.o Texture.o FileLoader.o FrameBuffer.o Mesh.o GBuffer.o Light.o StateManager.o Material.o GameObject.o Scene.o RenderTarget.o CubeMap.o SkyBox.o Component.o Camera.o Quaternion.o Transform.o
 	g++ -std=c++11 *.o -o main.exe $(options)
 
 main.o: src/main.cpp
@@ -79,6 +79,9 @@ Camera.o: src/Camera.cpp
 
 Quaternion.o: src/Quaternion.cpp
 	g++ -std=c++11 -c src/Quaternion.cpp $(options)
+
+Transform.o: src/Transform.cpp
+	g++ -std=c++11 -c src/Transform.cpp $(options)
 
 
 clean:

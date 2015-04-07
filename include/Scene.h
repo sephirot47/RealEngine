@@ -12,6 +12,7 @@
 
 #include "Debug.h"
 #include "GBuffer.h"
+#include "Transform.h"
 #include "GameObject.h"
 #include "StateManager.h"
 

@@ -1,9 +1,3 @@
-#include <iostream>
-#include <vector>
-#include <SDL2/SDL.h>
-#include <cstring>
-#include <stdio.h>
-
 #include "../include/RealEngine.h"
 
 using namespace std;
@@ -86,19 +80,33 @@ void Init()
     camera->SetPosition(vec3(0,0,0));
     camera->SetPerspective(45.0f, width/height, 300.0f, 10000.0f);
 
+    Transform *t1 = new Transform();
+    t1->position = vec3(0, -10, -50);
+
+    Transform *t2 = new Transform();
+    t2->position = vec3(0, -10, -300);
+    t2->scale = vec3(2);
+
+    Transform *t3 = new Transform();
+    t3->position = vec3(0, 0, -700);
+    t3->scale = vec3(500);
+
     //SCENE STUFF
 
     go1 = new GameObject();
     go1->AddComponent(*mesh1);
     go1->AddComponent(*material1);
+    go1->AddComponent(*t1);
 
     go2 = new GameObject();
     go2->AddComponent(*mesh2);
     go2->AddComponent(*material2);
+    go2->AddComponent(*t2);
 
     go3 = new GameObject();
     go3->AddComponent(*mesh3);
     go3->AddComponent(*material3);
+    go3->AddComponent(*t3);
 
     scene = new Scene();
     scene->AddGameObject(*go1);
