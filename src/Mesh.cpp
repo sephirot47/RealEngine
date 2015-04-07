@@ -2,7 +2,7 @@
 
 using namespace RE;
 
-Mesh::Mesh() : Component("Mesh")
+Mesh::Mesh()
 {
     numVertices = 0;
     model = glm::mat4(1.0f);

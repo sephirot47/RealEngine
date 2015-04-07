@@ -25,6 +25,8 @@
 #include "Texture.h"
 #include "CubeMap.h"
 #include "Image.h"
+#include "Component.h"
+#include "GameObject.h"
 #include "FrameBuffer.h"
 #include "VAO.h"
 #include "GBuffer.h"

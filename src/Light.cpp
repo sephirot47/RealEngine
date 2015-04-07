@@ -8,7 +8,7 @@ const float Light::screenMesh[12] = {1.0f, -1.0f, 0.0f,
                                     -1.0f,  1.0f, 0.0f,
                                     -1.0f, -1.0f, 0.0f};
 
-Light::Light(Type type, float screenWidth, float screenHeight) : Component("Light")
+Light::Light(Type type, float screenWidth, float screenHeight)
 {
     StateManager::Push();
 

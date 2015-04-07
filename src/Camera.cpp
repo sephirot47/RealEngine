@@ -3,8 +3,7 @@
 using namespace RE;
 
 
-Camera::Camera() : Component("Camera"),
-                   position(glm::vec3(0)), rotation(Quaternion()),
+Camera::Camera() : position(glm::vec3(0)), rotation(Quaternion()),
                    ortho(glm::ortho(-1.0f, 1.0f, -1.0f, 1.0f, 0.1f, 100.0f)),
                    perspective(glm::perspective(45.0f * 3.1415f/180.0f, 1.0f, 0.1f, 150.0f)),
                    mode(Mode::Perspective)

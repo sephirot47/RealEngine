@@ -17,7 +17,7 @@
 namespace RE
 {
 
-class Light : public Component
+class Light
 {
 
 public:

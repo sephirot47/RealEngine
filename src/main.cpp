@@ -23,6 +23,16 @@ Texture *tex;
 
 void Init()
 {
+    Mesh *m = new Mesh();
+    GameObject *go = new GameObject();
+    go->AddComponent(*m);
+    go->RemoveComponent<Mesh>();
+    if(go->HasComponent<Mesh>()) DbgLog("Lo tiene");
+    else DbgLog("NO lo tiene");
+
+    //go->AddComponent(*m);
+    //DbgLog("*" << go->GetComponent<Mesh>()->GetNumVertices());
+
     glClearColor(0.0, 0.0, 0.0, 1.0);
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_TEXTURE_2D);
@@ -54,12 +64,12 @@ void Init()
 
     //Creamos el cielo
     Image *cm1, *cm2, *cm3, *cm4, *cm5, *cm6;
-    cm1 = new Image("Assets/Textures/sky4/posx.tga");
-    cm2 = new Image("Assets/Textures/sky4/negx.tga");
-    cm3 = new Image("Assets/Textures/sky4/posy.tga");
-    cm4 = new Image("Assets/Textures/sky4/negy.tga");
-    cm5 = new Image("Assets/Textures/sky4/posz.tga");
-    cm6 = new Image("Assets/Textures/sky4/negz.tga");
+    cm1 = new Image("Assets/Textures/sky2/posx.JPG");
+    cm2 = new Image("Assets/Textures/sky2/negx.JPG");
+    cm3 = new Image("Assets/Textures/sky2/posy.JPG");
+    cm4 = new Image("Assets/Textures/sky2/negy.JPG");
+    cm5 = new Image("Assets/Textures/sky2/posz.JPG");
+    cm6 = new Image("Assets/Textures/sky2/negz.JPG");
 
     CubeMap *skyCubeMap = new CubeMap();
     skyCubeMap->SetFaceTexture(CubeMap::Face::PositiveX, *cm1);
@@ -146,9 +156,8 @@ void RenderScene()
     translate = vec3(0.0f, 0.0f, 0.0f);
     scale = vec3(5000.0f);
     T = glm::translate(model, translate);
-    R = glm::rotate_slow(model, sphereRot, axis);
     S = glm::scale(model, scale);
-    model = T * R * S;
+    model = T * S;
     skybox->GetMesh()->SetModelMatrix(model);
 
     skybox->Render(*gbuffer, *camera);

@@ -10,17 +10,13 @@ class Component
 {
 
 private:
-    const std::string name;
+
+    Component(const Component &comp) {}
 
 protected:
 
-    Component(std::string name) : name(name) {}
-    Component(const Component &comp) {}
+    Component() {}
     virtual ~Component() {}
-
-public:
-
-    std::string GetName() const { return name; }
 };
 
 }

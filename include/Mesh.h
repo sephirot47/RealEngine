@@ -21,7 +21,7 @@ class Mesh : public Component
 {
 private:
 
-    Mesh(const Mesh& m) : Component("Mesh") { }
+    Mesh(const Mesh& m) { }
 
     VAO *vao;
     VBO *vboPos, *vboUv, *vboNormals;

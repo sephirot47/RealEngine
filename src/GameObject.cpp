@@ -2,7 +2,6 @@
 
 using namespace RE;
 
-
 int GameObject::globalId = 0;
 
 
@@ -12,16 +11,6 @@ GameObject::GameObject()
 }
 
 GameObject::~GameObject()
-{
-
-}
-
-void GameObject::AddComponent(Component &component) const
-{
-
-}
-
-void GameObject::RemoveComponent(Component &component) const
 {
 
 }

@@ -1,6 +1,8 @@
 #ifndef GAMEOBJECT_H
 #define GAMEOBJECT_H
 
+#include <typeinfo>
+#include <typeindex>
 #include <map>
 
 #include "StateManager.h"
@@ -19,19 +21,50 @@ friend class Scene;
 
 private:
 
+    struct ComponentPair
+    {
+        std::type_index type;
+        Component *component;
+        ComponentPair(Component* c) : type( std::type_index(typeid(*c)) ) { component = c; }
+    };
+
     static int globalId;
 
     int id;
-    typedef std::map<std::string, Component*> ComponentMap;
-    ComponentMap components;
+    std::vector<ComponentPair> components;
 
 public:
 
     GameObject();
     virtual ~GameObject();
 
-    void AddComponent(Component &component) const;
-    void RemoveComponent(Component &component) const;
+    template <class T> void AddComponent(const T &component)
+    {
+        components.push_back( ComponentPair( (Component*)&component ) );
+    }
+
+    template <class T> bool HasComponent() const
+    {
+        for(int i = 0; i < components.size(); ++i)
+            if(std::type_index(typeid(T)) == components[i].type)
+                return true;
+        return false;
+    }
+
+    template <class T> T* GetComponent() const
+    {
+        for(int i = 0; i < components.size(); ++i)
+            if(std::type_index(typeid(T)) == components[i].type)
+                return components[i].component;
+
+        return nullptr;
+    }
+
+    template <class T> void RemoveComponent()
+    {
+        for(int i = 0; i < components.size(); ++i)
+            if(std::type_index(typeid(T)) == components[i].type) { components.erase( components.begin() + i ); }
+    }
 
     int GetId() const;
 };
