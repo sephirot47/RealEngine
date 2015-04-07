@@ -104,12 +104,14 @@ void Init()
     scene->AddGameObject(*go1);
     scene->AddGameObject(*go2);
     scene->AddGameObject(*go3);
+    scene->SetCamera(*camera);
 }
 
 float rot = 0.0f, sphereRot = 0.0f, appTime = 0.0f, zFar = 10.0f, zNear = 0.1f;
 
 void RenderScene()
 {    
+    scene->Render();
     /*
     gbuffer->ClearColorDepth();
 
