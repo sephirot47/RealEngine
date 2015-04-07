@@ -19,29 +19,12 @@ Material *material1, *material2, *material3;
 
 Camera *camera;
 SkyBox *skybox;
-Texture *tex;
+
+Scene *scene;
+GameObject *go1, *go2, *go3;
 
 void Init()
 {
-    Mesh *m = new Mesh();
-    GameObject *go = new GameObject();
-    go->AddComponent(*m);
-    go->RemoveComponent<Mesh>();
-    if(go->HasComponent<Mesh>()) DbgLog("Lo tiene");
-    else DbgLog("NO lo tiene");
-
-    //go->AddComponent(*m);
-    //DbgLog("*" << go->GetComponent<Mesh>()->GetNumVertices());
-
-    glClearColor(0.0, 0.0, 0.0, 1.0);
-    glEnable(GL_DEPTH_TEST);
-    glEnable(GL_TEXTURE_2D);
-    glEnable(GL_CULL_FACE);
-    glCullFace(GL_BACK);
-    glDepthFunc(GL_LEQUAL);
-
-    tex = new Texture(width, height);
-
     mesh1 = new Mesh();
     mesh1->LoadFromFile("Assets/Models/luigi.obj");
     Texture *texture1 = new Texture("Assets/Textures/luigiD.jpg");
@@ -102,12 +85,32 @@ void Init()
     camera->SetMode(Camera::Mode::Perspective);
     camera->SetPosition(vec3(0,0,0));
     camera->SetPerspective(45.0f, width/height, 300.0f, 10000.0f);
+
+    //SCENE STUFF
+
+    go1 = new GameObject();
+    go1->AddComponent(*mesh1);
+    go1->AddComponent(*material1);
+
+    go2 = new GameObject();
+    go2->AddComponent(*mesh2);
+    go2->AddComponent(*material2);
+
+    go3 = new GameObject();
+    go3->AddComponent(*mesh3);
+    go3->AddComponent(*material3);
+
+    scene = new Scene();
+    scene->AddGameObject(*go1);
+    scene->AddGameObject(*go2);
+    scene->AddGameObject(*go3);
 }
 
 float rot = 0.0f, sphereRot = 0.0f, appTime = 0.0f, zFar = 10.0f, zNear = 0.1f;
 
 void RenderScene()
 {    
+    /*
     gbuffer->ClearColorDepth();
 
     appTime += 0.03f;
@@ -187,6 +190,7 @@ void RenderScene()
     light2->Render(*gbuffer, *camera);
 
     gbuffer->RenderToScreen();
+    */
 }
 
 bool IsPressed(int keyCode)

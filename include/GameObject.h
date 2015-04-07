@@ -55,7 +55,7 @@ public:
     {
         for(int i = 0; i < components.size(); ++i)
             if(std::type_index(typeid(T)) == components[i].type)
-                return components[i].component;
+                return (T*) components[i].component;
 
         return nullptr;
     }
