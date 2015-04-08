@@ -5,7 +5,6 @@ using namespace RE;
 Mesh::Mesh()
 {
     numVertices = 0;
-    model = glm::mat4(1.0f);
     vao = nullptr;
     vboPos = vboUv = vboNormals = nullptr;
 }
@@ -85,60 +84,60 @@ void Mesh::LoadPositionsFromArray(const std::vector<glm::vec3> &positions, GLenu
     StateManager::Pop();
 }
 
-void Mesh::Render(const Material &material, Camera &camera)
+void Mesh::Render(const Material &material, const glm::mat4 &model, Camera &camera)
 {
     glm::mat4 view = camera.GetView(), projection = camera.GetProjection();
-    Render(material, view, projection);
+    Render(material, model, view, projection);
 }
 
-void Mesh::Render(RenderTarget &renderTarget, const Material &material, glm::mat4 &camView, glm::mat4 &camProjection)
+void Mesh::Render(RenderTarget &renderTarget, const Material &material, const glm::mat4 &model, const glm::mat4 &camView, const glm::mat4 &camProjection)
 {
     StateManager::Push();
 
     renderTarget.BindRenderTarget();
-        Render(material, camView, camProjection);
+        Render(material, model, camView, camProjection);
     renderTarget.UnBindRenderTarget();
 
     StateManager::Pop();
 }
 
-void Mesh::Render(RenderTarget &renderTarget, const ShaderProgram &program, Camera &camera)
+void Mesh::Render(RenderTarget &renderTarget, const ShaderProgram &program, const glm::mat4 &model, Camera &camera)
 {
     glm::mat4 view = camera.GetView(), projection = camera.GetProjection();
-    Render(renderTarget, program, view, projection);
+    Render(renderTarget, program, model, view, projection);
 }
 
-void Mesh::Render(RenderTarget &renderTarget, const ShaderProgram &program, glm::mat4 &camView, glm::mat4 &camProjection)
+void Mesh::Render(RenderTarget &renderTarget, const ShaderProgram &program, const glm::mat4 &model, const glm::mat4 &camView, const glm::mat4 &camProjection)
 {
     StateManager::Push();
 
     renderTarget.BindRenderTarget();
-        Render(program, camView, camProjection);
+        Render(program, model, camView, camProjection);
     renderTarget.UnBindRenderTarget();
 
     StateManager::Pop();
 }
 
-void Mesh::Render(const Material &material, glm::mat4 &camView, glm::mat4 &camProjection)
+void Mesh::Render(const Material &material, const glm::mat4 &model, const glm::mat4 &camView, const glm::mat4 &camProjection)
 {
     if(not vao) return;
 
     StateManager::Push();
 
     material.Bind();
-        Render(*material.GetShaderProgram(), camView, camProjection);
+        Render(*material.GetShaderProgram(), model, camView, camProjection);
     material.UnBind();
 
     StateManager::Pop();
 }
 
-void Mesh::Render(const ShaderProgram &program, Camera &camera)
+void Mesh::Render(const ShaderProgram &program, const glm::mat4 &model, Camera &camera)
 {
     glm::mat4 view = camera.GetView(), projection = camera.GetProjection();
-    Render(program, view, projection);
+    Render(program, model, view, projection);
 }
 
-void Mesh::Render(const ShaderProgram &program, glm::mat4 &camView, glm::mat4 &camProjection)
+void Mesh::Render(const ShaderProgram &program, const glm::mat4 &model, const glm::mat4 &camView, const glm::mat4 &camProjection)
 {
     if(not vao) return;
 
@@ -163,22 +162,16 @@ void Mesh::Render(const ShaderProgram &program, glm::mat4 &camView, glm::mat4 &c
     StateManager::Pop();
 }
 
-void Mesh::Render(RenderTarget &renderTarget, const Material &material, Camera &camera)
+void Mesh::Render(RenderTarget &renderTarget, const Material &material, const glm::mat4 &model, Camera &camera)
 {
     glm::mat4 view = camera.GetView(), projection = camera.GetProjection();
-    Render(renderTarget, material, view, projection);
+    Render(renderTarget, material, model, view, projection);
 }
 
 void Mesh::SetRenderMode(GLenum renderMode)
 {
     this->renderMode = renderMode;
 }
-
-void Mesh::SetModelMatrix(glm::mat4 &modelMatrix)
-{
-    this->model = modelMatrix;
-}
-
 
 int Mesh::GetNumVertices() const
 {
@@ -208,9 +201,4 @@ VBO* Mesh::GetVBONormals() const
 GLenum Mesh::GetRenderMode() const
 {
     return renderMode;
-}
-
-glm::mat4 Mesh::GetModelMatrix() const
-{
-    return model;
 }

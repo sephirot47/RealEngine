@@ -4,7 +4,6 @@ using namespace RE;
 
 int GameObject::globalId = 0;
 
-
 GameObject::GameObject()
 {
     id = globalId++;

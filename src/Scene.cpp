@@ -40,6 +40,7 @@ void Scene::Render()
 {
     gbuffer->ClearColorDepth();
 
+    // FIRST PASS: FILL GBUFFER and FILL SHADOW MAP OF EVERY LIGHT ///////////
     for(auto it = gameObjects.begin(); it != gameObjects.end(); ++it)
     {
         GameObject *go = it->second;
@@ -49,31 +50,51 @@ void Scene::Render()
             if(go->HasComponent<Material>())
             {
                 Material *material = go->GetComponent<Material>();
+
+                glm::mat4 model;
+                if(go->HasComponent<Transform>())
+                {
+                    Transform *transform = go->GetComponent<Transform>();
+                    model = transform->GetModelMatrix();
+                }
+
                 if(camera)
                 {
-                    if(go->HasComponent<Transform>())
-                    {
-                        Transform *transform = go->GetComponent<Transform>();
-
-                        glm::mat4 model;
-                        glm::mat4 T = glm::translate(model, transform->position);
-                        glm::mat4 R = glm::mat4_cast(transform->rotation);
-                        glm::mat4 S = glm::scale(model, transform->scale);
-
-                        model = T * R * S;
-                        mesh->SetModelMatrix(model);
-                    }
-
-                    mesh->Render(*gbuffer, *material, *camera);
+                    mesh->Render(*gbuffer, *material, model, *camera);
                 }
                 else
                 {
                     glm::mat4 view, projection;
-                    mesh->Render(*gbuffer, *material, view, projection);
+                    mesh->Render(*gbuffer, *material, model, view, projection);
+                }
+
+                if(go->HasComponent<Light>())
+                {
+                    Light *light = go->GetComponent<Light>();
+                    for(auto it2 = gameObjects.begin(); it2 != gameObjects.end(); ++it2)
+                    {
+                        GameObject *go2 = it2->second;
+                        if(go == go2) continue;
+
+                        light->ShadowMapMesh(*go2->GetComponent<Mesh>(), width, height);
+                    }
                 }
             }
         }
     }
+    // END FIRST PASS /////////////////////////////////////////
+
+    // SECOND PASS: LIGHT EVERYTHING //////////////////////////
+    for(auto it = gameObjects.begin(); it != gameObjects.end(); ++it)
+    {
+        GameObject *go = it->second;
+        if(go->HasComponent<Light>())
+        {
+           Light *light = go->GetComponent<Light>();
+           light->Render(*gbuffer, *camera);
+        }
+    }
+    // END SECOND PASS /////////////////////////////////////////
 
     gbuffer->RenderToScreen();
 }

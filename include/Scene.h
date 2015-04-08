@@ -11,6 +11,7 @@
 #include <vector>
 
 #include "Debug.h"
+#include "Light.h"
 #include "GBuffer.h"
 #include "Transform.h"
 #include "GameObject.h"
