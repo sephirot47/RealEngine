@@ -62,53 +62,38 @@ void Init()
 
     gbuffer = new GBuffer(width, height);
 
+    GameObject *lightGo1 = new GameObject();
+    lightGo1->GetTransform()->SetPosition(vec3(0.0f, 50.0f, 50.0f));
+    lightGo1->GetTransform()->SetRotation(Quaternion::LookAt( lightGo1->GetTransform()->GetPosition(),
+                                                              glm::vec3(0), glm::vec3(0,1,0) )  );
     light = new Light(Light::Type::DirectionalLight, width, height);
-    light->SetPosition(vec3(1000.0f, 50.0f, 1000.0f));
-    light->SetDirection(-light->GetPosition());
-    light->SetColor(vec3(1.0f, 1.0f, 1.0f));
-    light->SetIntensity(2.0f);
-
-    light2 = new Light(Light::Type::PointLight, width, height);
-    light2->SetPosition(vec3(0.0f, 0.0f, 200.0f));
-    light2->SetDirection(-light2->GetPosition());
-    light2->SetColor(vec3(1.0f, 0.0f, 0.0f));
-    light2->SetIntensity(2.0f);
-    light2->SetRange(200.0f);
-    light2->SetEnabled(false);
+    lightGo1->AddComponent(*light);
 
     camera->SetMode(Camera::Mode::Perspective);
-    camera->SetPosition(vec3(0,0,0));
+    camera->SetPosition(vec3(0, 50, 500));
     camera->SetPerspective(45.0f, width/height, 300.0f, 10000.0f);
-
-    Transform *t1 = new Transform();
-    t1->position = vec3(0, -10, -50);
-
-    Transform *t2 = new Transform();
-    t2->position = vec3(0, -10, -300);
-    t2->scale = vec3(2);
-
-    Transform *t3 = new Transform();
-    t3->position = vec3(0, 0, -700);
-    t3->scale = vec3(500);
 
     //SCENE STUFF
 
     go1 = new GameObject();
     go1->AddComponent(*mesh1);
     go1->AddComponent(*material1);
-    go1->AddComponent(*t1);
+    go1->GetTransform()->SetPosition(vec3(0, -10, -50));
 
     go2 = new GameObject();
     go2->AddComponent(*mesh2);
     go2->AddComponent(*material2);
-    go2->AddComponent(*t2);
+    go2->GetTransform()->SetPosition(vec3(0, -10, -300));
+    go2->GetTransform()->SetScale(vec3(2));
 
     go3 = new GameObject();
     go3->AddComponent(*mesh3);
     go3->AddComponent(*material3);
-    go3->AddComponent(*t3);
+    go3->GetTransform()->SetPosition(vec3(0, 0, -700));
+    go3->GetTransform()->SetScale(vec3(500));
 
     scene = new Scene();
+    scene->AddGameObject(*lightGo1);
     scene->AddGameObject(*go1);
     scene->AddGameObject(*go2);
     scene->AddGameObject(*go3);
@@ -270,12 +255,7 @@ int main()
             if (event.type == SDL_KEYDOWN && IsPressed(SDLK_j))
                 zFar /= 1.1f;
 
-
-
-
-
             if (event.type == SDL_KEYDOWN && IsPressed(SDLK_1)) light->SetEnabled(!light->GetEnabled());
-            if (event.type == SDL_KEYDOWN && IsPressed(SDLK_2)) light2->SetEnabled(!light2->GetEnabled());
         }
 
         float t = Time::GetMiliseconds();

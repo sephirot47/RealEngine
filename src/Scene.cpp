@@ -52,11 +52,14 @@ void Scene::Render()
                 Material *material = go->GetComponent<Material>();
 
                 glm::mat4 model;
+
+                Transform *transform;
                 if(go->HasComponent<Transform>())
                 {
-                    Transform *transform = go->GetComponent<Transform>();
+                    transform = go->GetComponent<Transform>();
                     model = transform->GetModelMatrix();
                 }
+                else transform = new Transform();
 
                 if(camera)
                 {
@@ -68,17 +71,30 @@ void Scene::Render()
                     mesh->Render(*gbuffer, *material, model, view, projection);
                 }
 
-                if(go->HasComponent<Light>())
-                {
-                    Light *light = go->GetComponent<Light>();
-                    for(auto it2 = gameObjects.begin(); it2 != gameObjects.end(); ++it2)
-                    {
-                        GameObject *go2 = it2->second;
-                        if(go == go2) continue;
+                if(not go->HasComponent<Transform>()) delete transform;
+            }
+        }
 
-                        light->ShadowMapMesh(*go2->GetComponent<Mesh>(), width, height);
-                    }
+        if(go->HasComponent<Light>())
+        {
+            Light *light = go->GetComponent<Light>();
+            for(auto it2 = gameObjects.begin(); it2 != gameObjects.end(); ++it2)
+            {
+                GameObject *go2 = it2->second;
+                if(go == go2) continue;
+
+                Transform *transform;
+                glm::mat4 model;
+                if(go->HasComponent<Transform>())
+                {
+                    transform = go->GetComponent<Transform>();
+                    model = transform->GetModelMatrix();
                 }
+                else transform = new Transform();
+
+                light->ShadowMapMesh(*go2->GetComponent<Mesh>(), model, *transform, width, height);
+
+                if(not go->HasComponent<Transform>()) delete transform;
             }
         }
     }
@@ -90,8 +106,18 @@ void Scene::Render()
         GameObject *go = it->second;
         if(go->HasComponent<Light>())
         {
+
            Light *light = go->GetComponent<Light>();
-           light->Render(*gbuffer, *camera);
+           light->ClearShadowMap();
+
+
+           Transform *transform;
+           if(go->HasComponent<Transform>()) transform = go->GetComponent<Transform>();
+           else transform = new Transform();
+
+           light->Render(*gbuffer, *transform, *camera);
+
+           if(not go->HasComponent<Transform>()) delete transform;
         }
     }
     // END SECOND PASS /////////////////////////////////////////

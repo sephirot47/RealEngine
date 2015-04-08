@@ -7,6 +7,7 @@
 
 #include "StateManager.h"
 #include "Component.h"
+#include "Transform.h"
 #include "Material.h"
 #include "Mesh.h"
 #include "glm/glm.hpp"
@@ -30,6 +31,11 @@ private:
 
     static int globalId;
 
+    //Default components
+    Transform *transform;
+    bool initialTransformChanged;
+    //
+
     int id;
     std::vector<ComponentPair> components;
 
@@ -40,7 +46,21 @@ public:
 
     template <class T> void AddComponent(const T &component)
     {
-        components.push_back( ComponentPair( (Component*)&component ) );
+        if(HasComponent<T>())
+        {
+            DbgWarning("Can't add two components of the same type to a GameObject."
+                       "The new added component will replace the old one.");
+            RemoveComponent<T>();
+        }
+
+        if(typeid(T) == typeid(Transform))
+        {
+            transform = (Transform*) &component;
+            initialTransformChanged = true;
+        }
+
+        ComponentPair cp = ComponentPair( (Component*)&component );
+        components.push_back(cp);
     }
 
     template <class T> bool HasComponent() const
@@ -62,10 +82,17 @@ public:
 
     template <class T> void RemoveComponent()
     {
+        if(typeid(T) == typeid(Transform))
+        {
+            transform = nullptr;
+            initialTransformChanged = true;
+        }
+
         for(int i = 0; i < components.size(); ++i)
             if(std::type_index(typeid(T)) == components[i].type) { components.erase( components.begin() + i ); }
     }
 
+    Transform *GetTransform() const;
     int GetId() const;
 };
 

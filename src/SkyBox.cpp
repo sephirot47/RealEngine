@@ -81,7 +81,8 @@ void SkyBox::Render(RenderTarget &renderTarget, glm::mat4 &camView, glm::mat4 &c
     program->AttachTexture("cubemap", *cubeTexture);
     glDisable(GL_CULL_FACE);
     glDisable(GL_DEPTH_TEST);
-    cubeMesh->Render(renderTarget, *program, camView, camProjection);
+    glm::mat4 model;
+    cubeMesh->Render(renderTarget, *program, model, camView, camProjection);
 
     StateManager::Pop();
 }

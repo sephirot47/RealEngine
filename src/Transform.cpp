@@ -12,6 +12,36 @@ Transform::~Transform()
 {
 }
 
+void Transform::SetPosition(glm::vec3 position)
+{
+    this->position = position;
+}
+
+void Transform::SetScale(glm::vec3 scale)
+{
+    this->scale = scale;
+}
+
+void Transform::SetRotation(Quaternion rotation)
+{
+    this->rotation = rotation;
+}
+
+glm::vec3 Transform::GetPosition() const
+{
+    return position;
+}
+
+glm::vec3 Transform::GetScale() const
+{
+    return scale;
+}
+
+Quaternion Transform::GetRotation() const
+{
+    return rotation;
+}
+
 glm::mat4 Transform::GetModelMatrix()
 {
     glm::mat4 identity;

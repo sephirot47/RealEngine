@@ -1,23 +1,25 @@
 #ifndef LIGHT_H
 #define LIGHT_H
 
-#include "stb_image.h"
-#include "Shader.h"
-#include "Component.h"
 #include "ShaderProgram.h"
+#include "StateManager.h"
+#include "Transform.h"
+#include "Component.h"
 #include "GBuffer.h"
 #include "Texture.h"
+#include "Shader.h"
 #include "Debug.h"
 #include "Mesh.h"
 #include "VAO.h"
 #include "VBO.h"
-#include "StateManager.h"
+
+#include "stb_image.h"
 #include "glm/glm.hpp"
 
 namespace RE
 {
 
-class Light
+class Light : public Component
 {
 
 public:
@@ -40,7 +42,6 @@ private:
            *lightfshader, *shadowfshader;
     FrameBuffer *shadowBuffer;
 
-    glm::vec3 pos, dir;
     glm::vec3 color;
     float intensity, range;
     float shadow;
@@ -54,13 +55,11 @@ public:
     Light(Type type, float screenWidth, float screenHeight);
     ~Light();
 
-    void ClearBufferMeshShadow();
-    void ShadowMapMesh(Mesh &m, float screenWidth, float screenHeight);
-    void Render(GBuffer &gbuffer, const Camera &camera) const;
-    void Render(GBuffer &gbuffer, const glm::mat4 &camView, const glm::mat4 &camProjection) const;
+    void ClearShadowMap();
+    void ShadowMapMesh(Mesh &m, const glm::mat4 &model, const Transform &parentTransform, float screenWidth, float screenHeight);
+    void Render(GBuffer &gbuffer, const Transform &parentTransform, const Camera &camera) const;
+    void Render(GBuffer &gbuffer, const Transform &parentTransform, const glm::mat4 &camView, const glm::mat4 &camProjection) const;
 
-    void SetPosition(glm::vec3 position);
-    void SetDirection(glm::vec3 direction);
     void SetColor(glm::vec3 color);
     void SetIntensity(float intensity);
     void SetRange(float range);
@@ -68,15 +67,13 @@ public:
     void SetEnabled(bool enabled);
 
     FrameBuffer *GetShadowBuffer() const;
-    glm::vec3 GetPosition() const;
-    glm::vec3 GetDirection() const;
     glm::vec3 GetColor() const;
     float GetIntensity() const;
     float GetRange() const;
     float GetShadow() const;
     bool GetEnabled() const;
 
-    glm::mat4 GetView() const;
+    glm::mat4 GetView(const Transform &parentTransform) const;
     glm::mat4 GetProjection(float screenWidth, float screenHeight) const;
 };
 

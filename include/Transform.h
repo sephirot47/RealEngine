@@ -12,13 +12,23 @@ namespace RE
 
 class Transform : public Component
 {
-public:
+private:
 
     glm::vec3 position, scale;
     Quaternion rotation;
 
+public:
+
     Transform();
     ~Transform();
+
+    void SetPosition(glm::vec3 position);
+    void SetScale(glm::vec3 scale);
+    void SetRotation(Quaternion rotation);
+
+    glm::vec3 GetPosition() const;
+    glm::vec3 GetScale() const;
+    Quaternion GetRotation() const;
 
     glm::mat4 GetModelMatrix();
 };
