@@ -52,14 +52,8 @@ void Scene::Render()
                 Material *material = go->GetComponent<Material>();
 
                 glm::mat4 model;
-
-                Transform *transform;
                 if(go->HasComponent<Transform>())
-                {
-                    transform = go->GetComponent<Transform>();
-                    model = transform->GetModelMatrix();
-                }
-                else transform = new Transform();
+                    model = go->GetComponent<Transform>()->GetModelMatrix();
 
                 if(camera)
                 {
@@ -70,35 +64,39 @@ void Scene::Render()
                     glm::mat4 view, projection;
                     mesh->Render(*gbuffer, *material, model, view, projection);
                 }
-
-                if(not go->HasComponent<Transform>()) delete transform;
             }
         }
 
+        // CREATE SHADOW MAP ///////////////////////////////////////
         if(go->HasComponent<Light>())
         {
             Light *light = go->GetComponent<Light>();
+            light->ClearShadowMap();
             for(auto it2 = gameObjects.begin(); it2 != gameObjects.end(); ++it2)
             {
                 GameObject *go2 = it2->second;
-                if(go == go2) continue;
-
-                Transform *transform;
-                glm::mat4 model;
-                if(go->HasComponent<Transform>())
+                if(go != go2)
                 {
-                    transform = go->GetComponent<Transform>();
-                    model = transform->GetModelMatrix();
+                    if(go2->HasComponent<Mesh>())
+                    {
+                        Transform *transform;
+                        if(go2->HasComponent<Transform>()) transform = go2->GetComponent<Transform>();
+                        else transform = new Transform();
+
+                        light->ShadowMapMesh(*go2->GetComponent<Mesh>(), *transform, width, height);
+
+                        if(not go2->HasComponent<Transform>()) delete transform;
+                    }
                 }
-                else transform = new Transform();
-
-                light->ShadowMapMesh(*go2->GetComponent<Mesh>(), model, *transform, width, height);
-
-                if(not go->HasComponent<Transform>()) delete transform;
             }
         }
+        // END CREATE SHADOW MAP ////////////////////////////////////
+
+
     }
     // END FIRST PASS /////////////////////////////////////////
+
+
 
     // SECOND PASS: LIGHT EVERYTHING //////////////////////////
     for(auto it = gameObjects.begin(); it != gameObjects.end(); ++it)
@@ -106,10 +104,7 @@ void Scene::Render()
         GameObject *go = it->second;
         if(go->HasComponent<Light>())
         {
-
            Light *light = go->GetComponent<Light>();
-           light->ClearShadowMap();
-
 
            Transform *transform;
            if(go->HasComponent<Transform>()) transform = go->GetComponent<Transform>();
@@ -122,6 +117,8 @@ void Scene::Render()
     }
     // END SECOND PASS /////////////////////////////////////////
 
+
+    //RENDER
     gbuffer->RenderToScreen();
 }
 

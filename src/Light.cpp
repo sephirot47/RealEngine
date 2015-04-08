@@ -61,7 +61,7 @@ Light::~Light()
 
 }
 
-void Light::ShadowMapMesh(Mesh &m, const glm::mat4 &model, const Transform &parentTransform, float screenWidth, float screenHeight)
+void Light::ShadowMapMesh(Mesh &m, const Transform &transform, float screenWidth, float screenHeight)
 {
     StateManager::Push();
 
@@ -71,7 +71,7 @@ void Light::ShadowMapMesh(Mesh &m, const glm::mat4 &model, const Transform &pare
             glEnable(GL_CULL_FACE);
             glCullFace(GL_FRONT);
 
-            shadowProgram->SetUniform("PVM", GetProjection(screenWidth, screenHeight) * GetView(parentTransform) * model);
+            shadowProgram->SetUniform("PVM", GetProjection(screenWidth, screenHeight) * GetView(transform) * transform.GetModelMatrix());
 
             VAO *shadowVao = new VAO();
             shadowVao->AddAttribute(*m.GetVBOPos(), 0, 3, GL_FLOAT, GL_FALSE, 0, 0);
@@ -97,13 +97,13 @@ void Light::ClearShadowMap()
     StateManager::Pop();
 }
 
-void Light::Render(GBuffer &gbuffer, const Transform &parentTransform, const Camera &camera) const
+void Light::Render(GBuffer &gbuffer, const Transform &transform, const Camera &camera) const
 {
     glm::mat4 view = camera.GetView(), projection = camera.GetProjection();
-    Render(gbuffer, parentTransform, view, projection);
+    Render(gbuffer, transform, view, projection);
 }
 
-void Light::Render(GBuffer &gbuffer, const Transform &parentTransform, const glm::mat4 &camView, const glm::mat4 &camProjection) const
+void Light::Render(GBuffer &gbuffer, const Transform &transform, const glm::mat4 &camView, const glm::mat4 &camProjection) const
 {
     if(not enabled) return;
 
@@ -127,13 +127,13 @@ void Light::Render(GBuffer &gbuffer, const Transform &parentTransform, const glm
                                    0.0, 0.0, 0.5, 0.0,
                                    0.5, 0.5, 0.5, 1.0);
 
-        glm::mat4 proj = GetProjection(gbuffer.GetWidth(), gbuffer.GetHeight()), view = GetView(parentTransform);
+        glm::mat4 proj = GetProjection(gbuffer.GetWidth(), gbuffer.GetHeight()), view = GetView(transform);
         lightProgram->SetUniform("light.projection", proj);
         lightProgram->SetUniform("light.view", view);
         lightProgram->SetUniform("light.projectionView", proj * view);
         lightProgram->SetUniform("light.biasedProjectionView", bias * proj * view);
-        lightProgram->SetUniform("light.position", parentTransform.GetPosition());
-        lightProgram->SetUniform("light.direction", parentTransform.GetRotation().GetForward());
+        lightProgram->SetUniform("light.position", transform.GetPosition());
+        lightProgram->SetUniform("light.direction", transform.GetRotation().GetForward());
         lightProgram->SetUniform("light.color", color);
         lightProgram->SetUniform("light.intensity", intensity);
         lightProgram->SetUniform("light.shadow", shadow);
@@ -215,13 +215,13 @@ bool Light::GetEnabled() const
 }
 
 
-glm::mat4 Light::GetView(const Transform &parentTransform) const
+glm::mat4 Light::GetView(const Transform &transform) const
 {
     glm::mat4 lightView = glm::mat4(1.0f);
-    glm::mat4 T = glm::translate(lightView, parentTransform.GetPosition());
-    glm::vec3 lookTo = parentTransform.GetPosition() + parentTransform.GetRotation().GetForward() * 99.0f;
+    glm::mat4 T = glm::translate(lightView, transform.GetPosition());
+    glm::vec3 lookTo = transform.GetPosition() + transform.GetRotation().GetForward() * 99.0f;
     glm::vec3 up = glm::vec3(0, 1, 0);
-    Quaternion rot = Quaternion::LookAt(parentTransform.GetPosition(), lookTo, up);
+    Quaternion rot = Quaternion::LookAt(transform.GetPosition(), lookTo, up);
     glm::mat4 R = glm::mat4_cast(rot);
     return glm::inverse(T * R);
 }

@@ -42,7 +42,7 @@ Quaternion Transform::GetRotation() const
     return rotation;
 }
 
-glm::mat4 Transform::GetModelMatrix()
+glm::mat4 Transform::GetModelMatrix() const
 {
     glm::mat4 identity;
     glm::mat4 T = glm::translate(identity, position);

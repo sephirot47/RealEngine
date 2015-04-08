@@ -30,7 +30,7 @@ public:
     glm::vec3 GetScale() const;
     Quaternion GetRotation() const;
 
-    glm::mat4 GetModelMatrix();
+    glm::mat4 GetModelMatrix() const;
 };
 
 }

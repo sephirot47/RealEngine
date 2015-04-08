@@ -98,6 +98,9 @@ void Init()
     scene->AddGameObject(*go2);
     scene->AddGameObject(*go3);
     scene->SetCamera(*camera);
+
+    go3->GetComponent<Material>()->SetTexture(
+                *lightGo1->GetComponent<Light>()->GetShadowBuffer()->GetTexture(GL_DEPTH_ATTACHMENT) );
 }
 
 float rot = 0.0f, sphereRot = 0.0f, appTime = 0.0f, zFar = 10.0f, zNear = 0.1f;
