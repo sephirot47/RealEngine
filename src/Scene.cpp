@@ -11,7 +11,6 @@ Scene::Scene()
 
     glClearColor(0.0, 0.0, 0.0, 1.0);
     glEnable(GL_DEPTH_TEST);
-    glEnable(GL_TEXTURE_2D);
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
     glDepthFunc(GL_LEQUAL);
@@ -68,6 +67,7 @@ void Scene::Render()
         }
 
         // CREATE SHADOW MAP ///////////////////////////////////////
+
         if(go->HasComponent<Light>())
         {
             Light *light = go->GetComponent<Light>();

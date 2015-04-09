@@ -219,7 +219,7 @@ glm::mat4 Light::GetView(const Transform &transform) const
 {
     glm::mat4 lightView = glm::mat4(1.0f);
     glm::mat4 T = glm::translate(lightView, transform.GetPosition());
-    glm::vec3 lookTo = transform.GetPosition() + transform.GetRotation().GetForward() * 99.0f;
+    glm::vec3 lookTo = transform.GetPosition() + transform.GetRotation().GetForward() * 99999.0f;
     glm::vec3 up = glm::vec3(0, 1, 0);
     Quaternion rot = Quaternion::LookAt(transform.GetPosition(), lookTo, up);
     glm::mat4 R = glm::mat4_cast(rot);
@@ -230,6 +230,6 @@ glm::mat4 Light::GetProjection(float screenWidth, float screenHeight) const
 {
     float width = 800.0f;
     float height = width * screenHeight/screenWidth;
-    return glm::ortho(-width, width, -height, height, 350.0f, 4000.0f);
+    return glm::ortho(-width, width, -height, height, 100.0f, 1000.0f);
 }
 

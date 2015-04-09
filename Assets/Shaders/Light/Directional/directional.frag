@@ -22,7 +22,7 @@ in vec2 screenuv;
 
 out vec4 outGColor;
 
-float shadowBias = 0.005;
+float shadowBias = 0.05;
 int blurRadius = 0;
 
 float GetShadow(vec4 worldPosition)
